@@ -10,29 +10,15 @@ Sistem ini memiliki **UI/UX modern, performa tinggi, tanpa redundansi kode**, se
 
 ## **Fitur Utama**  
 
-### **Autentikasi (Wajib Registrasi & Login Sebelum Mengakses Fitur)**
-1. **Registrasi Penduduk**  
-   - Penduduk dapat **mendaftarkan akun secara mandiri**.   
-   - **Input:**  
-     - `Nama Lengkap`  
-     - `NIK`  
-     - `Tanggal Lahir`  
-     - `Jenis Kelamin`  
-     - `Alamat`  
-     - `Email`  
-     - `Password`  
-
-2. **Login Penduduk**  
-   - **Penduduk wajib login** sebelum dapat mengakses fitur pengajuan dokumen dan berita.  
-   - **Input:** `Email/NIK`, `password`.  
+1. **Login Penduduk**  
+   - **Penduduk wajib login** sebelum dapat mengakses fitur pengajuan dokumen dan berita.   
    - Setelah login, pengguna diarahkan ke **dashboard penduduk**.  
 
-3. **Login Admin**  
-   - **Admin wajib login** sebelum dapat mengelola sistem.  
-   - **Input:** `email`, `password`.  
+2. **Login Admin**  
+   - **Admin wajib login** sebelum dapat mengelola sistem.   
    - Setelah login, admin diarahkan ke **dashboard admin**.  
 
-4. **Logout**
+3. **Logout**
 ---
 
 ### **Penduduk (User)**
