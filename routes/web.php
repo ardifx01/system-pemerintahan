@@ -15,11 +15,11 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
     })->name('admin.dashboard');
 });
 
-// User/Penduduk routes
-Route::middleware(['auth', 'verified'])->group(function () {
+// Penduduk routes
+Route::middleware(['auth', 'verified'])->prefix('penduduk')->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+        return Inertia::render('penduduk/dashboard');
+    })->name('penduduk.dashboard');
 });
 
 require __DIR__.'/settings.php';

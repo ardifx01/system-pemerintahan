@@ -1,6 +1,25 @@
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
+const AuthButtons = ({ isCompact = false }: { isCompact?: boolean }) => {
+    const baseButtonStyles = "text-sm font-medium transition-colors";
+    const primaryButtonStyles = `${baseButtonStyles} inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`;
+    const secondaryButtonStyles = isCompact 
+        ? `${baseButtonStyles} text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md dark:text-gray-200 dark:hover:text-white`
+        : `${baseButtonStyles} flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 sm:px-8 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700`;
+
+    return (
+        <>
+            <Link href={route('login')} className={secondaryButtonStyles}>
+                Masuk
+            </Link>
+            <Link href={route('register')} className={primaryButtonStyles}>
+                {isCompact ? 'Daftar' : 'Daftar Sekarang'}
+            </Link>
+        </>
+    );
+};
+
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
 
@@ -32,20 +51,7 @@ export default function Welcome() {
                                         Dashboard
                                     </Link>
                                 ) : (
-                                    <>
-                                        <Link
-                                            href={route('login')}
-                                            className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors dark:text-gray-200 dark:hover:text-white"
-                                        >
-                                            Masuk
-                                        </Link>
-                                        <Link
-                                            href={route('register')}
-                                            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                        >
-                                            Daftar
-                                        </Link>
-                                    </>
+                                    <AuthButtons isCompact />
                                 )}
                             </div>
                         </div>
@@ -68,24 +74,13 @@ export default function Welcome() {
                                 <p className="mt-6 max-w-lg mx-auto text-center text-xl text-gray-500 sm:max-w-3xl dark:text-gray-300">
                                     Layanan administrasi kependudukan online yang aman, cepat, dan mudah untuk semua warga.
                                 </p>
-                                <div className="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
-                                    {!auth.user && (
+                                {!auth.user && (
+                                    <div className="mt-10 max-w-sm mx-auto sm:max-w-none">
                                         <div className="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
-                                            <Link
-                                                href={route('register')}
-                                                className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 sm:px-8 transition-colors"
-                                            >
-                                                Daftar Sekarang
-                                            </Link>
-                                            <Link
-                                                href={route('login')}
-                                                className="flex items-center justify-center px-4 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 sm:px-8 transition-colors dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700"
-                                            >
-                                                Masuk
-                                            </Link>
+                                            <AuthButtons />
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
