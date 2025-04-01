@@ -40,3 +40,20 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export type DocumentStatus = 'DIPROSES' | 'SELESAI' | 'DITOLAK';
+
+export interface Document {
+    id: string;
+    type: 'KTP' | 'KK' | 'AKTA_KELAHIRAN' | 'AKTA_KEMATIAN';
+    status: DocumentStatus;
+    submittedAt: string;
+    notes?: string;
+}
+
+export interface DocumentType {
+    id: string;
+    title: string;
+    description: string;
+    icon: LucideIcon;
+}
