@@ -22,5 +22,12 @@ Route::middleware(['auth', 'verified'])->prefix('penduduk')->group(function () {
     })->name('penduduk.dashboard');
 });
 
+// Document routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/documents', [DocumentController::class, 'index']);
+    Route::post('/api/documents/request', [DocumentController::class, 'store']);
+    Route::get('/api/documents/{document}/download', [DocumentController::class, 'download']);
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
