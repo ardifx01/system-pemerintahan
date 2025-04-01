@@ -31,20 +31,31 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'type' => 'required|in:ktp,kk,akta_kelahiran,akta_kematian',
+            'type' => 'required|in:KTP,KK,AKTA_KELAHIRAN,AKTA_KEMATIAN',
+            'nik' => 'required|string',
+            'nama' => 'required|string',
+            'alamat' => 'required|string',
+            'tempat_lahir' => 'required_if:type,KTP|string|nullable',
+            'tanggal_lahir' => 'required_if:type,KTP|date|nullable',
+            'nama_ayah' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
+            'nama_ibu' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
+            'nama_almarhum' => 'required_if:type,AKTA_KEMATIAN|string|nullable',
+            'tanggal_meninggal' => 'required_if:type,AKTA_KEMATIAN|date|nullable',
         ]);
 
-        $typeMap = [
-            'ktp' => Document::TYPE_KTP,
-            'kk' => Document::TYPE_KK,
-            'akta_kelahiran' => Document::TYPE_AKTA_KELAHIRAN,
-            'akta_kematian' => Document::TYPE_AKTA_KEMATIAN,
-        ];
-
         $document = auth()->user()->documents()->create([
-            'type' => $typeMap[$request->type],
+            'type' => $request->type,
             'status' => Document::STATUS_DIPROSES,
             'submitted_at' => now(),
+            'nik' => $request->nik,
+            'nama' => $request->nama,
+            'alamat' => $request->alamat,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'nama_ayah' => $request->nama_ayah,
+            'nama_ibu' => $request->nama_ibu,
+            'nama_almarhum' => $request->nama_almarhum,
+            'tanggal_meninggal' => $request->tanggal_meninggal,
         ]);
 
         return response()->json($document, 201);

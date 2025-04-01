@@ -9,6 +9,7 @@ import { FileText, FileCheck, FileClock, FileX, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
 import { DocumentService } from '@/services';
+import DocumentRequestForm from '@/components/Forms/DocumentRequestForm';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,10 +19,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const documentTypes: DocumentType[] = [
-    { id: 'ktp', title: 'KTP', description: 'Kartu Tanda Penduduk', icon: FileText },
-    { id: 'kk', title: 'KK', description: 'Kartu Keluarga', icon: FileText },
-    { id: 'akta_kelahiran', title: 'Akta Kelahiran', description: 'Surat Keterangan Kelahiran', icon: FileText },
-    { id: 'akta_kematian', title: 'Akta Kematian', description: 'Surat Keterangan Kematian', icon: FileText },
+    { id: 'KTP', title: 'KTP', description: 'Kartu Tanda Penduduk', icon: FileText },
+    { id: 'KK', title: 'KK', description: 'Kartu Keluarga', icon: FileText },
+    { id: 'AKTA_KELAHIRAN', title: 'Akta Kelahiran', description: 'Surat Keterangan Kelahiran', icon: FileText },
+    { id: 'AKTA_KEMATIAN', title: 'Akta Kematian', description: 'Surat Keterangan Kematian', icon: FileText },
 ];
 
 const statusConfig: Record<DocumentStatus, { color: string; icon: typeof FileCheck }> = {
@@ -109,19 +110,27 @@ const DocumentTable = ({ documents }: DocumentTableProps) => {
 
 export default function PendudukDashboard() {
     const [documents, setDocuments] = useState<Document[]>([]);
+    const [selectedType, setSelectedType] = useState<string | null>(null);
+    const [isFormOpen, setIsFormOpen] = useState(false);
 
     useEffect(() => {
         DocumentService.getDocuments().then(setDocuments);
     }, []);
 
-    const handleRequestDocument = async (type: string) => {
-        try {
-            await DocumentService.requestDocument(type);
-            const updatedDocuments = await DocumentService.getDocuments();
-            setDocuments(updatedDocuments);
-        } catch (error) {
-            console.error('Error requesting document:', error);
-        }
+    const handleRequestDocument = (type: string) => {
+        setSelectedType(type);
+        setIsFormOpen(true);
+    };
+
+    const handleFormClose = () => {
+        setIsFormOpen(false);
+        setSelectedType(null);
+    };
+
+    const handleFormSuccess = async () => {
+        const updatedDocuments = await DocumentService.getDocuments();
+        setDocuments(updatedDocuments);
+        handleFormClose();
     };
 
     return (
@@ -147,6 +156,15 @@ export default function PendudukDashboard() {
                         <DocumentTable documents={documents} />
                     </CardContent>
                 </Card>
+
+                {selectedType && (
+                    <DocumentRequestForm
+                        isOpen={isFormOpen}
+                        onClose={handleFormClose}
+                        documentType={selectedType}
+                        onSuccess={handleFormSuccess}
+                    />
+                )}
             </div>
         </AppLayout>
     );

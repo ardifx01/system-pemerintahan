@@ -16,6 +16,15 @@ class Document extends Model
         'status',
         'notes',
         'file_path',
+        'nik',
+        'nama',
+        'alamat',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'nama_ayah',
+        'nama_ibu',
+        'nama_almarhum',
+        'tanggal_meninggal',
     ];
 
     protected $casts = [
