@@ -1,6 +1,6 @@
-import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import type { PageProps } from '@/types';
 
 const AuthButtons = ({ isCompact = false }: { isCompact?: boolean }) => {
     const baseButtonStyles = "text-sm font-semibold transition-all duration-200";
@@ -22,7 +22,7 @@ const AuthButtons = ({ isCompact = false }: { isCompact?: boolean }) => {
 };
 
 export default function Welcome() {
-    const { auth } = usePage<SharedData>().props;
+    const { auth } = usePage<PageProps>().props;
 
     return (
         <>
