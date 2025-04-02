@@ -14,6 +14,26 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
     Route::get('dashboard', function () {
         return Inertia::render('admin/dashboard');
     })->name('admin.dashboard');
+
+    // Verifikasi Akun Penduduk
+    Route::get('verifikasi', function () {
+        return Inertia::render('admin/verifikasi');
+    })->name('admin.verifikasi');
+
+    // Manajemen Penduduk
+    Route::get('penduduk', function () {
+        return Inertia::render('admin/penduduk');
+    })->name('admin.penduduk');
+
+    // Manajemen Dokumen
+    Route::get('dokumen', function () {
+        return Inertia::render('admin/dokumen');
+    })->name('admin.dokumen');
+
+    // Manajemen Berita
+    Route::get('berita', function () {
+        return Inertia::render('admin/berita');
+    })->name('admin.berita');
 });
 
 // Penduduk routes
