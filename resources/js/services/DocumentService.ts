@@ -18,37 +18,33 @@ export interface DocumentSubmissionData {
 export const DocumentService = {
     async getDocuments(): Promise<Document[]> {
         try {
-            const response = await axios.get<Document[]>('/api/documents');
+            const response = await axios.get<Document[]>('/penduduk/documents');
             return response.data;
         } catch (error) {
             console.error('Error fetching documents:', error);
-            toast.error('Gagal memuat data dokumen');
+            toast.error('Gagal memuat daftar dokumen');
             return [];
         }
     },
 
     async submitDocument(data: DocumentSubmissionData): Promise<Document> {
         try {
-            const response = await axios.post<Document>('/api/documents/request', data);
+            const response = await axios.post<{ document: Document }>('/penduduk/documents', data);
             toast.success('Dokumen berhasil diajukan');
-            return response.data;
-        } catch (error: any) {
+            return response.data.document;
+        } catch (error) {
             console.error('Error submitting document:', error);
-            if (error.response?.data?.message) {
-                toast.error(error.response.data.message);
-            } else {
-                toast.error('Gagal mengajukan dokumen');
-            }
+            toast.error('Gagal mengajukan dokumen');
             throw error;
         }
     },
 
     async downloadDocument(id: number): Promise<void> {
         try {
-            const response = await axios.get(`/api/documents/${id}/download`, {
-                responseType: 'blob',
+            const response = await axios.get(`/penduduk/documents/${id}/download`, {
+                responseType: 'blob'
             });
-
+            
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -60,6 +56,7 @@ export const DocumentService = {
         } catch (error) {
             console.error('Error downloading document:', error);
             toast.error('Gagal mengunduh dokumen');
+            throw error;
         }
-    },
+    }
 };

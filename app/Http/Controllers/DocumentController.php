@@ -30,46 +30,65 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'type' => 'required|in:KTP,KK,AKTA_KELAHIRAN,AKTA_KEMATIAN',
-            'nik' => 'required|string',
-            'nama' => 'required|string',
+            'nik' => 'required|string|size:16',
+            'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
-            'tempat_lahir' => 'required_if:type,KTP|string|nullable',
-            'tanggal_lahir' => 'required_if:type,KTP|date|nullable',
+            'tempat_lahir' => 'required_if:type,KTP,AKTA_KELAHIRAN|string|nullable',
+            'tanggal_lahir' => 'required_if:type,KTP,AKTA_KELAHIRAN|date|nullable',
             'nama_ayah' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
             'nama_ibu' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
             'nama_almarhum' => 'required_if:type,AKTA_KEMATIAN|string|nullable',
             'tanggal_meninggal' => 'required_if:type,AKTA_KEMATIAN|date|nullable',
         ]);
 
-        $document = auth()->user()->documents()->create([
-            'type' => $request->type,
-            'status' => Document::STATUS_DIPROSES,
-            'submitted_at' => now(),
-            'nik' => $request->nik,
-            'nama' => $request->nama,
-            'alamat' => $request->alamat,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'nama_ayah' => $request->nama_ayah,
-            'nama_ibu' => $request->nama_ibu,
-            'nama_almarhum' => $request->nama_almarhum,
-            'tanggal_meninggal' => $request->tanggal_meninggal,
-        ]);
+        try {
+            $document = auth()->user()->documents()->create([
+                'type' => $validated['type'],
+                'status' => Document::STATUS_DIPROSES,
+                'submitted_at' => now(),
+                'nik' => $validated['nik'],
+                'nama' => $validated['nama'],
+                'alamat' => $validated['alamat'],
+                'tempat_lahir' => $validated['tempat_lahir'] ?? null,
+                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+                'nama_ayah' => $validated['nama_ayah'] ?? null,
+                'nama_ibu' => $validated['nama_ibu'] ?? null,
+                'nama_almarhum' => $validated['nama_almarhum'] ?? null,
+                'tanggal_meninggal' => $validated['tanggal_meninggal'] ?? null,
+            ]);
 
-        return response()->json($document, 201);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Dokumen berhasil diajukan',
+                    'document' => $document
+                ], 201);
+            }
+
+            return redirect()->route('penduduk.dashboard')
+                ->with('success', 'Dokumen berhasil diajukan');
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Gagal mengajukan dokumen',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+
+            return back()->withErrors([
+                'error' => 'Gagal mengajukan dokumen: ' . $e->getMessage()
+            ]);
+        }
     }
 
     public function download(Document $document)
     {
-        // Check if user owns the document
         if ($document->user_id !== auth()->id()) {
             abort(403);
         }
 
-        // Check if document is completed and has a file
-        if ($document->status !== Document::STATUS_SELESAI || !$document->file_path) {
+        if (!$document->file_path || !Storage::exists($document->file_path)) {
             abort(404);
         }
 

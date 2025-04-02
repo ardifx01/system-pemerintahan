@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,13 +21,13 @@ Route::middleware(['auth', 'verified'])->prefix('penduduk')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('penduduk/dashboard');
     })->name('penduduk.dashboard');
-});
 
-// Document routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/api/documents', [DocumentController::class, 'index']);
-    Route::post('/api/documents/request', [DocumentController::class, 'store']);
-    Route::get('/api/documents/{document}/download', [DocumentController::class, 'download']);
+    // Document routes
+    Route::controller(DocumentController::class)->group(function () {
+        Route::get('documents', 'index')->name('documents.index');
+        Route::post('documents', 'store')->name('documents.store');
+        Route::get('documents/{document}/download', 'download')->name('documents.download');
+    });
 });
 
 require __DIR__.'/settings.php';

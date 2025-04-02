@@ -6,6 +6,7 @@ import { type DocumentType } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 
 interface Props {
     isOpen: boolean;
@@ -19,45 +20,46 @@ type FormData = {
     nik: string;
     nama: string;
     alamat: string;
-    tempatLahir?: string;
-    tanggalLahir?: string;
-    namaAyah?: string;
-    namaIbu?: string;
-    namaAlmarhum?: string;
-    tanggalMeninggal?: string;
-    [key: string]: string | undefined;
+    tempat_lahir?: string;
+    tanggal_lahir?: string;
+    nama_ayah?: string;
+    nama_ibu?: string;
+    nama_almarhum?: string;
+    tanggal_meninggal?: string;
 }
 
 export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, documentType }: Props) {
-    const { data, setData, post, processing, errors, reset } = useForm<FormData>({
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm<FormData>({
         type: documentType,
         nik: '',
         nama: '',
         alamat: '',
-        tempatLahir: '',
-        tanggalLahir: '',
-        namaAyah: '',
-        namaIbu: '',
-        namaAlmarhum: '',
-        tanggalMeninggal: '',
+        tempat_lahir: '',
+        tanggal_lahir: '',
+        nama_ayah: '',
+        nama_ibu: '',
+        nama_almarhum: '',
+        tanggal_meninggal: '',
     });
 
     useEffect(() => {
         if (isOpen) {
             reset();
+            clearErrors();
             setData('type', documentType);
         }
     }, [isOpen, documentType]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/api/documents', {
+        post('/penduduk/documents', {
             onSuccess: () => {
                 onClose();
                 onFormSuccess();
                 toast.success('Dokumen berhasil diajukan');
             },
-            onError: () => {
+            onError: (errors) => {
+                console.error('Form errors:', errors);
                 toast.error('Gagal mengajukan dokumen');
             },
         });
@@ -82,6 +84,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                             name="nik"
                             value={data.nik}
                             onChange={handleChange}
+                            maxLength={16}
                             required
                         />
                         {errors.nik && <p className="text-sm text-red-500">{errors.nik}</p>}
@@ -111,55 +114,59 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                         {errors.alamat && <p className="text-sm text-red-500">{errors.alamat}</p>}
                     </div>
 
+                    {(documentType === 'KTP' || documentType === 'AKTA_KELAHIRAN') && (
+                        <>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="tempat_lahir">Tempat Lahir</Label>
+                                <Input
+                                    id="tempat_lahir"
+                                    name="tempat_lahir"
+                                    value={data.tempat_lahir}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                {errors.tempat_lahir && <p className="text-sm text-red-500">{errors.tempat_lahir}</p>}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="tanggal_lahir">Tanggal Lahir</Label>
+                                <Input
+                                    id="tanggal_lahir"
+                                    name="tanggal_lahir"
+                                    type="date"
+                                    value={data.tanggal_lahir}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                {errors.tanggal_lahir && <p className="text-sm text-red-500">{errors.tanggal_lahir}</p>}
+                            </div>
+                        </>
+                    )}
+
                     {documentType === 'AKTA_KELAHIRAN' && (
                         <>
                             <div className="space-y-1.5">
-                                <Label htmlFor="tempatLahir">Tempat Lahir</Label>
+                                <Label htmlFor="nama_ayah">Nama Ayah</Label>
                                 <Input
-                                    id="tempatLahir"
-                                    name="tempatLahir"
-                                    value={data.tempatLahir}
+                                    id="nama_ayah"
+                                    name="nama_ayah"
+                                    value={data.nama_ayah}
                                     onChange={handleChange}
                                     required
                                 />
-                                {errors.tempatLahir && <p className="text-sm text-red-500">{errors.tempatLahir}</p>}
+                                {errors.nama_ayah && <p className="text-sm text-red-500">{errors.nama_ayah}</p>}
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="tanggalLahir">Tanggal Lahir</Label>
+                                <Label htmlFor="nama_ibu">Nama Ibu</Label>
                                 <Input
-                                    id="tanggalLahir"
-                                    name="tanggalLahir"
-                                    type="date"
-                                    value={data.tanggalLahir}
+                                    id="nama_ibu"
+                                    name="nama_ibu"
+                                    value={data.nama_ibu}
                                     onChange={handleChange}
                                     required
                                 />
-                                {errors.tanggalLahir && <p className="text-sm text-red-500">{errors.tanggalLahir}</p>}
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <Label htmlFor="namaAyah">Nama Ayah</Label>
-                                <Input
-                                    id="namaAyah"
-                                    name="namaAyah"
-                                    value={data.namaAyah}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {errors.namaAyah && <p className="text-sm text-red-500">{errors.namaAyah}</p>}
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <Label htmlFor="namaIbu">Nama Ibu</Label>
-                                <Input
-                                    id="namaIbu"
-                                    name="namaIbu"
-                                    value={data.namaIbu}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {errors.namaIbu && <p className="text-sm text-red-500">{errors.namaIbu}</p>}
+                                {errors.nama_ibu && <p className="text-sm text-red-500">{errors.nama_ibu}</p>}
                             </div>
                         </>
                     )}
@@ -167,38 +174,45 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                     {documentType === 'AKTA_KEMATIAN' && (
                         <>
                             <div className="space-y-1.5">
-                                <Label htmlFor="namaAlmarhum">Nama Almarhum/Almarhumah</Label>
+                                <Label htmlFor="nama_almarhum">Nama Almarhum</Label>
                                 <Input
-                                    id="namaAlmarhum"
-                                    name="namaAlmarhum"
-                                    value={data.namaAlmarhum}
+                                    id="nama_almarhum"
+                                    name="nama_almarhum"
+                                    value={data.nama_almarhum}
                                     onChange={handleChange}
                                     required
                                 />
-                                {errors.namaAlmarhum && <p className="text-sm text-red-500">{errors.namaAlmarhum}</p>}
+                                {errors.nama_almarhum && <p className="text-sm text-red-500">{errors.nama_almarhum}</p>}
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="tanggalMeninggal">Tanggal Meninggal</Label>
+                                <Label htmlFor="tanggal_meninggal">Tanggal Meninggal</Label>
                                 <Input
-                                    id="tanggalMeninggal"
-                                    name="tanggalMeninggal"
+                                    id="tanggal_meninggal"
+                                    name="tanggal_meninggal"
                                     type="date"
-                                    value={data.tanggalMeninggal}
+                                    value={data.tanggal_meninggal}
                                     onChange={handleChange}
                                     required
                                 />
-                                {errors.tanggalMeninggal && <p className="text-sm text-red-500">{errors.tanggalMeninggal}</p>}
+                                {errors.tanggal_meninggal && <p className="text-sm text-red-500">{errors.tanggal_meninggal}</p>}
                             </div>
                         </>
                     )}
 
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-3">
                         <Button type="button" variant="outline" onClick={onClose}>
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {processing ? 'Memproses...' : 'Ajukan'}
+                            {processing ? (
+                                <>
+                                    <Loader2 className="mr-2 size-4 animate-spin" />
+                                    Memproses...
+                                </>
+                            ) : (
+                                'Ajukan'
+                            )}
                         </Button>
                     </div>
                 </form>

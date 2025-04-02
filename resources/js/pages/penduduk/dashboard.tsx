@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { FileText, FileCheck, FileClock, FileX, Download, Users, FileArchive, AlertCircle, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import { DocumentService } from '@/services/DocumentService';
 import DocumentRequestForm from '@/components/Forms/DocumentRequestForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -191,114 +193,114 @@ const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
     </Card>
 );
 
-export default function PendudukDashboard() {
+const PendudukDashboard = () => {
     const [documents, setDocuments] = useState<Document[]>([]);
-    const [selectedType, setSelectedType] = useState<DocumentType | null>(null);
-    const [isFormOpen, setIsFormOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [selectedDocumentType, setSelectedDocumentType] = useState<DocumentType | null>(null);
+    const [isRequestFormOpen, setIsRequestFormOpen] = useState(false);
+    const [processingDocumentType, setProcessingDocumentType] = useState<DocumentType | null>(null);
 
-    useEffect(() => {
-        loadDocuments();
-    }, []);
-
-    const loadDocuments = async () => {
-        setIsLoading(true);
+    const fetchDocuments = async () => {
         try {
-            const docs = await DocumentService.getDocuments();
-            setDocuments(docs);
+            const response = await axios.get('/penduduk/documents');
+            setDocuments(response.data);
         } catch (error) {
-            console.error('Error loading documents:', error);
+            console.error('Error fetching documents:', error);
+            toast.error('Gagal memuat daftar dokumen');
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleRequestDocument = (type: DocumentType) => {
-        setIsProcessing(true);
-        setSelectedType(type);
-        setIsFormOpen(true);
+    useEffect(() => {
+        fetchDocuments();
+    }, []);
+
+    const handleDocumentRequest = (type: DocumentType) => {
+        setSelectedDocumentType(type);
+        setIsRequestFormOpen(true);
+        setProcessingDocumentType(type);
     };
 
-    const handleFormClose = () => {
-        setIsFormOpen(false);
-        setSelectedType(null);
-        setIsProcessing(false);
+    const handleRequestFormClose = () => {
+        setIsRequestFormOpen(false);
+        setSelectedDocumentType(null);
+        setProcessingDocumentType(null);
     };
 
-    const handleFormSuccess = () => {
-        handleFormClose();
-        loadDocuments();
+    const handleRequestFormSuccess = () => {
+        fetchDocuments();
     };
-
-    const stats = [
-        {
-            title: 'Total Dokumen',
-            value: documents.length,
-            description: 'Total dokumen yang telah diajukan',
-            icon: FileArchive,
-            trend: { value: 12, label: 'vs bulan lalu' }
-        },
-        {
-            title: 'Dokumen Diproses',
-            value: documents.filter(d => d.status === 'DIPROSES').length,
-            description: 'Dokumen dalam proses verifikasi',
-            icon: FileClock
-        },
-        {
-            title: 'Dokumen Selesai',
-            value: documents.filter(d => d.status === 'SELESAI').length,
-            description: 'Dokumen yang telah selesai diproses',
-            icon: FileCheck,
-            trend: { value: 8, label: 'vs bulan lalu' }
-        }
-    ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Penduduk" />
-
-            <div className="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto">
-                <div className="grid gap-8">
-                    {/* Statistics Section */}
-                    <div className="grid gap-6 md:grid-cols-3">
-                        {stats.map((stat, index) => (
-                            <StatsCard key={index} {...stat} />
-                        ))}
-                    </div>
-
-                    {/* Document Request Section */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-semibold">Ajukan Dokumen Baru</h2>
-                        </div>
-                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                            {documentTypes.map((type) => (
-                                <DocumentCard
-                                    key={type.id}
-                                    type={type}
-                                    onRequest={handleRequestDocument}
-                                    isProcessing={isProcessing && selectedType === type.id}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Document History Table */}
-                    <div className="space-y-6">
-                        <DocumentTable documents={documents} isLoading={isLoading} />
-                    </div>
+            
+            <div className="space-y-8">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <StatsCard
+                        title="Total Dokumen"
+                        value={documents.length}
+                        description="Total dokumen yang telah diajukan"
+                        icon={FileArchive}
+                    />
+                    <StatsCard
+                        title="Dokumen Diproses"
+                        value={documents.filter(d => d.status === 'DIPROSES').length}
+                        description="Dokumen dalam proses verifikasi"
+                        icon={FileClock}
+                    />
+                    <StatsCard
+                        title="Dokumen Selesai"
+                        value={documents.filter(d => d.status === 'SELESAI').length}
+                        description="Dokumen yang telah selesai diproses"
+                        icon={FileCheck}
+                    />
+                    <StatsCard
+                        title="Dokumen Ditolak"
+                        value={documents.filter(d => d.status === 'DITOLAK').length}
+                        description="Dokumen yang ditolak"
+                        icon={AlertCircle}
+                    />
                 </div>
+
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {documentTypes.map((type) => (
+                        <DocumentCard
+                            key={type.id}
+                            type={type}
+                            onRequest={handleDocumentRequest}
+                            isProcessing={processingDocumentType === type.id}
+                        />
+                    ))}
+                </div>
+
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg">Riwayat Pengajuan Dokumen</CardTitle>
+                            <Users className="size-5 text-muted-foreground" />
+                        </div>
+                        <CardDescription>
+                            Daftar dokumen yang telah diajukan dan statusnya
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <DocumentTable documents={documents} isLoading={isLoading} />
+                    </CardContent>
+                </Card>
             </div>
 
-            {selectedType && (
+            {selectedDocumentType && (
                 <DocumentRequestForm
-                    isOpen={isFormOpen}
-                    onClose={handleFormClose}
-                    onFormSuccess={handleFormSuccess}
-                    documentType={selectedType}
+                    isOpen={isRequestFormOpen}
+                    onClose={handleRequestFormClose}
+                    onFormSuccess={handleRequestFormSuccess}
+                    documentType={selectedDocumentType}
                 />
             )}
         </AppLayout>
     );
-}
+};
+
+export default PendudukDashboard;
