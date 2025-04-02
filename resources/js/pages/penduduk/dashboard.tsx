@@ -44,20 +44,20 @@ interface StatsCardProps {
 }
 
 const StatsCard = ({ title, value, description, icon: Icon, trend }: StatsCardProps) => (
-    <Card>
+    <Card className="hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-            <Icon className="size-4 text-muted-foreground" />
+            <Icon className="size-5 text-primary/80" />
         </CardHeader>
         <CardContent>
-            <div className="text-2xl font-bold">{value}</div>
-            <p className="text-xs text-muted-foreground mt-1">{description}</p>
+            <div className="text-3xl font-bold tracking-tight">{value}</div>
+            <p className="text-sm text-muted-foreground mt-2">{description}</p>
             {trend && (
-                <div className="mt-2 flex items-center text-xs">
+                <div className="mt-3 flex items-center text-xs font-medium">
                     <span className={trend.value >= 0 ? "text-green-600" : "text-red-600"}>
                         {trend.value >= 0 ? "+" : ""}{trend.value}%
                     </span>
-                    <span className="ml-1 text-muted-foreground">{trend.label}</span>
+                    <span className="ml-1.5 text-muted-foreground">{trend.label}</span>
                 </div>
             )}
         </CardContent>
@@ -71,30 +71,30 @@ interface DocumentCardProps {
 }
 
 const DocumentCard = ({ type, onRequest, isProcessing }: DocumentCardProps) => (
-    <Card className="group hover:shadow-md transition-all duration-200">
+    <Card className="group hover:shadow-md transition-all duration-200 border-primary/10">
         <CardHeader>
             <div className="flex items-center justify-between">
-                {type.icon && <type.icon className="size-5 text-primary" />}
-                <Badge variant="secondary" className="text-xs">Dokumen Resmi</Badge>
+                {type.icon && <type.icon className="size-6 text-primary/80" />}
+                <Badge variant="secondary" className="text-xs font-medium">Dokumen Resmi</Badge>
             </div>
-            <CardTitle className="text-lg mt-2">{type.title}</CardTitle>
-            <CardDescription className="text-sm">{type.description}</CardDescription>
+            <CardTitle className="text-xl mt-3 tracking-tight">{type.title}</CardTitle>
+            <CardDescription className="text-sm mt-1.5">{type.description}</CardDescription>
         </CardHeader>
         <CardContent>
             <Button 
                 onClick={() => onRequest(type.id as DocumentType)}
-                className="w-full group-hover:bg-primary/90"
+                className="w-full group-hover:bg-primary/90 transition-all duration-200"
                 disabled={isProcessing}
             >
                 {isProcessing ? (
                     <>
-                        <Skeleton className="h-4 w-4 rounded-full mr-2" />
+                        <Skeleton className="h-4 w-4 rounded-full mr-2.5" />
                         Memproses...
                     </>
                 ) : (
                     <>
                         Ajukan {type.title}
-                        <ChevronRight className="ml-2 size-4" />
+                        <ChevronRight className="ml-2.5 size-4" />
                     </>
                 )}
             </Button>
@@ -236,8 +236,13 @@ const PendudukDashboard = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Penduduk" />
             
-            <div className="space-y-8">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-8 px-6 py-6 max-w-[1600px] mx-auto">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight mb-2">Dashboard Penduduk</h1>
+                    <p className="text-muted-foreground">Kelola dan ajukan dokumen kependudukan Anda</p>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard
                         title="Total Dokumen"
                         value={documents.length}
@@ -264,7 +269,7 @@ const PendudukDashboard = () => {
                     />
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {documentTypes.map((type) => (
                         <DocumentCard
                             key={type.id}
@@ -275,17 +280,19 @@ const PendudukDashboard = () => {
                     ))}
                 </div>
 
-                <Card>
-                    <CardHeader>
+                <Card className="shadow-sm">
+                    <CardHeader className="border-b bg-muted/5">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">Riwayat Pengajuan Dokumen</CardTitle>
-                            <Users className="size-5 text-muted-foreground" />
+                            <div>
+                                <CardTitle className="text-xl tracking-tight">Riwayat Pengajuan Dokumen</CardTitle>
+                                <CardDescription className="mt-1.5">
+                                    Daftar dokumen yang telah diajukan dan statusnya
+                                </CardDescription>
+                            </div>
+                            <Users className="size-5 text-primary/80" />
                         </div>
-                        <CardDescription>
-                            Daftar dokumen yang telah diajukan dan statusnya
-                        </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         <DocumentTable documents={documents} isLoading={isLoading} />
                     </CardContent>
                 </Card>
