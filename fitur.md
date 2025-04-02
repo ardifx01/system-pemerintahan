@@ -22,7 +22,7 @@ Sistem ini memiliki **UI/UX modern, performa tinggi, tanpa redundansi kode**, se
 ---
 
 ### **Penduduk (User)**
-1. **Manajemen Dokumen**  
+1. **Dashboard Penduduk**  
    - Mengajukan **KTP, KK, Akta Kelahiran, Akta Kematian**.  
    - Melihat status pengajuan dokumen: **Diproses, Selesai, atau Ditolak**.  
    - Mengunduh dokumen dalam format **PDF** setelah selesai diproses.  
@@ -30,10 +30,6 @@ Sistem ini memiliki **UI/UX modern, performa tinggi, tanpa redundansi kode**, se
 2. **Berita Pemerintahan**  
    - Membaca berita terbaru dari pemerintah.  
    - Berita dilengkapi dengan **judul, isi, gambar, penulis, dan tanggal rilis**.  
-
-3. **Dashboard Penduduk**  
-   - Menampilkan informasi pribadi seperti **NIK, Nama, dan Status Dokumen**.  
-
 ---
 
 ### **Admin**
