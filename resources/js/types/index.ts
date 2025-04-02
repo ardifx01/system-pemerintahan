@@ -37,6 +37,12 @@ export interface BreadcrumbItem {
     href: string;
 }
 
+export interface NavItem {
+    title: string;
+    href: string | ((route: string) => string);
+    icon: LucideIcon;
+}
+
 export interface User {
     id: number;
     name: string;
