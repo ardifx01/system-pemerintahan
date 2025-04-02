@@ -1,21 +1,30 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type PageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { FileText, Newspaper, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
-export function AppSidebar() {
+export function PendudukSidebar() {
     const { auth } = usePage<PageProps>().props;
-    const dashboardPath = auth.user?.role === 'ADMIN' ? '/admin/dashboard' : '/penduduk/dashboard';
+    const dashboardPath = '/penduduk/dashboard';
 
     const mainNavItems: NavItem[] = [
         {
             title: 'Dashboard',
-            href: dashboardPath,
+            href: '/penduduk/dashboard',
             icon: LayoutGrid,
+        },
+        {
+            title: 'Dokumen Saya',
+            href: '/penduduk/dokumen',
+            icon: FileText,
+        },
+        {
+            title: 'Berita',
+            href: '/penduduk/berita',
+            icon: Newspaper,
         },
     ];
     
