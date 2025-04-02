@@ -46,12 +46,16 @@ interface StatsCardProps {
 const StatsCard = ({ title, value, description, icon: Icon, trend }: StatsCardProps) => (
     <Card className="hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-            <Icon className="size-5 text-primary/80" />
+            <div className="space-y-1.5">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+                <div className="text-3xl font-bold tracking-tight">{value}</div>
+            </div>
+            <div className="p-2.5 rounded-lg bg-primary/5 text-primary">
+                <Icon className="size-6" />
+            </div>
         </CardHeader>
         <CardContent>
-            <div className="text-3xl font-bold tracking-tight">{value}</div>
-            <p className="text-sm text-muted-foreground mt-2">{description}</p>
+            <p className="text-sm text-muted-foreground">{description}</p>
             {trend && (
                 <div className="mt-3 flex items-center text-xs font-medium">
                     <span className={trend.value >= 0 ? "text-green-600" : "text-red-600"}>
@@ -72,30 +76,32 @@ interface DocumentCardProps {
 
 const DocumentCard = ({ type, onRequest, isProcessing }: DocumentCardProps) => (
     <Card className="group hover:shadow-md transition-all duration-200 border-primary/10">
-        <CardHeader>
+        <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-                {type.icon && <type.icon className="size-6 text-primary/80" />}
+                <div className="p-2 rounded-lg bg-primary/5 text-primary">
+                    {type.icon && <type.icon className="size-6" />}
+                </div>
                 <Badge variant="secondary" className="text-xs font-medium">Dokumen Resmi</Badge>
             </div>
-            <CardTitle className="text-xl mt-3 tracking-tight">{type.title}</CardTitle>
-            <CardDescription className="text-sm mt-1.5">{type.description}</CardDescription>
+            <CardTitle className="text-xl mt-4 tracking-tight">{type.title}</CardTitle>
+            <CardDescription className="text-sm mt-1.5 line-clamp-2">{type.description}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
             <Button 
                 onClick={() => onRequest(type.id as DocumentType)}
-                className="w-full group-hover:bg-primary/90 transition-all duration-200"
+                className="w-full group-hover:bg-primary/90 transition-all duration-200 font-medium"
                 disabled={isProcessing}
             >
                 {isProcessing ? (
-                    <>
-                        <Skeleton className="h-4 w-4 rounded-full mr-2.5" />
-                        Memproses...
-                    </>
+                    <div className="flex items-center justify-center space-x-2">
+                        <div className="size-4 border-2 border-current border-t-transparent animate-spin rounded-full" />
+                        <span>Memproses...</span>
+                    </div>
                 ) : (
-                    <>
-                        Ajukan {type.title}
-                        <ChevronRight className="ml-2.5 size-4" />
-                    </>
+                    <div className="flex items-center justify-center space-x-2">
+                        <span>Ajukan {type.title}</span>
+                        <ChevronRight className="size-4" />
+                    </div>
                 )}
             </Button>
         </CardContent>
@@ -108,26 +114,29 @@ interface DocumentTableProps {
 }
 
 const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
-    <Card>
-        <CardHeader>
-            <CardTitle>Riwayat Pengajuan Dokumen</CardTitle>
-            <CardDescription>Daftar dokumen yang telah diajukan dan statusnya</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="rounded-lg border bg-card text-card-foreground">
+        <div className="flex items-center justify-between border-b bg-muted/5 px-6 py-4">
+            <div>
+                <h2 className="text-xl font-semibold tracking-tight">Riwayat Pengajuan Dokumen</h2>
+                <p className="text-sm text-muted-foreground mt-1">Daftar dokumen yang telah diajukan dan statusnya</p>
+            </div>
+            <Users className="size-5 text-primary/80" />
+        </div>
+        <div className="p-0">
             <ScrollArea className="h-[400px]">
                 <Table>
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>Jenis Dokumen</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Tanggal Pengajuan</TableHead>
-                            <TableHead className="text-right">Aksi</TableHead>
+                        <TableRow className="hover:bg-transparent">
+                            <TableHead className="w-[25%]">Jenis Dokumen</TableHead>
+                            <TableHead className="w-[20%]">Status</TableHead>
+                            <TableHead className="w-[35%]">Tanggal Pengajuan</TableHead>
+                            <TableHead className="text-right w-[20%]">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             Array(3).fill(0).map((_, i) => (
-                                <TableRow key={i}>
+                                <TableRow key={i} className="hover:bg-muted/30">
                                     <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-32" /></TableCell>
@@ -136,10 +145,11 @@ const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
                             ))
                         ) : documents.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} className="text-center py-8">
-                                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                                        <FileArchive className="size-8" />
-                                        <p>Belum ada dokumen yang diajukan</p>
+                                <TableCell colSpan={4} className="h-32">
+                                    <div className="flex flex-col items-center justify-center text-center">
+                                        <FileArchive className="size-8 text-muted-foreground mb-3" />
+                                        <p className="text-muted-foreground font-medium">Belum ada dokumen yang diajukan</p>
+                                        <p className="text-sm text-muted-foreground mt-1">Dokumen yang Anda ajukan akan muncul di sini</p>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -147,18 +157,22 @@ const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
                             documents.map((doc) => {
                                 const StatusIcon = statusConfig[doc.status].icon;
                                 return (
-                                    <TableRow key={doc.id}>
-                                        <TableCell className="font-medium">{doc.type.replace('_', ' ')}</TableCell>
+                                    <TableRow key={doc.id} className="hover:bg-muted/30">
+                                        <TableCell className="font-medium">
+                                            {documentTypes.find(t => t.id === doc.type)?.title || doc.type.replace('_', ' ')}
+                                        </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className={`${statusConfig[doc.status].color} border`}>
-                                                <StatusIcon className="mr-1 size-3" />
-                                                {doc.status}
+                                            <Badge variant="outline" className={`${statusConfig[doc.status].color} border font-medium`}>
+                                                <StatusIcon className="mr-1.5 size-3.5" />
+                                                {doc.status === 'DIPROSES' ? 'Sedang Diproses' : doc.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell>{new Date(doc.submittedAt).toLocaleDateString('id-ID', {
+                                        <TableCell className="text-muted-foreground">{new Date(doc.submittedAt).toLocaleDateString('id-ID', {
                                             year: 'numeric',
                                             month: 'long',
-                                            day: 'numeric'
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
                                         })}</TableCell>
                                         <TableCell className="text-right">
                                             {doc.status === 'SELESAI' && doc.filePath ? (
@@ -166,19 +180,19 @@ const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => DocumentService.downloadDocument(doc.id)}
-                                                    className="hover:bg-primary hover:text-white transition-colors"
+                                                    className="hover:bg-primary hover:text-white transition-colors font-medium"
                                                 >
-                                                    <Download className="size-3 mr-1" />
-                                                    Unduh
+                                                    <Download className="size-3.5 mr-1.5" />
+                                                    Unduh Dokumen
                                                 </Button>
                                             ) : doc.status === 'DITOLAK' && (
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="text-red-600 hover:text-red-700"
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 font-medium"
                                                 >
-                                                    <AlertCircle className="size-3 mr-1" />
-                                                    Lihat Alasan
+                                                    <AlertCircle className="size-3.5 mr-1.5" />
+                                                    Detail Penolakan
                                                 </Button>
                                             )}
                                         </TableCell>
@@ -189,8 +203,8 @@ const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
                     </TableBody>
                 </Table>
             </ScrollArea>
-        </CardContent>
-    </Card>
+        </div>
+    </div>
 );
 
 const PendudukDashboard = () => {
@@ -236,7 +250,7 @@ const PendudukDashboard = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Penduduk" />
             
-            <div className="space-y-8 px-6 py-6 max-w-[1600px] mx-auto">
+            <div className="space-y-8 px-8 py-8 max-w-[1600px] mx-auto">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight mb-2">Dashboard Penduduk</h1>
                     <p className="text-muted-foreground">Kelola dan ajukan dokumen kependudukan Anda</p>
@@ -250,21 +264,22 @@ const PendudukDashboard = () => {
                         icon={FileArchive}
                     />
                     <StatsCard
-                        title="Dokumen Diproses"
+                        title="Sedang Diproses"
                         value={documents.filter(d => d.status === 'DIPROSES').length}
                         description="Dokumen dalam proses verifikasi"
                         icon={FileClock}
                     />
                     <StatsCard
-                        title="Dokumen Selesai"
+                        title="Selesai Diproses"
                         value={documents.filter(d => d.status === 'SELESAI').length}
-                        description="Dokumen yang telah selesai diproses"
+                        description="Dokumen yang telah selesai"
                         icon={FileCheck}
+                        trend={{ value: 12, label: "dari bulan lalu" }}
                     />
                     <StatsCard
                         title="Dokumen Ditolak"
                         value={documents.filter(d => d.status === 'DITOLAK').length}
-                        description="Dokumen yang ditolak"
+                        description="Dokumen yang perlu perbaikan"
                         icon={AlertCircle}
                     />
                 </div>
@@ -280,22 +295,7 @@ const PendudukDashboard = () => {
                     ))}
                 </div>
 
-                <Card className="shadow-sm">
-                    <CardHeader className="border-b bg-muted/5">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl tracking-tight">Riwayat Pengajuan Dokumen</CardTitle>
-                                <CardDescription className="mt-1.5">
-                                    Daftar dokumen yang telah diajukan dan statusnya
-                                </CardDescription>
-                            </div>
-                            <Users className="size-5 text-primary/80" />
-                        </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <DocumentTable documents={documents} isLoading={isLoading} />
-                    </CardContent>
-                </Card>
+                <DocumentTable documents={documents} isLoading={isLoading} />
             </div>
 
             {selectedDocumentType && (
