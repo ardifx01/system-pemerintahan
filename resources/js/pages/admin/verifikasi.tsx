@@ -26,9 +26,8 @@ export default function Verifikasi() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>NIK</TableHead>
+                                    <TableHead>Email</TableHead>
                                     <TableHead>Nama</TableHead>
-                                    <TableHead>Alamat</TableHead>
                                     <TableHead>Tanggal Daftar</TableHead>
                                     <TableHead>Aksi</TableHead>
                                 </TableRow>
@@ -38,7 +37,6 @@ export default function Verifikasi() {
                                 <TableRow>
                                     <TableCell>3275012345678901</TableCell>
                                     <TableCell>John Doe</TableCell>
-                                    <TableCell>Jl. Contoh No. 123</TableCell>
                                     <TableCell>2025-04-02</TableCell>
                                     <TableCell className="space-x-2">
                                         <Button variant="outline" size="sm" className="text-green-600">
