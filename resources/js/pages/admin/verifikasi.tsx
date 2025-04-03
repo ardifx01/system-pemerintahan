@@ -35,7 +35,7 @@ export default function Verifikasi() {
                             <TableBody>
                                 {/* Sample data - replace with real data */}
                                 <TableRow>
-                                    <TableCell>3275012345678901</TableCell>
+                                    <TableCell>johndoe@gmail.com</TableCell>
                                     <TableCell>John Doe</TableCell>
                                     <TableCell>2025-04-02</TableCell>
                                     <TableCell className="space-x-2">
