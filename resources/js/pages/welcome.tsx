@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { PageProps } from '@/types';
+import AppLogoIcon from '@/components/app-logo-icon';
 
 const AuthButtons = ({ isCompact = false }: { isCompact?: boolean }) => {
     const baseButtonStyles = "text-sm font-semibold transition-all duration-200";
@@ -37,11 +38,7 @@ export default function Welcome() {
                         <div className="flex justify-between h-20">
                             <div className="flex items-center">
                                 <Link href="/" className="flex items-center space-x-3 group">
-                                    <img 
-                                        src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=96&h=96&q=80" 
-                                        alt="Logo" 
-                                        className="h-10 w-10 rounded-lg shadow-md transition-transform group-hover:scale-105" 
-                                    />
+                                    <AppLogoIcon className="h-10 w-10 rounded-lg shadow-md transition-transform group-hover:scale-105" />
                                     <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                                         SIPEM
                                     </span>
