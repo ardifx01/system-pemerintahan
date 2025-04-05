@@ -4,7 +4,7 @@ Aplikasi website resmi pemerintahan menggunakan Laravel dan TypeScript untuk men
 
 ## Teknologi
 
-- Backend: Laravel 10+
+- Backend: Laravel 12+
 - Frontend: TypeScript & React
 - Database: MySQL
 - Environment: XAMPP
