@@ -19,11 +19,13 @@ class PendudukController extends Controller
         $search = $request->input('search');
         
         $penduduk = Penduduk::query()
+            ->with('user:id,email') // Use eager loading instead of join
             ->when($search, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('nik', 'like', "%{$search}%")
-                        ->orWhere('nama', 'like', "%{$search}%")
-                        ->orWhere('alamat', 'like', "%{$search}%");
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($q) use ($search) {
+                            $q->where('email', 'like', "%{$search}%");
+                        });
                 });
             })
             ->latest()
@@ -81,7 +83,7 @@ class PendudukController extends Controller
             'kewarganegaraan' => $validated['kewarganegaraan'] ?? 'Indonesia',
         ]);
 
-        return redirect()->route('admin.penduduk')->with('success', 'Penduduk berhasil ditambahkan.');
+        return redirect()->route('admin.penduduk')->with('message', 'Penduduk berhasil ditambahkan.')->with('type', 'success');
     }
 
     /**
@@ -89,6 +91,8 @@ class PendudukController extends Controller
      */
     public function show(Penduduk $penduduk)
     {
+        // Load user relationship to access email
+        $penduduk->load('user:id,email');
         return response()->json($penduduk);
     }
 
@@ -118,7 +122,7 @@ class PendudukController extends Controller
         // Update penduduk
         $penduduk->update($validated);
 
-        return redirect()->route('admin.penduduk')->with('success', 'Penduduk berhasil diperbarui.');
+        return redirect()->route('admin.penduduk')->with('message', 'Penduduk berhasil diperbarui.')->with('type', 'success');
     }
 
     /**
@@ -129,6 +133,6 @@ class PendudukController extends Controller
         // Delete user (will cascade to penduduk)
         $penduduk->user()->delete();
 
-        return redirect()->route('admin.penduduk')->with('success', 'Penduduk berhasil dihapus.');
+        return redirect()->route('admin.penduduk')->with('message', 'Penduduk berhasil dihapus.')->with('type', 'success');
     }
 }
