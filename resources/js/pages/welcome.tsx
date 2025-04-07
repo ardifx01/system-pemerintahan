@@ -3,147 +3,367 @@ import { motion } from 'framer-motion';
 import type { PageProps } from '@/types';
 import AppLogoIcon from '@/components/app-logo-icon';
 
-// Enhanced AuthButtons with better spacing and responsive design
-const AuthButtons = ({ isCompact = false }: { isCompact?: boolean }) => {
-    const baseButtonStyles = "text-sm font-semibold transition-all duration-200 flex items-center justify-center";
-    const primaryButtonStyles = `${baseButtonStyles} px-5 py-2.5 border border-transparent rounded-lg shadow-md text-white bg-blue-600 hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`;
-    const secondaryButtonStyles = isCompact 
-        ? `${baseButtonStyles} text-gray-700 hover:text-gray-900 px-4 py-2.5 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-800`
-        : `${baseButtonStyles} px-5 py-2.5 border border-gray-300 rounded-lg shadow-md text-gray-700 bg-white hover:bg-gray-50 hover:scale-105 sm:px-8 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700`;
+// Animation variants for consistent animations throughout the application
+const animations = {
+    fadeInUp: {
+        hidden: { opacity: 0, y: 20 },
+        visible: (delay = 0) => ({
+            opacity: 1, 
+            y: 0,
+            transition: { 
+                duration: 0.6, 
+                ease: "easeOut",
+                delay 
+            }
+        })
+    },
+    scale: {
+        hover: { scale: 1.05 },
+        tap: { scale: 0.95 }
+    }
+};
 
+// Reusable button component to reduce code duplication
+type ButtonVariant = 'primary' | 'secondary' | 'outline';
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
+
+interface ButtonProps {
+    href: string;
+    variant: ButtonVariant;
+    size?: ButtonSize;
+    children: React.ReactNode;
+    className?: string;
+    icon?: React.ReactNode;
+}
+
+const Button = ({ href, variant, size = 'md', children, className = '', icon }: ButtonProps) => {
+    // Base styles
+    const baseStyles = "font-semibold transition-all duration-200 flex items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2";
+    
+    // Size styles
+    const sizeStyles = {
+        xs: "text-xs px-3 py-1.5",
+        sm: "text-xs px-4 py-2",
+        md: "text-sm px-5 py-2.5",
+        lg: "text-base px-6 py-3"
+    };
+    
+    // Variant styles
+    const variantStyles = {
+        primary: "shadow-md text-white bg-blue-600 hover:bg-blue-700 hover:scale-105 focus:ring-blue-500 border border-transparent",
+        secondary: "border text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 hover:scale-105 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 focus:ring-gray-500 border-gray-300 shadow-sm",
+        outline: "border border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/30 focus:ring-blue-500"
+    };
+    
     return (
-        <div className={`flex ${isCompact ? 'space-x-3' : 'space-x-4 sm:space-x-6'}`}>
-            <Link href={route('login')} className={secondaryButtonStyles}>
-                Masuk
+        <motion.div whileHover={animations.scale.hover} whileTap={animations.scale.tap}>
+            <Link 
+                href={href} 
+                className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+            >
+                {icon && <span className="mr-2">{icon}</span>}
+                {children}
             </Link>
-            <Link href={route('register')} className={primaryButtonStyles}>
-                {isCompact ? 'Daftar' : 'Daftar Sekarang'}
-            </Link>
-        </div>
+        </motion.div>
     );
 };
 
-// Animation variants for consistent animations
-const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (delay = 0) => ({
-        opacity: 1, 
-        y: 0,
-        transition: { 
-            duration: 0.6, 
-            ease: "easeOut",
-            delay 
-        }
-    })
+// Feature card component to reduce duplication
+interface FeatureProps {
+    title: string;
+    description: string;
+    icon?: string;
+    delay?: number;
+}
+
+const FeatureCard = ({ title, description, icon, delay = 0 }: FeatureProps) => {
+    return (
+        <motion.div 
+            variants={animations.fadeInUp}
+            custom={delay}
+            className="bg-white/10 backdrop-blur-sm p-3 sm:p-6 md:p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-900/30 transform hover:-translate-y-1 h-full flex flex-col"
+        >
+            {icon && (
+                <div className="mb-1 sm:mb-3 md:mb-4 text-blue-400">
+                    <span className="text-xl sm:text-2xl md:text-3xl">{icon}</span>
+                </div>
+            )}
+            <h3 className="text-base sm:text-xl md:text-2xl font-semibold text-white mb-1 sm:mb-2">{title}</h3>
+            <p className="text-xs sm:text-base md:text-lg text-blue-100/80">{description}</p>
+        </motion.div>
+    );
+};
+
+// Stat card component
+interface StatProps {
+    value: string;
+    label: string;
+    delay?: number;
+}
+
+const StatCard = ({ value, label, delay = 0 }: StatProps) => {
+    return (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ 
+                opacity: 1, 
+                y: 0, 
+                transition: { 
+                    delay,
+                    duration: 0.6
+                } 
+            }}
+            className="bg-blue-900/30 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-4 md:p-5 border border-blue-800/50 shadow-sm sm:shadow-md shadow-blue-900/20"
+        >
+            <p className="text-lg sm:text-2xl md:text-3xl font-bold text-blue-300 leading-tight">{value}</p>
+            <p className="text-xs sm:text-sm md:text-base text-blue-200/80 leading-tight">{label}</p>
+        </motion.div>
+    );
 };
 
 export default function Welcome() {
     const { auth } = usePage<PageProps>().props;
+    const isAuthenticated = auth.user !== null;
+
+    // Features data
+    const features = [
+        { 
+            title: "Proses Cepat", 
+            description: "Proses administrasi yang lebih cepat dan efisien dengan sistem digital", 
+            icon: "" 
+        },
+        { 
+            title: "Data Aman", 
+            description: "Data terlindungi dengan sistem keamanan terkini dan terenkripsi", 
+            icon: "" 
+        },
+        { 
+            title: "Mudah Digunakan", 
+            description: "Antarmuka yang sederhana dan intuitif untuk semua kalangan masyarakat", 
+            icon: "" 
+        }
+    ];
+
+    // Stats data
+    const stats = [
+        { value: "99%", label: "Kepuasan" },
+        { value: "24/7", label: "Layanan" },
+        { value: "5 mnt", label: "Proses" },
+        { value: "100%", label: "Digital" }
+    ];
 
     return (
         <>
             <Head title="Sistem Pemerintahan">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700" rel="stylesheet" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+                <style>{`
+                    html, body { overflow: hidden; height: 100%; }
+                    @media (max-width: 640px) {
+                        .mobile-content {
+                            height: calc(100vh - 56px - 50px); /* Viewport - header - footer */
+                        }
+                    }
+                `}</style>
             </Head>
-            <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                {/* Enhanced Navigation with better mobile support */}
-                <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-lg shadow-lg z-50 dark:bg-gray-900/90 transition-all duration-300">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between items-center h-16 sm:h-20">
+            
+            <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
+                {/* Enhanced Navigation with subtle blur effect */}
+                <nav className="bg-slate-900/90 backdrop-blur-lg shadow-lg shadow-blue-900/10 z-50 transition-all duration-300 border-b border-blue-800/40">
+                    <div className="container mx-auto px-3 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-14 sm:h-16 md:h-20">
                             <div className="flex items-center">
-                                <Link href="/" className="flex items-center space-x-3 group">
-                                    <AppLogoIcon className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg shadow-md transition-transform group-hover:scale-105" />
-                                    <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                                <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+                                    <div className="relative">
+                                        <AppLogoIcon className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg shadow-md transition-transform group-hover:scale-105" />
+                                        <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                    </div>
+                                    <span className="text-lg sm:text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
                                         SIPEM
                                     </span>
                                 </Link>
                             </div>
-                            <div className="flex items-center">
-                                {auth.user ? (
-                                    <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <Link
-                                            href={route('dashboard')}
-                                            className="inline-flex items-center px-4 sm:px-5 py-2 sm:py-2.5 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-                                        >
-                                            Dashboard
-                                        </Link>
-                                    </motion.div>
+                            
+                            <div className="flex items-center space-x-2 sm:space-x-4">
+                                {isAuthenticated ? (
+                                    <Button href={route('dashboard')} variant="primary" size="xs" className="text-xs sm:text-sm">
+                                        Dashboard
+                                    </Button>
                                 ) : (
-                                    <AuthButtons isCompact />
+                                    <>
+                                        <Button href={route('login')} variant="outline" size="xs" className="text-xs sm:text-sm">
+                                            Masuk
+                                        </Button>
+                                        <Button href={route('register')} variant="primary" size="xs" className="text-xs sm:text-sm">
+                                            Daftar
+                                        </Button>
+                                    </>
                                 )}
                             </div>
                         </div>
                     </div>
                 </nav>
 
-                {/* Enhanced Hero Section with better spacing and animations */}
-                <main className="pt-16 sm:pt-20">
-                    <div className="relative overflow-hidden">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="relative px-4 py-12 sm:py-16 md:py-24 lg:py-32 lg:px-8">
+                {/* Main content - truly fullscreen */}
+                <main className="flex-1 flex flex-col relative">
+                    {/* Background decorative elements */}
+                    <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-20 pointer-events-none">
+                        <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
+                            <defs>
+                                <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <rect x="0" y="0" width="4" height="4" className="text-blue-500" fill="currentColor" />
+                                </pattern>
+                            </defs>
+                            <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c1)" />
+                        </svg>
+                    </div>
+                    <div className="absolute bottom-0 left-0 -mb-20 -ml-20 opacity-20 pointer-events-none">
+                        <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
+                            <defs>
+                                <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <rect x="0" y="0" width="4" height="4" className="text-blue-500" fill="currentColor" />
+                                </pattern>
+                            </defs>
+                            <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c2)" />
+                        </svg>
+                    </div>
+                    
+                    {/* Content area with flexible sizing to fit viewport */}
+                    <div className="flex-1 flex flex-col justify-between">
+                        {/* Center content area with mobile optimization */}
+                        <div className="flex-1 flex flex-col justify-center mobile-content">
+                            <div className="container mx-auto px-3 sm:px-6 lg:px-8 flex flex-col items-center">
                                 <motion.div
                                     initial="hidden"
                                     animate="visible"
-                                    className="text-center"
+                                    className="text-center w-full"
                                 >
+                                    {/* Hero Title - Responsive sizing */}
                                     <motion.h1 
-                                        variants={fadeInUp}
+                                        variants={animations.fadeInUp}
                                         custom={0}
-                                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+                                        className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
                                     >
-                                        <span className="block text-gray-900 dark:text-white mb-2 sm:mb-4">
+                                        <span className="block text-white mb-0 sm:mb-2">
                                             Sistem Informasi
                                         </span>
-                                        <span className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
                                             Pemerintahan Digital
                                         </span>
                                     </motion.h1>
                                     
+                                    {/* Description - Mobile optimized */}
                                     <motion.p
-                                        variants={fadeInUp}
+                                        variants={animations.fadeInUp}
                                         custom={0.2}
-                                        className="mt-6 sm:mt-8 max-w-lg mx-auto text-center text-base sm:text-lg md:text-xl text-gray-600 sm:max-w-3xl dark:text-gray-300"
+                                        className="mt-2 sm:mt-4 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto text-center text-xs sm:text-base md:text-lg lg:text-xl text-blue-100"
                                     >
-                                        Layanan administrasi kependudukan online yang aman, cepat, dan mudah untuk semua warga.
+                                        <span className="block sm:hidden">
+                                            Layanan administrasi kependudukan online yang aman, cepat, dan mudah.
+                                        </span>
+                                        <span className="hidden sm:block">
+                                            Layanan administrasi kependudukan online yang aman, cepat, dan mudah untuk semua warga.
+                                            <span className="block mt-2 text-sm md:text-base text-blue-200/70">
+                                                Akses KTP, KK, Akta Kelahiran, dan Akta Kematian dalam satu platform.
+                                            </span>
+                                        </span>
                                     </motion.p>
                                     
-                                    {!auth.user && (
+                                    {/* Auth buttons */}
+                                    {!isAuthenticated && (
                                         <motion.div
-                                            variants={fadeInUp}
+                                            variants={animations.fadeInUp}
                                             custom={0.4}
-                                            className="mt-8 sm:mt-12 max-w-sm mx-auto sm:max-w-none"
+                                            className="mt-3 sm:mt-6 md:mt-8 flex flex-row justify-center space-x-3 sm:space-x-4"
                                         >
-                                            <div className="flex flex-col sm:flex-row justify-center sm:space-x-6 space-y-4 sm:space-y-0">
-                                                <AuthButtons />
-                                            </div>
+                                            <Button 
+                                                href={route('login')} 
+                                                variant="secondary" 
+                                                size="xs"
+                                                icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                </svg>}
+                                                className="text-xs sm:text-sm md:text-base"
+                                            >
+                                                Masuk
+                                            </Button>
+                                            <Button 
+                                                href={route('register')} 
+                                                variant="primary" 
+                                                size="xs"
+                                                icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                                                </svg>}
+                                                className="text-xs sm:text-sm md:text-base"
+                                            >
+                                                Daftar
+                                            </Button>
                                         </motion.div>
                                     )}
                                     
-                                    {/* Added feature highlights section */}
+                                    {/* Stats row - responsive for all devices */}
                                     <motion.div
-                                        variants={fadeInUp}
-                                        custom={0.6}
-                                        className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+                                        variants={animations.fadeInUp}
+                                        custom={0.5}
+                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-4 gap-1 sm:gap-3 md:gap-5 max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto"
                                     >
-                                        {[
-                                            { title: "Cepat", description: "Proses administrasi yang lebih cepat dan efisien" },
-                                            { title: "Aman", description: "Data terlindungi dengan sistem keamanan terkini" },
-                                            { title: "Mudah", description: "Antarmuka yang sederhana dan mudah digunakan" }
-                                        ].map((feature, index) => (
-                                            <div key={index} className="bg-white/80 dark:bg-gray-800/80 p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
-                                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
-                                                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-                                            </div>
+                                        {stats.map((stat, index) => (
+                                            <StatCard 
+                                                key={index}
+                                                value={stat.value}
+                                                label={stat.label}
+                                                delay={0.6 + (index * 0.1)}
+                                            />
+                                        ))}
+                                    </motion.div>
+                                    
+                                    {/* Features section - optimized for all devices */}
+                                    <motion.div
+                                        variants={animations.fadeInUp}
+                                        custom={0.6}
+                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
+                                    >
+                                        {features.map((feature, index) => (
+                                            <FeatureCard 
+                                                key={index}
+                                                title={feature.title}
+                                                description={feature.description}
+                                                icon={feature.icon}
+                                                delay={0.9 + (index * 0.1)}
+                                            />
                                         ))}
                                     </motion.div>
                                 </motion.div>
                             </div>
                         </div>
+                        
+                        {/* Footer section - responsive for all devices */}
+                        <footer className="py-2 sm:py-3 md:py-4 border-t border-blue-800/30">
+                            <div className="container mx-auto px-3 sm:px-6">
+                                <div className="flex flex-col sm:flex-row justify-between items-center">
+                                    <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-0">
+                                        <AppLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded-md" />
+                                        <span className="text-[10px] sm:text-xs md:text-sm font-medium text-blue-200">
+                                            &copy; {new Date().getFullYear()} SIPEM
+                                        </span>
+                                    </div>
+                                    <div className="flex space-x-3 sm:space-x-5 md:space-x-8">
+                                        <Link href="#" className="text-[10px] sm:text-xs md:text-sm text-blue-300 hover:text-white transition-colors">
+                                            <span className="block sm:hidden">Tentang</span>
+                                            <span className="hidden sm:block">Tentang Kami</span>
+                                        </Link>
+                                        <Link href="#" className="text-[10px] sm:text-xs md:text-sm text-blue-300 hover:text-white transition-colors">
+                                            <span className="block sm:hidden">Privasi</span>
+                                            <span className="hidden sm:block">Kebijakan Privasi</span>
+                                        </Link>
+                                        <Link href="#" className="text-[10px] sm:text-xs md:text-sm text-blue-300 hover:text-white transition-colors">
+                                            Kontak
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
                     </div>
                 </main>
             </div>
