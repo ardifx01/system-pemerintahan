@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\PendudukController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,9 +22,13 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
     })->name('admin.verifikasi');
 
     // Manajemen Penduduk
-    Route::get('penduduk', function () {
-        return Inertia::render('admin/penduduk');
-    })->name('admin.penduduk');
+    Route::controller(PendudukController::class)->group(function () {
+        Route::get('penduduk', 'index')->name('admin.penduduk');
+        Route::post('penduduk', 'store')->name('admin.penduduk.store');
+        Route::get('penduduk/{penduduk}', 'show')->name('admin.penduduk.show');
+        Route::put('penduduk/{penduduk}', 'update')->name('admin.penduduk.update');
+        Route::delete('penduduk/{penduduk}', 'destroy')->name('admin.penduduk.destroy');
+    });
 
     // Manajemen Dokumen
     Route::get('dokumen', function () {
