@@ -31,11 +31,6 @@ export function AdminSidebar() {
             href: '/admin/berita',
             icon: Newspaper,
         },
-        {
-            title: 'Verifikasi Akun Penduduk',
-            href: '/admin/verifikasi',
-            icon: ShieldCheck,
-        },
     ];
     
     return (
