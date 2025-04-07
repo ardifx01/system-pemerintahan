@@ -49,7 +49,7 @@ Sistem ini memiliki **UI/UX modern, performa tinggi, tanpa redundansi kode**, se
 2. **Manajemen Penduduk**
 
     - Melihat, menambah, mengedit, dan menghapus data penduduk.
-    - Pencarian penduduk berdasarkan **NIK, Nama, atau Alamat**.
+    - Pencarian penduduk berdasarkan **Email, Nama**.
 
 3. **Manajemen Dokumen**
 
