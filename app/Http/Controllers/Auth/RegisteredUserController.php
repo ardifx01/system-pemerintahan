@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Penduduk;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,7 +41,18 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'penduduk', // Set default role as penduduk
+            'role' => User::ROLE_PENDUDUK, // Use the constant instead of hardcoded string
+        ]);
+
+        // Create a basic penduduk record linked to this user
+        Penduduk::create([
+            'user_id' => $user->id,
+            'nama' => $request->name,
+            'jenis_kelamin' => 'Laki-laki', // Default value
+            'kewarganegaraan' => 'Indonesia', // Default value
+            'tanggal_lahir' => now(), // Default value, can be updated later
+            'tempat_lahir' => '', // Empty default
+            'alamat' => '', // Empty default
         ]);
 
         event(new Registered($user));

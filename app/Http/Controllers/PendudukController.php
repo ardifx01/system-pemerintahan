@@ -46,12 +46,12 @@ class PendudukController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nik' => ['required', 'string', 'size:16', 'unique:penduduks,nik'],
+            'nik' => ['nullable', 'string', 'size:16', 'unique:penduduks,nik'],
             'nama' => ['required', 'string', 'max:255'],
-            'alamat' => ['required', 'string'],
+            'alamat' => ['nullable', 'string'],
             'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tanggal_lahir' => ['required', 'date'],
+            'tempat_lahir' => ['nullable', 'string', 'max:255'],
+            'tanggal_lahir' => ['nullable', 'date'],
             'agama' => ['nullable', 'string', 'max:255'],
             'status_perkawinan' => ['nullable', 'string', 'max:255'],
             'pekerjaan' => ['nullable', 'string', 'max:255'],
@@ -71,12 +71,12 @@ class PendudukController extends Controller
         // Create penduduk
         $penduduk = Penduduk::create([
             'user_id' => $user->id,
-            'nik' => $validated['nik'],
+            'nik' => $validated['nik'] ?? null,
             'nama' => $validated['nama'],
-            'alamat' => $validated['alamat'],
+            'alamat' => $validated['alamat'] ?? null,
             'jenis_kelamin' => $validated['jenis_kelamin'],
-            'tempat_lahir' => $validated['tempat_lahir'],
-            'tanggal_lahir' => $validated['tanggal_lahir'],
+            'tempat_lahir' => $validated['tempat_lahir'] ?? null,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? now(),
             'agama' => $validated['agama'] ?? null,
             'status_perkawinan' => $validated['status_perkawinan'] ?? null,
             'pekerjaan' => $validated['pekerjaan'] ?? null,
@@ -102,12 +102,12 @@ class PendudukController extends Controller
     public function update(Request $request, Penduduk $penduduk)
     {
         $validated = $request->validate([
-            'nik' => ['required', 'string', 'size:16', Rule::unique('penduduks')->ignore($penduduk->id)],
+            'nik' => ['nullable', 'string', 'size:16', Rule::unique('penduduks', 'nik')->ignore($penduduk)],
             'nama' => ['required', 'string', 'max:255'],
-            'alamat' => ['required', 'string'],
+            'alamat' => ['nullable', 'string'],
             'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tanggal_lahir' => ['required', 'date'],
+            'tempat_lahir' => ['nullable', 'string', 'max:255'],
+            'tanggal_lahir' => ['nullable', 'date'],
             'agama' => ['nullable', 'string', 'max:255'],
             'status_perkawinan' => ['nullable', 'string', 'max:255'],
             'pekerjaan' => ['nullable', 'string', 'max:255'],

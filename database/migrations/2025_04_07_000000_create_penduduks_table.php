@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('penduduks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('nik', 16)->unique();
+            $table->string('nik', 16)->nullable()->unique();
             $table->string('nama');
-            $table->text('alamat');
+            $table->text('alamat')->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
-            $table->string('tempat_lahir');
-            $table->date('tanggal_lahir');
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
             $table->string('agama')->nullable();
             $table->string('status_perkawinan')->nullable();
             $table->string('pekerjaan')->nullable();
