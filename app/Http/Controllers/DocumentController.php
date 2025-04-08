@@ -96,4 +96,98 @@ class DocumentController extends Controller
 
         return Storage::download($document->file_path);
     }
+
+    // Admin document management methods
+    public function adminIndex()
+    {
+        // Return document statistics and list of all documents with related data
+        $totalDocuments = Document::count();
+        $pendingDocuments = Document::where('status', Document::STATUS_DIPROSES)->count();
+        $approvedDocuments = Document::where('status', Document::STATUS_SELESAI)->count();
+        $rejectedDocuments = Document::where('status', Document::STATUS_DITOLAK)->count();
+        
+        $documents = Document::with('user')
+            ->orderBy('submitted_at', 'desc')
+            ->get()
+            ->map(function ($document) {
+                return [
+                    'id' => $document->id,
+                    'document_number' => 'DOC-' . date('Y', strtotime($document->submitted_at)) . '-' . str_pad($document->id, 3, '0', STR_PAD_LEFT),
+                    'type' => $document->type,
+                    'user_name' => $document->nama,
+                    'submitted_at' => $document->submitted_at->format('Y-m-d'),
+                    'status' => $document->status,
+                    'notes' => $document->notes,
+                    'can_download' => $document->status === Document::STATUS_SELESAI && $document->file_path !== null,
+                ];
+            });
+
+        return Inertia::render('admin/dokumen', [
+            'stats' => [
+                'total' => $totalDocuments,
+                'pending' => $pendingDocuments,
+                'approved' => $approvedDocuments,
+                'rejected' => $rejectedDocuments,
+            ],
+            'documents' => $documents,
+        ]);
+    }
+
+    public function show(Document $document)
+    {
+        return response()->json([
+            'id' => $document->id,
+            'type' => $document->type,
+            'status' => $document->status,
+            'nik' => $document->nik,
+            'nama' => $document->nama,
+            'alamat' => $document->alamat,
+            'tempat_lahir' => $document->tempat_lahir,
+            'tanggal_lahir' => $document->tanggal_lahir,
+            'nama_ayah' => $document->nama_ayah,
+            'nama_ibu' => $document->nama_ibu,
+            'nama_almarhum' => $document->nama_almarhum,
+            'tanggal_meninggal' => $document->tanggal_meninggal,
+            'submitted_at' => $document->submitted_at->format('Y-m-d'),
+            'notes' => $document->notes,
+        ]);
+    }
+
+    public function approve(Document $document, Request $request)
+    {
+        $validated = $request->validate([
+            'notes' => 'nullable|string',
+        ]);
+
+        $document->status = Document::STATUS_SELESAI;
+        $document->notes = $validated['notes'] ?? null;
+        // Here we would generate the document file and save its path
+        // For now we'll simulate this with a placeholder
+        $document->file_path = 'documents/' . $document->type . '_' . $document->id . '.pdf';
+        $document->save();
+
+        return back()->with('success', 'Dokumen berhasil disetujui');
+    }
+
+    public function reject(Document $document, Request $request)
+    {
+        $validated = $request->validate([
+            'notes' => 'required|string',
+        ]);
+
+        $document->status = Document::STATUS_DITOLAK;
+        $document->notes = $validated['notes'];
+        $document->save();
+
+        return back()->with('success', 'Dokumen telah ditolak');
+    }
+
+    public function adminDownload(Document $document)
+    {
+        if (!$document->file_path || !Storage::exists($document->file_path)) {
+            abort(404);
+        }
+
+        return Storage::download($document->file_path);
+    }
 }

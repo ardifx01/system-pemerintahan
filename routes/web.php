@@ -31,9 +31,13 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
     });
 
     // Manajemen Dokumen
-    Route::get('dokumen', function () {
-        return Inertia::render('admin/dokumen');
-    })->name('admin.dokumen');
+    Route::controller(DocumentController::class)->group(function () {
+        Route::get('dokumen', 'adminIndex')->name('admin.dokumen');
+        Route::get('dokumen/{document}', 'show')->name('admin.dokumen.show');
+        Route::post('dokumen/{document}/approve', 'approve')->name('admin.dokumen.approve');
+        Route::post('dokumen/{document}/reject', 'reject')->name('admin.dokumen.reject');
+        Route::get('dokumen/{document}/download', 'adminDownload')->name('admin.dokumen.download');
+    });
 
     // Manajemen Berita
     Route::get('berita', function () {
