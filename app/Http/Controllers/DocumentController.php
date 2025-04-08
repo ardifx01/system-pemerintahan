@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Inertia\Inertia;
@@ -12,7 +13,7 @@ class DocumentController extends Controller
 {
     public function index()
     {
-        $documents = auth()->user()->documents()
+        $documents = Document::where('user_id', Auth::id())
             ->orderBy('submitted_at', 'desc')
             ->get()
             ->map(function ($document) {
@@ -44,7 +45,8 @@ class DocumentController extends Controller
         ]);
 
         try {
-            $document = auth()->user()->documents()->create([
+            $document = Document::create([
+                'user_id' => Auth::id(),
                 'type' => $validated['type'],
                 'status' => Document::STATUS_DIPROSES,
                 'submitted_at' => now(),
@@ -84,7 +86,7 @@ class DocumentController extends Controller
 
     public function download(Document $document)
     {
-        if ($document->user_id !== auth()->id()) {
+        if ($document->user_id !== Auth::id()) {
             abort(403);
         }
 
