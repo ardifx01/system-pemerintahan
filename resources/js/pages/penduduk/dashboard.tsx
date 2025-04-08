@@ -14,6 +14,7 @@ import { DocumentService } from '@/services/DocumentService';
 import DocumentRequestForm from '@/components/Forms/DocumentRequestForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -115,106 +116,161 @@ interface DocumentTableProps {
     isLoading?: boolean;
 }
 
-const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => (
-    <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
-        <div className="flex items-center justify-between border-b bg-muted/5 px-6 py-4">
-            <div>
-                <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
-                    <FileText className="size-5 text-primary" />
-                    Riwayat Pengajuan
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">Pantau status dokumen yang telah Anda ajukan</p>
+const DocumentTable = ({ documents, isLoading }: DocumentTableProps) => {
+    const [isRejectionDialogOpen, setIsRejectionDialogOpen] = useState(false);
+    const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+
+    const handleViewRejectionDetails = (doc: Document) => {
+        setSelectedDocument(doc);
+        setIsRejectionDialogOpen(true);
+    };
+
+    return (
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
+            <div className="flex items-center justify-between border-b bg-muted/5 px-6 py-4">
+                <div>
+                    <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
+                        <FileText className="size-5 text-primary" />
+                        Riwayat Pengajuan
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">Pantau status dokumen yang telah Anda ajukan</p>
+                </div>
+                <Badge variant="outline" className="font-medium">
+                    {documents.length} Dokumen
+                </Badge>
             </div>
-            <Badge variant="outline" className="font-medium">
-                {documents.length} Dokumen
-            </Badge>
-        </div>
-        <div className="p-0">
-            <ScrollArea className="h-[400px]">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="hover:bg-transparent">
-                            <TableHead className="w-[25%]">Jenis Dokumen</TableHead>
-                            <TableHead className="w-[20%]">Status</TableHead>
-                            <TableHead className="w-[35%]">Tanggal Pengajuan</TableHead>
-                            <TableHead className="text-right w-[20%]">Aksi</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
-                            Array(3).fill(0).map((_, i) => (
-                                <TableRow key={i} className="hover:bg-muted/30">
-                                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                    <TableCell><Skeleton className="h-8 w-20 ml-auto" /></TableCell>
-                                </TableRow>
-                            ))
-                        ) : documents.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={4} className="h-32">
-                                    <div className="flex flex-col items-center justify-center text-center">
-                                        <div className="p-3 rounded-full bg-primary/5 mb-3">
-                                            <FileArchive className="size-8 text-primary" />
-                                        </div>
-                                        <p className="text-muted-foreground font-medium">Belum ada dokumen yang diajukan</p>
-                                        <p className="text-sm text-muted-foreground mt-1">Pilih jenis dokumen di atas untuk memulai pengajuan</p>
-                                    </div>
-                                </TableCell>
+            <div className="p-0">
+                <ScrollArea className="h-[400px]">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="hover:bg-transparent">
+                                <TableHead className="w-[25%]">Jenis Dokumen</TableHead>
+                                <TableHead className="w-[20%]">Status</TableHead>
+                                <TableHead className="w-[35%]">Tanggal Pengajuan</TableHead>
+                                <TableHead className="text-right w-[20%]">Aksi</TableHead>
                             </TableRow>
-                        ) : (
-                            documents.map((doc) => {
-                                const StatusIcon = statusConfig[doc.status].icon;
-                                return (
-                                    <TableRow key={doc.id} className="hover:bg-muted/30">
-                                        <TableCell className="font-medium">
-                                            {documentTypes.find(t => t.id === doc.type)?.title || doc.type.replace('_', ' ')}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline" className={`${statusConfig[doc.status].color} border font-medium`}>
-                                                <StatusIcon className="mr-1.5 size-3.5" />
-                                                {doc.status === 'DIPROSES' ? 'Sedang Diproses' : doc.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground">{new Date(doc.submittedAt).toLocaleDateString('id-ID', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}</TableCell>
-                                        <TableCell className="text-right">
-                                            {doc.status === 'SELESAI' && doc.filePath ? (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => DocumentService.downloadDocument(doc.id)}
-                                                    className="hover:bg-primary hover:text-white transition-colors font-medium group"
-                                                >
-                                                    <Download className="size-3.5 mr-1.5 group-hover:-translate-y-0.5 transition-transform" />
-                                                    Unduh Dokumen
-                                                </Button>
-                                            ) : doc.status === 'DITOLAK' && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 font-medium group"
-                                                >
-                                                    <AlertCircle className="size-3.5 mr-1.5 group-hover:animate-pulse" />
-                                                    Detail Penolakan
-                                                </Button>
-                                            )}
-                                        </TableCell>
+                        </TableHeader>
+                        <TableBody>
+                            {isLoading ? (
+                                Array(3).fill(0).map((_, i) => (
+                                    <TableRow key={i} className="hover:bg-muted/30">
+                                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                                        <TableCell><Skeleton className="h-8 w-20 ml-auto" /></TableCell>
                                     </TableRow>
-                                );
-                            })
-                        )}
-                    </TableBody>
-                </Table>
-            </ScrollArea>
+                                ))
+                            ) : documents.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="h-32">
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            <div className="p-3 rounded-full bg-primary/5 mb-3">
+                                                <FileArchive className="size-8 text-primary" />
+                                            </div>
+                                            <p className="text-muted-foreground font-medium">Belum ada dokumen yang diajukan</p>
+                                            <p className="text-sm text-muted-foreground mt-1">Pilih jenis dokumen di atas untuk memulai pengajuan</p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                documents.map((doc) => {
+                                    const StatusIcon = statusConfig[doc.status].icon;
+                                    return (
+                                        <TableRow key={doc.id} className="hover:bg-muted/30">
+                                            <TableCell className="font-medium">
+                                                {documentTypes.find(t => t.id === doc.type)?.title || doc.type.replace('_', ' ')}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className={`${statusConfig[doc.status].color} border font-medium`}>
+                                                    <StatusIcon className="mr-1.5 size-3.5" />
+                                                    {doc.status === 'DIPROSES' ? 'Sedang Diproses' : doc.status === 'SELESAI' ? 'Disetujui' : 'Ditolak'}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">{new Date(doc.submittedAt).toLocaleDateString('id-ID', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}</TableCell>
+                                            <TableCell className="text-right">
+                                                {doc.status === 'SELESAI' ? (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => DocumentService.downloadDocument(doc.id)}
+                                                        className="hover:bg-primary hover:text-white transition-colors font-medium group"
+                                                    >
+                                                        <Download className="size-3.5 mr-1.5 group-hover:-translate-y-0.5 transition-transform" />
+                                                        Unduh Dokumen
+                                                    </Button>
+                                                ) : doc.status === 'DITOLAK' && doc.notes ? (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50 font-medium group"
+                                                        onClick={() => handleViewRejectionDetails(doc)}
+                                                    >
+                                                        <AlertCircle className="size-3.5 mr-1.5 group-hover:animate-pulse" />
+                                                        Detail Penolakan
+                                                    </Button>
+                                                ) : (
+                                                    <span className="text-sm text-muted-foreground italic">
+                                                        Menunggu proses
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            )}
+                        </TableBody>
+                    </Table>
+                </ScrollArea>
+            </div>
+
+            {/* Rejection Details Dialog */}
+            {selectedDocument && (
+                <Dialog open={isRejectionDialogOpen} onOpenChange={setIsRejectionDialogOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle className="text-red-600 flex items-center gap-2">
+                                <AlertCircle className="size-5" />
+                                Detail Penolakan Dokumen
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold mb-1">Jenis Dokumen</h3>
+                                <p>{documentTypes.find(t => t.id === selectedDocument.type)?.title || selectedDocument.type.replace('_', ' ')}</p>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold mb-1">Tanggal Pengajuan</h3>
+                                <p>{new Date(selectedDocument.submittedAt).toLocaleDateString('id-ID', {
+                                    year: 'numeric', month: 'long', day: 'numeric'
+                                })}</p>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold mb-1 text-red-600">Alasan Penolakan</h3>
+                                <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-800">
+                                    {selectedDocument.notes || "Tidak ada alasan yang diberikan"}
+                                </div>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button 
+                                variant="outline" 
+                                onClick={() => setIsRejectionDialogOpen(false)}
+                            >
+                                Tutup
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
         </div>
-    </div>
-);
+    );
+};
 
 const PendudukDashboard = () => {
     const [documents, setDocuments] = useState<Document[]>([]);
