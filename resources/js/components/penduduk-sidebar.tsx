@@ -17,11 +17,6 @@ export function PendudukSidebar() {
             icon: LayoutGrid,
         },
         {
-            title: 'Dokumen Saya',
-            href: '/penduduk/dokumen',
-            icon: FileText,
-        },
-        {
             title: 'Berita',
             href: '/penduduk/berita',
             icon: Newspaper,
