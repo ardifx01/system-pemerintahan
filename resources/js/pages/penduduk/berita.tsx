@@ -1,10 +1,11 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { Calendar, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -76,12 +77,11 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="pt-2">
-                                    <button
-                                        onClick={() => window.location.href = `/penduduk/berita/${berita.id}`}
-                                        className="text-sm font-medium text-primary hover:underline"
-                                    >
-                                        Baca Selengkapnya
-                                    </button>
+                                    <Link href={route('penduduk.berita.show', berita.id)}>
+                                        <Button variant="link" className="p-0 h-auto font-medium">
+                                            Baca Selengkapnya
+                                        </Button>
+                                    </Link>
                                 </CardFooter>
                             </Card>
                         ))}

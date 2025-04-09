@@ -121,6 +121,23 @@ class BeritaController extends Controller
     }
 
     /**
+     * Display the specified resource for penduduk.
+     */
+    public function pendudukShow(Berita $berita)
+    {
+        // Make sure the berita is published
+        if ($berita->status !== 'Dipublikasi') {
+            abort(404);
+        }
+
+        $berita->gambar = $berita->gambar ? asset('storage/' . $berita->gambar) : null;
+        
+        return Inertia::render('penduduk/berita/show', [
+            'berita' => $berita,
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Berita $berita)

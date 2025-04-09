@@ -68,6 +68,7 @@ Route::middleware(['auth', 'verified'])->prefix('penduduk')->group(function () {
 
     // Berita routes
     Route::get('berita', [BeritaController::class, 'pendudukIndex'])->name('penduduk.berita');
+    Route::get('berita/{berita}', [BeritaController::class, 'pendudukShow'])->name('penduduk.berita.show');
 });
 
 require __DIR__.'/settings.php';
