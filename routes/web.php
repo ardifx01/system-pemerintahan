@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PendudukController;
 use App\Http\Middleware\AdminMiddleware;
@@ -40,9 +41,16 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
     });
 
     // Manajemen Berita
-    Route::get('berita', function () {
-        return Inertia::render('admin/berita');
-    })->name('admin.berita');
+    Route::controller(BeritaController::class)->group(function () {
+        Route::get('berita', 'adminIndex')->name('admin.berita');
+        Route::get('berita/create', 'create')->name('admin.berita.create');
+        Route::post('berita', 'store')->name('admin.berita.store');
+        Route::get('berita/{berita}', 'show')->name('admin.berita.show');
+        Route::get('berita/{berita}/edit', 'edit')->name('admin.berita.edit');
+        Route::put('berita/{berita}', 'update')->name('admin.berita.update');
+        Route::post('berita/{berita}/update-image', 'updateImage')->name('admin.berita.update-image');
+        Route::delete('berita/{berita}', 'destroy')->name('admin.berita.destroy');
+    });
 });
 
 // Penduduk routes
@@ -57,6 +65,9 @@ Route::middleware(['auth', 'verified'])->prefix('penduduk')->group(function () {
         Route::post('documents', 'store')->name('documents.store');
         Route::get('documents/{document}/download', 'download')->name('documents.download');
     });
+
+    // Berita routes
+    Route::get('berita', [BeritaController::class, 'pendudukIndex'])->name('penduduk.berita');
 });
 
 require __DIR__.'/settings.php';
