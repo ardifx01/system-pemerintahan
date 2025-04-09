@@ -342,7 +342,6 @@ const PendudukDashboard = () => {
                         value={documents.filter(d => d.status === 'SELESAI').length}
                         description="Dokumen yang telah selesai"
                         icon={FileCheck}
-                        trend={{ value: 12, label: "dari bulan lalu" }}
                     />
                     <StatsCard
                         title="Dokumen Ditolak"
