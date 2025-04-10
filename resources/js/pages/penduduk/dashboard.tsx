@@ -64,8 +64,9 @@ const StatsCard = ({ title, value, description, icon: Icon, trend }: StatsCardPr
                 <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
                 <div className="text-3xl font-bold tracking-tight">{value}</div>
             </div>
-            <div className="p-2.5 rounded-lg bg-primary/10 text-primary backdrop-blur-sm transition-all duration-300 group-hover:bg-primary group-hover:text-white">
-                <Icon className="size-6" />
+            <div className="relative p-2.5 rounded-lg bg-primary/10 text-primary transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-300"></div>
+                <Icon className="size-6 relative z-10" />
             </div>
         </CardHeader>
         <CardContent className="relative">
