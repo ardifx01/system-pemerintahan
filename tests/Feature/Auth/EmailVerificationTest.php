@@ -16,7 +16,9 @@ test('email verification screen can be rendered', function () {
 });
 
 test('email can be verified', function () {
-    $user = User::factory()->unverified()->create();
+    $user = User::factory()->unverified()->create([
+        'role' => 'penduduk'
+    ]);
 
     Event::fake();
 
@@ -30,7 +32,27 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+    $response->assertRedirect(route('penduduk.dashboard', absolute: false).'?verified=1');
+});
+
+test('admin email can be verified', function () {
+    $user = User::factory()->unverified()->create([
+        'role' => 'admin'
+    ]);
+
+    Event::fake();
+
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->id, 'hash' => sha1($user->email)]
+    );
+
+    $response = $this->actingAs($user)->get($verificationUrl);
+
+    Event::assertDispatched(Verified::class);
+    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $response->assertRedirect(route('admin.dashboard', absolute: false).'?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {

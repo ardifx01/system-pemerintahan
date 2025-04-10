@@ -45,8 +45,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public const ROLE_ADMIN = 'ADMIN';
-    public const ROLE_PENDUDUK = 'PENDUDUK';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_PENDUDUK = 'penduduk';
 
     /**
      * Get the documents for the user.

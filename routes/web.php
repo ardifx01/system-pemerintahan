@@ -5,6 +5,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PendudukController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\PendudukMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -53,7 +54,7 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
 });
 
 // Penduduk routes
-Route::middleware(['auth', 'verified'])->prefix('penduduk')->group(function () {
+Route::middleware(['auth', 'verified', PendudukMiddleware::class])->prefix('penduduk')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('penduduk/dashboard');
     })->name('penduduk.dashboard');
