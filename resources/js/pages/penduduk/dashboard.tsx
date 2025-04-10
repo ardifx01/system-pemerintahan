@@ -602,14 +602,12 @@ const PendudukDashboard = () => {
                         value={documents.filter(d => d.status === 'DIPROSES').length}
                         description="Dokumen dalam proses verifikasi"
                         icon={FileClock}
-                        trend={{value: 0, label: "Status saat ini"}}
                     />
                     <StatsCard
                         title="Dokumen Disetujui"
                         value={documents.filter(d => d.status === 'SELESAI').length}
                         description="Dokumen yang telah disetujui"
                         icon={FileCheck}
-                        trend={{value: 100, label: "Siap diunduh"}}
                     />
                     <StatsCard
                         title="Dokumen Ditolak"
