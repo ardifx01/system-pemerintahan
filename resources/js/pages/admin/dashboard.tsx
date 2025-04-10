@@ -38,19 +38,22 @@ function StatsCard({ title, value, icon, description, color = 'default', delay =
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: delay * 0.1 }}
+            className="h-full"
         >
-            <Card className={cn("bg-gradient-to-br", colorClasses[color])}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <Card className={cn("bg-gradient-to-br h-full flex flex-col", colorClasses[color])}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 flex-shrink-0">
                     <CardTitle className="text-sm font-medium">{title}</CardTitle>
                     <div className={cn("p-2 rounded-full bg-white/20", colorClasses[color])}>
                         {icon}
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex flex-col justify-between flex-grow">
                     <div className="text-3xl font-bold tracking-tight">{value}</div>
-                    {description && (
-                        <p className="text-xs text-current/70 mt-1 font-medium">{description}</p>
-                    )}
+                    <div className="h-4">
+                        {description && (
+                            <p className="text-xs text-current/70 mt-1 font-medium">{description}</p>
+                        )}
+                    </div>
                 </CardContent>
             </Card>
         </motion.div>
@@ -172,6 +175,7 @@ export default function AdminDashboard({ stats }: { stats: DashboardStats }) {
                         title="Total Berita"
                         value={stats?.totalBerita.toLocaleString() || 0}
                         icon={<Newspaper className="h-5 w-5" />}
+                        description=" "
                         color="green"
                         delay={2}
                     />
@@ -179,6 +183,7 @@ export default function AdminDashboard({ stats }: { stats: DashboardStats }) {
                         title="Aktivitas Hari Ini"
                         value={stats?.todayActivities.toLocaleString() || 0}
                         icon={<Activity className="h-5 w-5" />}
+                        description=" "
                         color="purple"
                         delay={3}
                     />
@@ -329,6 +334,7 @@ export default function AdminDashboard({ stats }: { stats: DashboardStats }) {
                         </Card>
                     </motion.div>
                 </div>
+                
             </div>
         </AppLayout>
     );
