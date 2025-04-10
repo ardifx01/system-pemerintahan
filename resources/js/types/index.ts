@@ -1,5 +1,4 @@
 import type { LucideIcon } from 'lucide-react';
-import type { Page } from '@inertiajs/core';
 
 export type DocumentType = 'KTP' | 'KK' | 'AKTA_KELAHIRAN' | 'AKTA_KEMATIAN';
 export type DocumentStatus = 'DIPROSES' | 'SELESAI' | 'DITOLAK';

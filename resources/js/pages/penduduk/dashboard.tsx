@@ -1,4 +1,3 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type Document, type DocumentType, type DocumentStatus, type DocumentTypeConfig } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -8,13 +7,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { 
     FileText, FileCheck, FileClock, FileX, Download, Users, FileArchive, 
     AlertCircle, ChevronRight, FileInput, Eye, Calendar, ClipboardEdit,
-    CheckCircle2, XCircle, HelpCircle, MoreHorizontal, RefreshCcw
+    CheckCircle2, XCircle, HelpCircle, RefreshCcw
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { DocumentService } from '@/services/DocumentService';
 import DocumentRequestForm from '@/components/Forms/DocumentRequestForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -367,7 +365,9 @@ const DocumentTable = ({ documents, isLoading, onRequestDocument }: DocumentTabl
                                 variant="default"
                                 onClick={() => {
                                     setIsRejectionDialogOpen(false);
-                                    onRequestDocument && onRequestDocument(selectedDocument.type as DocumentType);
+                                    if (onRequestDocument) {
+                                        onRequestDocument(selectedDocument.type as DocumentType);
+                                    }
                                 }}
                             >
                                 Ajukan Ulang
@@ -399,7 +399,7 @@ const DocumentTable = ({ documents, isLoading, onRequestDocument }: DocumentTabl
                             ) : (
                                 <div className="text-center space-y-4">
                                     <div className="bg-primary/10 text-primary size-16 rounded-full flex items-center justify-center mx-auto">
-                                        <FileCheck className="size-8" />
+                                        {React.createElement(FileCheck, { className: "size-8" })}
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold">Dokumen {documentTypes.find(t => t.id === selectedDocument.type)?.title || selectedDocument.type}</h3>

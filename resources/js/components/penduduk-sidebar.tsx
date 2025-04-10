@@ -3,11 +3,11 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type PageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { FileText, Newspaper, LayoutGrid } from 'lucide-react';
+import { Newspaper, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 export function PendudukSidebar() {
-    const { } = usePage<PageProps>().props;
+    usePage<PageProps>();
     const dashboardPath = '/penduduk/dashboard';
 
     const mainNavItems: NavItem[] = [

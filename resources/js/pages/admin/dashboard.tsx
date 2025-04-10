@@ -2,11 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Users, FileText, Newspaper, Activity, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Users, FileText, Newspaper, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
