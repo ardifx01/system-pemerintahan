@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, DocumentType } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { CheckCircle, Download, FileText, XCircle, Users, Files, Clock, CheckCheck, AlertTriangle, Search, Calendar, User } from 'lucide-react';
+import { CheckCircle, Download, FileText, XCircle, Files, Clock, CheckCheck, AlertTriangle, Search, Calendar, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -173,32 +173,6 @@ export default function Dokumen({ stats, documents }: Props) {
         });
     };
 
-    const getStatusBadgeClass = (status: string) => {
-        switch (status) {
-            case 'DIPROSES':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'SELESAI':
-                return 'bg-green-100 text-green-800';
-            case 'DITOLAK':
-                return 'bg-red-100 text-red-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case 'DIPROSES':
-                return 'Menunggu';
-            case 'SELESAI':
-                return 'Disetujui';
-            case 'DITOLAK':
-                return 'Ditolak';
-            default:
-                return status;
-        }
-    };
-
     const formatDocumentType = (type: DocumentType) => {
         switch (type) {
             case 'KTP':
@@ -365,7 +339,6 @@ export default function Dokumen({ stats, documents }: Props) {
                                                     <Badge 
                                                         variant="outline" 
                                                         className={cn(
-                                                            "flex items-center gap-1.5 font-normal",
                                                             document.status === 'DIPROSES' 
                                                                 ? "bg-yellow-50 text-yellow-600 border-yellow-200" 
                                                                 : document.status === 'SELESAI'
@@ -479,7 +452,6 @@ export default function Dokumen({ stats, documents }: Props) {
                             <Badge 
                                 variant="outline" 
                                 className={cn(
-                                    "flex items-center gap-1.5 font-normal",
                                     selectedDocument?.status === 'DIPROSES' 
                                         ? "bg-yellow-50 text-yellow-600 border-yellow-200" 
                                         : selectedDocument?.status === 'SELESAI'

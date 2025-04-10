@@ -3,7 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { ArrowLeft, Calendar, User, Clock, Share2, Printer, BookOpen, ChevronLeft, Eye } from 'lucide-react';
+import { Calendar, User, Clock, Share2, Printer, BookOpen, ChevronLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
@@ -48,7 +48,7 @@ export default function BeritaDetail({ berita }: BeritaDetailProps) {
         if (!dateString) return '-';
         try {
             return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: id });
-        } catch (error) {
+        } catch {
             return '-';
         }
     };
@@ -60,12 +60,12 @@ export default function BeritaDetail({ berita }: BeritaDetailProps) {
                 text: 'Lihat berita ini dari Pemerintahan!',
                 url: window.location.href,
             })
-            .catch((error) => console.log('Error sharing:', error));
+            .catch(() => console.log('Error sharing:'));
         } else {
             // Fallback - copy to clipboard
             navigator.clipboard.writeText(window.location.href)
                 .then(() => alert('Link berita berhasil disalin!'))
-                .catch((err) => console.error('Gagal menyalin link: ', err));
+                .catch(() => console.error('Gagal menyalin link: '));
         }
     };
     

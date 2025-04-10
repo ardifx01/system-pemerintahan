@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Edit, ImagePlus, Plus, Trash2, Search, Calendar, User, FileText, ExternalLink, Eye, EyeOff } from 'lucide-react';
+import { Edit, ImagePlus, Plus, Trash2, Search, Calendar, User, FileText, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
