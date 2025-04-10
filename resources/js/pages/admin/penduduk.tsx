@@ -65,7 +65,6 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [currentPenduduk, setCurrentPenduduk] = useState<PendudukData | null>(null);
     const [pendudukToDelete, setPendudukToDelete] = useState<PendudukData | null>(null);
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
 

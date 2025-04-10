@@ -48,7 +48,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             clearErrors();
             setData('type', documentType);
         }
-    }, [isOpen, documentType]);
+    }, [isOpen, documentType, reset, clearErrors, setData]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

@@ -46,7 +46,25 @@ export default function Dokumen({ stats, documents }: Props) {
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
-    const [documentDetails, setDocumentDetails] = useState<any>(null);
+    const [documentDetails, setDocumentDetails] = useState<{
+        type: DocumentType;
+        nik: string;
+        nama: string;
+        alamat: string;
+        tempat_lahir?: string;
+        tanggal_lahir?: string;
+        nama_ayah?: string;
+        nama_ibu?: string;
+        nama_almarhum?: string;
+        tanggal_meninggal?: string;
+        submitted_at?: string;
+        notes?: string;
+    }>({
+        type: 'KTP',
+        nik: '',
+        nama: '',
+        alamat: ''
+    });
     
     const rejectForm = useForm({
         notes: '',
@@ -59,11 +77,12 @@ export default function Dokumen({ stats, documents }: Props) {
     const handleViewDocument = async (document: Document) => {
         try {
             const response = await fetch(`/admin/dokumen/${document.id}`);
-            if (!response.ok) throw new Error('Failed to fetch document details');
-            
+            if (!response.ok) {
+                throw new Error('Failed to fetch document details');
+            }
             const data = await response.json();
-            setDocumentDetails(data);
             setSelectedDocument(document);
+            setDocumentDetails(data);
             setIsViewDialogOpen(true);
         } catch (error) {
             console.error('Error fetching document details:', error);
@@ -309,11 +328,11 @@ export default function Dokumen({ stats, documents }: Props) {
                                 <>
                                     <div className="space-y-1.5">
                                         <Label className="font-bold">Tempat Lahir</Label>
-                                        <p>{documentDetails.tempat_lahir}</p>
+                                        <p>{documentDetails.tempat_lahir ?? '-'}</p>
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label className="font-bold">Tanggal Lahir</Label>
-                                        <p>{documentDetails.tanggal_lahir}</p>
+                                        <p>{documentDetails.tanggal_lahir ?? '-'}</p>
                                     </div>
                                 </>
                             )}
@@ -322,11 +341,11 @@ export default function Dokumen({ stats, documents }: Props) {
                                 <>
                                     <div className="space-y-1.5">
                                         <Label className="font-bold">Nama Ayah</Label>
-                                        <p>{documentDetails.nama_ayah}</p>
+                                        <p>{documentDetails.nama_ayah ?? '-'}</p>
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label className="font-bold">Nama Ibu</Label>
-                                        <p>{documentDetails.nama_ibu}</p>
+                                        <p>{documentDetails.nama_ibu ?? '-'}</p>
                                     </div>
                                 </>
                             )}
@@ -335,18 +354,18 @@ export default function Dokumen({ stats, documents }: Props) {
                                 <>
                                     <div className="space-y-1.5">
                                         <Label className="font-bold">Nama Almarhum</Label>
-                                        <p>{documentDetails.nama_almarhum}</p>
+                                        <p>{documentDetails.nama_almarhum ?? '-'}</p>
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label className="font-bold">Tanggal Meninggal</Label>
-                                        <p>{documentDetails.tanggal_meninggal}</p>
+                                        <p>{documentDetails.tanggal_meninggal ?? '-'}</p>
                                     </div>
                                 </>
                             )}
 
                             <div className="space-y-1.5 col-span-2">
                                 <Label className="font-bold">Tanggal Pengajuan</Label>
-                                <p>{documentDetails.submitted_at}</p>
+                                <p>{documentDetails.submitted_at ?? '-'}</p>
                             </div>
 
                             {documentDetails.notes && (

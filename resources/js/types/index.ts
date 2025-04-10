@@ -59,11 +59,11 @@ export type PageProps = {
         message?: string;
         type?: 'success' | 'error';
     };
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 declare global {
     interface Window {
-        route: (name: string, params?: Record<string, any>) => string;
+        route: (name: string, params?: Record<string, unknown>) => string;
     }
 }

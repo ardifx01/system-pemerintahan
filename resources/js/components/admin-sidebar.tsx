@@ -7,7 +7,7 @@ import { Users, FileText, Newspaper, LayoutGrid, Activity, ShieldCheck } from 'l
 import AppLogo from './app-logo';
 
 export function AdminSidebar() {
-    const { auth } = usePage<PageProps>().props;
+    const { } = usePage<PageProps>().props;
     const dashboardPath = '/admin/dashboard';
 
     const mainNavItems: NavItem[] = [

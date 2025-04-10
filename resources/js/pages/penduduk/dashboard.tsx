@@ -263,7 +263,11 @@ const DocumentTable = ({ documents, isLoading, onRequestDocument }: DocumentTabl
                                                                 <Eye className="mr-2 size-4" />
                                                                 Pratinjau Dokumen
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => DocumentService.downloadDocument(doc.id)}>
+                                                            <DropdownMenuItem onClick={() => {
+                                                                if (doc && doc.id) {
+                                                                    window.open(`/document/${doc.id}/download`, '_blank');
+                                                                }
+                                                            }}>
                                                                 <Download className="mr-2 size-4" />
                                                                 Unduh Dokumen
                                                             </DropdownMenuItem>
@@ -419,7 +423,11 @@ const DocumentTable = ({ documents, isLoading, onRequestDocument }: DocumentTabl
                             </Button>
                             <Button 
                                 variant="default"
-                                onClick={() => DocumentService.downloadDocument(selectedDocument.id)}
+                                onClick={() => {
+                                    if (selectedDocument && selectedDocument.id) {
+                                        window.open(`/document/${selectedDocument.id}/download`, '_blank');
+                                    }
+                                }}
                                 disabled={previewLoading}
                                 className="sm:order-2"
                             >
@@ -436,14 +444,11 @@ const DocumentTable = ({ documents, isLoading, onRequestDocument }: DocumentTabl
 
 // Simple Tab Components
 interface TabsProps {
-    defaultValue: string;
-    value: string;
-    onValueChange: (value: string) => void;
     className?: string;
     children: React.ReactNode;
 }
 
-const Tabs: React.FC<TabsProps> = ({ defaultValue, value, onValueChange, className, children }) => {
+const Tabs: React.FC<TabsProps> = ({ className, children }) => {
     return (
         <div className={className}>
             {children}
@@ -644,7 +649,7 @@ const PendudukDashboard = () => {
                     </div>
 
                     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
-                        <Tabs defaultValue="semua" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <Tabs className="w-full">
                             <TabsList className="mb-4">
                                 <TabsTrigger value="semua" className="flex items-center gap-1">
                                     <FileArchive className="size-4" /> Semua

@@ -7,7 +7,7 @@ import { FileText, Newspaper, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 export function PendudukSidebar() {
-    const { auth } = usePage<PageProps>().props;
+    const { } = usePage<PageProps>().props;
     const dashboardPath = '/penduduk/dashboard';
 
     const mainNavItems: NavItem[] = [
