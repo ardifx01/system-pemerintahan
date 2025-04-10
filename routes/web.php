@@ -3,6 +3,7 @@
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PendudukController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,9 +14,7 @@ Route::get('/', function () {
 
 // Admin routes
 Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('admin/dashboard');
-    })->name('admin.dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // Verifikasi Akun Penduduk
     Route::get('verifikasi', function () {

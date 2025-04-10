@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -153,7 +154,7 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function approve(Document $document, Request $request)
+    public function approve(Document $document, Request $request, ActivityLogService $activityLogService)
     {
         $validated = $request->validate([
             'notes' => 'nullable|string',
@@ -166,10 +167,21 @@ class DocumentController extends Controller
         $document->file_path = 'documents/' . $document->type . '_' . $document->id . '.pdf';
         $document->save();
 
+        // Log the activity
+        $activityLogService->logDocumentActivity(
+            'approve_document',
+            'Menyetujui ' . $this->getDocumentTypeName($document->type) . ' untuk ' . $document->nama,
+            $document->id,
+            [
+                'document_type' => $document->type,
+                'nama_pemohon' => $document->nama
+            ]
+        );
+
         return back()->with('success', 'Dokumen berhasil disetujui');
     }
 
-    public function reject(Document $document, Request $request)
+    public function reject(Document $document, Request $request, ActivityLogService $activityLogService)
     {
         $validated = $request->validate([
             'notes' => 'required|string',
@@ -179,7 +191,35 @@ class DocumentController extends Controller
         $document->notes = $validated['notes'];
         $document->save();
 
+        // Log the activity
+        $activityLogService->logDocumentActivity(
+            'reject_document',
+            'Menolak ' . $this->getDocumentTypeName($document->type) . ' untuk ' . $document->nama,
+            $document->id,
+            [
+                'document_type' => $document->type,
+                'nama_pemohon' => $document->nama,
+                'alasan' => $validated['notes']
+            ]
+        );
+
         return back()->with('success', 'Dokumen telah ditolak');
+    }
+
+    private function getDocumentTypeName(string $type): string
+    {
+        switch ($type) {
+            case Document::TYPE_KTP:
+                return 'KTP';
+            case Document::TYPE_KK:
+                return 'Kartu Keluarga';
+            case Document::TYPE_AKTA_KELAHIRAN:
+                return 'Akta Kelahiran';
+            case Document::TYPE_AKTA_KEMATIAN:
+                return 'Akta Kematian';
+            default:
+                return $type;
+        }
     }
 
     public function adminDownload(Document $document)

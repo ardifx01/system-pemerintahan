@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Penduduk;
 use App\Models\User;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -43,7 +44,7 @@ class PendudukController extends Controller
     /**
      * Store a newly created penduduk in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLogService)
     {
         $validated = $request->validate([
             'nik' => ['nullable', 'string', 'size:16', 'unique:penduduks,nik'],
@@ -83,6 +84,17 @@ class PendudukController extends Controller
             'kewarganegaraan' => $validated['kewarganegaraan'] ?? 'Indonesia',
         ]);
 
+        // Log the activity
+        $activityLogService->logPendudukActivity(
+            'create_penduduk',
+            'Menambahkan penduduk baru: ' . $validated['nama'],
+            $penduduk->id,
+            [
+                'nama' => $validated['nama'],
+                'email' => $validated['email']
+            ]
+        );
+
         return redirect()->route('admin.penduduk')->with('message', 'Penduduk berhasil ditambahkan.')->with('type', 'success');
     }
 
@@ -99,7 +111,7 @@ class PendudukController extends Controller
     /**
      * Update the specified penduduk in storage.
      */
-    public function update(Request $request, Penduduk $penduduk)
+    public function update(Request $request, Penduduk $penduduk, ActivityLogService $activityLogService)
     {
         $validated = $request->validate([
             'nik' => ['nullable', 'string', 'size:16', Rule::unique('penduduks', 'nik')->ignore($penduduk)],
@@ -122,14 +134,36 @@ class PendudukController extends Controller
         // Update penduduk
         $penduduk->update($validated);
 
+        // Log the activity
+        $activityLogService->logPendudukActivity(
+            'update_penduduk',
+            'Memperbarui data penduduk: ' . $validated['nama'],
+            $penduduk->id,
+            [
+                'nama' => $validated['nama'],
+                'nik' => $validated['nik'] ?? null
+            ]
+        );
+
         return redirect()->route('admin.penduduk')->with('message', 'Penduduk berhasil diperbarui.')->with('type', 'success');
     }
 
     /**
      * Remove the specified penduduk from storage.
      */
-    public function destroy(Penduduk $penduduk)
+    public function destroy(Penduduk $penduduk, ActivityLogService $activityLogService)
     {
+        // Log the activity before deletion
+        $activityLogService->logPendudukActivity(
+            'delete_penduduk',
+            'Menghapus penduduk: ' . $penduduk->nama,
+            $penduduk->id,
+            [
+                'nama' => $penduduk->nama,
+                'nik' => $penduduk->nik
+            ]
+        );
+
         // Delete user (will cascade to penduduk)
         $penduduk->user()->delete();
 

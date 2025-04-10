@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Berita;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -72,7 +73,7 @@ class BeritaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ActivityLogService $activityLogService)
     {
         $validator = Validator::make($request->all(), [
             'judul' => 'required|string|max:255',
@@ -104,6 +105,17 @@ class BeritaController extends Controller
         }
 
         $berita->save();
+
+        // Log activity
+        $activityLogService->logBeritaActivity(
+            'create_berita',
+            'Menambahkan berita baru: ' . $request->judul,
+            $berita->id,
+            [
+                'judul' => $request->judul,
+                'status' => $request->status
+            ]
+        );
 
         return redirect()->route('admin.berita')->with('success', 'Berita berhasil ditambahkan!');
     }
@@ -150,7 +162,7 @@ class BeritaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Berita $berita)
+    public function update(Request $request, Berita $berita, ActivityLogService $activityLogService)
     {
         $validator = Validator::make($request->all(), [
             'judul' => 'required|string|max:255',
@@ -173,13 +185,25 @@ class BeritaController extends Controller
 
         $berita->save();
 
+        // Log activity
+        $activityLogService->logBeritaActivity(
+            'update_berita',
+            'Memperbarui berita: ' . $request->judul,
+            $berita->id,
+            [
+                'judul' => $request->judul,
+                'status' => $request->status,
+                'status_changed' => $berita->getOriginal('status') !== $request->status
+            ]
+        );
+
         return redirect()->route('admin.berita')->with('success', 'Berita berhasil diperbarui!');
     }
 
     /**
      * Update the berita image.
      */
-    public function updateImage(Request $request, Berita $berita)
+    public function updateImage(Request $request, Berita $berita, ActivityLogService $activityLogService)
     {
         $validator = Validator::make($request->all(), [
             'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -199,14 +223,35 @@ class BeritaController extends Controller
         $berita->gambar = $gambarPath;
         $berita->save();
 
+        // Log activity
+        $activityLogService->logBeritaActivity(
+            'update_berita_image',
+            'Memperbarui gambar berita: ' . $berita->judul,
+            $berita->id,
+            [
+                'judul' => $berita->judul
+            ]
+        );
+
         return redirect()->route('admin.berita')->with('success', 'Gambar berita berhasil diperbarui!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Berita $berita)
+    public function destroy(Berita $berita, ActivityLogService $activityLogService)
     {
+        // Log activity before deletion
+        $activityLogService->logBeritaActivity(
+            'delete_berita',
+            'Menghapus berita: ' . $berita->judul,
+            $berita->id,
+            [
+                'judul' => $berita->judul,
+                'status' => $berita->status
+            ]
+        );
+
         // Delete image if exists
         if ($berita->gambar) {
             Storage::disk('public')->delete($berita->gambar);
