@@ -23,7 +23,7 @@ const CopyrightWatermark: React.FC<CopyrightWatermarkProps> = ({ opacity = 0.075
       }}
     >
       <div className="text-[2vw] sm:text-[1.5vw] md:text-[1.2vw] whitespace-nowrap text-black dark:text-white font-bold tracking-wider uppercase">
-        © 2025 vickymosafan - All Rights Reserved
+        ....
       </div>
     </div>
   );
