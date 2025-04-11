@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2025 vickymosafan. All Rights Reserved.
+ * 
+ * This source code is protected under international copyright law.
+ * Unauthorized reproduction, distribution, or modification of this file is prohibited.
+ * This code contains proprietary security measures that prevent modification.
+ * Any attempt to modify by unauthorized parties will be subject to legal action.
+ */
 
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DocumentController;

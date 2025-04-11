@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2025 vickymosafan. All Rights Reserved.
+ * 
+ * This source code is protected under international copyright law.
+ * Unauthorized reproduction, distribution, or modification of this file is prohibited.
+ * This code contains proprietary security measures that prevent modification.
+ * Any attempt to modify by unauthorized parties will be subject to legal action.
+ */
 
 namespace App\Http;
 
@@ -21,6 +29,7 @@ class Kernel extends HttpKernel
         'Illuminate\Foundation\Http\Middleware\ValidatePostSize',
         'App\Http\Middleware\TrimStrings',
         'Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull',
+        'App\Http\Middleware\CopyrightProtectionMiddleware',
     ];
 
     /**
@@ -67,5 +76,6 @@ class Kernel extends HttpKernel
         'verified' => 'Illuminate\Auth\Middleware\EnsureEmailIsVerified',
         'admin' => 'App\Http\Middleware\AdminMiddleware',
         'penduduk' => 'App\Http\Middleware\PendudukMiddleware',
+        'copyright' => 'App\Http\Middleware\CopyrightProtectionMiddleware',
     ];
 }
