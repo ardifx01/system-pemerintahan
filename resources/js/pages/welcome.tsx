@@ -44,10 +44,10 @@ const animations = {
         }
     },
     pulse: {
-        initial: { opacity: 0.7, scale: 1 },
+        initial: { opacity: 0.4, scale: 1 },
         animate: { 
-            opacity: [0.7, 1, 0.7], 
-            scale: [1, 1.05, 1],
+            opacity: [0.4, 0.6, 0.4], 
+            scale: [1, 1.03, 1],
             transition: { 
                 duration: 3, 
                 repeat: Infinity, 
@@ -311,7 +311,7 @@ export default function Welcome() {
                 {/* Main content - truly fullscreen */}
                 <main className="flex-1 flex flex-col relative">
                     {/* Enhanced background decorative elements */}
-                    <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-20 pointer-events-none">
+                    <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-10 pointer-events-none">
                         <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
                             <defs>
                                 <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -321,7 +321,7 @@ export default function Welcome() {
                             <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c1)" />
                         </svg>
                     </div>
-                    <div className="absolute bottom-0 left-0 -mb-20 -ml-20 opacity-20 pointer-events-none">
+                    <div className="absolute bottom-0 left-0 -mb-20 -ml-20 opacity-10 pointer-events-none">
                         <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
                             <defs>
                                 <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -337,7 +337,7 @@ export default function Welcome() {
                         variants={animations.float}
                         initial="initial"
                         animate="animate"
-                        className="absolute top-1/4 right-10 z-0 opacity-20 pointer-events-none hidden sm:block"
+                        className="absolute top-1/4 right-10 z-0 opacity-10 pointer-events-none hidden sm:block"
                     >
                         <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 17.75L5.828 20.995L7.01 14.122L2.02 9.25495L8.914 8.26995L12 2.04395L15.086 8.26995L21.98 9.25495L16.99 14.122L18.172 20.995L12 17.75Z" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -348,27 +348,14 @@ export default function Welcome() {
                         variants={animations.float}
                         initial="initial"
                         animate="animate"
-                        className="absolute bottom-1/3 left-20 z-0 opacity-20 pointer-events-none hidden sm:block"
+                        className="absolute bottom-1/3 left-20 z-0 opacity-10 pointer-events-none hidden sm:block"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                         </svg>
                     </motion.div>
                     
-                    {/* Indonesian coat of arms - Garuda Pancasila silhouette */}
-                    <motion.div 
-                        variants={animations.pulse}
-                        initial="initial"
-                        animate="animate"
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none"
-                    >
-                        <svg width="600" height="600" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M50,10 C40,15 30,25 30,40 C30,55 40,65 50,70 C60,65 70,55 70,40 C70,25 60,15 50,10 Z" fill="#60A5FA"/>
-                            <path d="M30,40 C30,55 40,65 50,70 L50,90 L30,75 L20,90 L25,70 L10,60 L25,55 L30,40 Z" fill="#60A5FA"/>
-                            <path d="M70,40 C70,55 60,65 50,70 L50,90 L70,75 L80,90 L75,70 L90,60 L75,55 L70,40 Z" fill="#60A5FA"/>
-                        </svg>
-                    </motion.div>
-                    
+
                     {/* Content area with flexible sizing to fit viewport */}
                     <div className="flex-1 flex flex-col justify-between">
                         {/* Center content area with mobile optimization */}
