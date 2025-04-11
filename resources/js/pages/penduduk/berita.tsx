@@ -247,11 +247,12 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                 <Link href={route('penduduk.berita.show', berita.id)} className="w-full">
                                     <Button 
                                         variant="outline" 
-                                        className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-200 flex items-center justify-center gap-1"
+                                        className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 flex items-center justify-center gap-1 overflow-hidden relative"
                                     >
-                                        <BookOpen className="h-4 w-4 mr-1" />
-                                        Baca Selengkapnya
-                                        <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                        <BookOpen className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                                        <span className="relative z-10">Baca Selengkapnya</span>
+                                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300 ease-in-out relative z-10" />
+                                        <span className="absolute inset-0 bg-primary scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 -z-0"></span>
                                     </Button>
                                 </Link>
                             </CardFooter>
@@ -345,10 +346,12 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                             </div>
                                             <Link href={route('penduduk.berita.show', featuredNews.id)} className="w-full">
                                                 <Button 
-                                                    className="w-full bg-blue-700 hover:bg-blue-600 text-white"
+                                                    className="w-full bg-blue-700 hover:bg-blue-600 text-white dark:text-primary-foreground transition-all duration-300 flex items-center justify-center gap-1 relative overflow-hidden group"
                                                 >
-                                                    <BookOpen className="h-4 w-4 mr-2" />
-                                                    Baca Selengkapnya
+                                                    <BookOpen className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                                                    <span className="relative z-10">Baca Selengkapnya</span>
+                                                    <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ease-in-out relative z-10" />
+                                                    <span className="absolute inset-0 bg-blue-600 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 -z-0"></span>
                                                 </Button>
                                             </Link>
                                         </div>
