@@ -247,12 +247,12 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                 <Link href={route('penduduk.berita.show', berita.id)} className="w-full">
                                     <Button 
                                         variant="outline" 
-                                        className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 flex items-center justify-center gap-1 overflow-hidden relative"
+                                        className="w-full group-hover:bg-blue-600 dark:group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-1 overflow-hidden relative"
                                     >
-                                        <BookOpen className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                                        <div className="absolute inset-0 bg-blue-600 dark:bg-blue-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 -z-0"></div>
+                                        <BookOpen className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300 relative z-10" />
                                         <span className="relative z-10">Baca Selengkapnya</span>
-                                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300 ease-in-out relative z-10" />
-                                        <span className="absolute inset-0 bg-primary scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 -z-0"></span>
+                                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ease-in-out relative z-10" />
                                     </Button>
                                 </Link>
                             </CardFooter>
@@ -346,12 +346,12 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                             </div>
                                             <Link href={route('penduduk.berita.show', featuredNews.id)} className="w-full">
                                                 <Button 
-                                                    className="w-full bg-blue-700 hover:bg-blue-600 text-white dark:text-primary-foreground transition-all duration-300 flex items-center justify-center gap-1 relative overflow-hidden group"
+                                                    className="w-full bg-blue-700 hover:bg-blue-600 dark:hover:bg-blue-500 text-white transition-all duration-300 flex items-center justify-center gap-1 relative overflow-hidden group"
                                                 >
+                                                    <div className="absolute inset-0 bg-blue-600 dark:bg-blue-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 -z-0"></div>
                                                     <BookOpen className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300 relative z-10" />
                                                     <span className="relative z-10">Baca Selengkapnya</span>
                                                     <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 ease-in-out relative z-10" />
-                                                    <span className="absolute inset-0 bg-blue-600 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 -z-0"></span>
                                                 </Button>
                                             </Link>
                                         </div>
