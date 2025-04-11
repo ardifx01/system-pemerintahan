@@ -363,17 +363,17 @@ export default function Berita({ beritas }: BeritaPageProps) {
                 <div className="flex flex-col space-y-4">
                     <Tabs defaultValue="semua" onValueChange={setActiveTab} className="w-full">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                            <TabsList className="bg-muted/50 p-1">
+                            <TabsList className="bg-blue-50 p-1 border border-blue-200">
                                 <TabsTrigger 
                                     value="semua" 
-                                    className="data-[state=active]:bg-white data-[state=active]:text-primary"
+                                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 data-[state=inactive]:bg-transparent"
                                 >
                                     <Newspaper className="h-4 w-4 mr-2" />
                                     Semua Berita
                                 </TabsTrigger>
                                 <TabsTrigger 
                                     value="terbaru"
-                                    className="data-[state=active]:bg-white data-[state=active]:text-primary"
+                                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 data-[state=inactive]:bg-transparent"
                                 >
                                     <Clock className="h-4 w-4 mr-2" />
                                     Terbaru
