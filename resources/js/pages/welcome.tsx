@@ -11,6 +11,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import type { PageProps } from '@/types';
 import AppLogoIcon from '@/components/app-logo-icon';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Animation variants for consistent animations throughout the application
 const animations = {
@@ -205,6 +206,7 @@ const StatCard = ({ value, label, icon, delay = 0 }: StatProps) => {
 export default function Welcome() {
     const { auth } = usePage<PageProps>().props;
     const isAuthenticated = auth.user !== null;
+    const isMobile = useIsMobile();
 
     // Random notification count for authenticated users (for demo purposes)
     const notificationCount = isAuthenticated ? Math.floor(Math.random() * 5) : 0;
@@ -273,10 +275,18 @@ export default function Welcome() {
                 <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700" rel="stylesheet" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
                 <style>{`
-                    html, body { overflow: hidden; height: 100%; }
-                    @media (max-width: 640px) {
+                    html, body { overflow: hidden; height: 100vh; }
+                    .mobile-content {
+                        height: ${isMobile ? 'calc(100vh - 56px - 50px)' : '100%'};
+                        overflow-y: auto;
+                        -webkit-overflow-scrolling: touch;
+                    }
+                    .content-wrapper {
+                        min-height: ${isMobile ? 'auto' : '100vh'};
+                    }
+                    @supports (-webkit-touch-callout: none) {
                         .mobile-content {
-                            height: calc(100vh - 56px - 50px); /* Viewport - header - footer */
+                            height: -webkit-fill-available;
                         }
                     }
                 `}</style>
@@ -284,7 +294,7 @@ export default function Welcome() {
             
             <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
                 {/* Enhanced Navigation with subtle blur effect */}
-                <nav className="bg-slate-900/90 backdrop-blur-lg shadow-lg shadow-blue-900/10 z-50 transition-all duration-300 border-b border-blue-800/40">
+                <nav className="sticky top-0 bg-slate-900/90 backdrop-blur-lg shadow-lg shadow-blue-900/10 z-50 transition-all duration-300 border-b border-blue-800/40">
                     <div className="container mx-auto px-3 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-14 sm:h-16 md:h-20">
                             <div className="flex items-center">
@@ -320,56 +330,59 @@ export default function Welcome() {
                 {/* Main content - truly fullscreen */}
                 <main className="flex-1 flex flex-col relative">
                     {/* Enhanced background decorative elements */}
-                    <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-10 pointer-events-none">
-                        <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
-                            <defs>
-                                <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <rect x="0" y="0" width="4" height="4" className="text-blue-500" fill="currentColor" />
-                                </pattern>
-                            </defs>
-                            <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c1)" />
-                        </svg>
-                    </div>
-                    <div className="absolute bottom-0 left-0 -mb-20 -ml-20 opacity-10 pointer-events-none">
-                        <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
-                            <defs>
-                                <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <rect x="0" y="0" width="4" height="4" className="text-blue-500" fill="currentColor" />
-                                </pattern>
-                            </defs>
-                            <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c2)" />
-                        </svg>
-                    </div>
-                    
-                    {/* Animated floating decorative elements */}
-                    <motion.div 
-                        variants={animations.float}
-                        initial="initial"
-                        animate="animate"
-                        className="absolute top-1/4 right-10 z-0 opacity-10 pointer-events-none hidden sm:block"
-                    >
-                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 17.75L5.828 20.995L7.01 14.122L2.02 9.25495L8.914 8.26995L12 2.04395L15.086 8.26995L21.98 9.25495L16.99 14.122L18.172 20.995L12 17.75Z" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </motion.div>
-                    
-                    <motion.div 
-                        variants={animations.float}
-                        initial="initial"
-                        animate="animate"
-                        className="absolute bottom-1/3 left-20 z-0 opacity-10 pointer-events-none hidden sm:block"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                    </motion.div>
-                    
+                    {!isMobile && (
+                        <>
+                            <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-10 pointer-events-none">
+                                <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
+                                    <defs>
+                                        <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <rect x="0" y="0" width="4" height="4" className="text-blue-500" fill="currentColor" />
+                                        </pattern>
+                                    </defs>
+                                    <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c1)" />
+                                </svg>
+                            </div>
+                            <div className="absolute bottom-0 left-0 -mb-20 -ml-20 opacity-10 pointer-events-none">
+                                <svg width="404" height="384" fill="none" viewBox="0 0 404 384">
+                                    <defs>
+                                        <pattern id="de316486-4a29-4312-bdfc-fbce2132a2c2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <rect x="0" y="0" width="4" height="4" className="text-blue-500" fill="currentColor" />
+                                        </pattern>
+                                    </defs>
+                                    <rect width="404" height="384" fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c2)" />
+                                </svg>
+                            </div>
+                            
+                            {/* Animated floating decorative elements */}
+                            <motion.div 
+                                variants={animations.float}
+                                initial="initial"
+                                animate="animate"
+                                className="absolute top-1/4 right-10 z-0 opacity-10 pointer-events-none"
+                            >
+                                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 17.75L5.828 20.995L7.01 14.122L2.02 9.25495L8.914 8.26995L12 2.04395L15.086 8.26995L21.98 9.25495L16.99 14.122L18.172 20.995L12 17.75Z" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            </motion.div>
+                            
+                            <motion.div 
+                                variants={animations.float}
+                                initial="initial"
+                                animate="animate"
+                                className="absolute bottom-1/3 left-20 z-0 opacity-10 pointer-events-none"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </motion.div>
+                        </>
+                    )}
 
                     {/* Content area with flexible sizing to fit viewport */}
-                    <div className="flex-1 flex flex-col justify-between">
+                    <div className="content-wrapper flex-1 flex flex-col justify-between">
                         {/* Center content area with mobile optimization */}
-                        <div className="flex-1 flex flex-col justify-center mobile-content relative z-10">
-                            <div className="container mx-auto px-3 sm:px-6 lg:px-8 flex flex-col items-center">
+                        <div className="mobile-content flex-1 flex flex-col justify-center relative z-10">
+                            <div className="container mx-auto px-3 sm:px-6 lg:px-8 flex flex-col items-center py-4 sm:py-6 md:py-8">
                                 <motion.div
                                     initial="hidden"
                                     animate="visible"
@@ -450,14 +463,14 @@ export default function Welcome() {
                                     <motion.div
                                         variants={animations.fadeInUp}
                                         custom={0.5}
-                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-4 gap-1 sm:gap-3 md:gap-5 max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto"
+                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-5 max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto"
                                     >
                                         {stats.map((stat, index) => (
                                             <StatCard 
                                                 key={index}
                                                 value={stat.value}
                                                 label={stat.label}
-                                                icon={stat.icon}
+                                                icon={!isMobile ? stat.icon : undefined}
                                                 delay={0.6 + (index * 0.1)}
                                             />
                                         ))}
@@ -467,14 +480,14 @@ export default function Welcome() {
                                     <motion.div
                                         variants={animations.fadeInUp}
                                         custom={0.6}
-                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
+                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
                                     >
                                         {features.map((feature, index) => (
                                             <FeatureCard 
                                                 key={index}
                                                 title={feature.title}
                                                 description={feature.description}
-                                                icon={feature.icon}
+                                                icon={!isMobile ? feature.icon : undefined}
                                                 delay={0.9 + (index * 0.1)}
                                             />
                                         ))}
@@ -484,7 +497,7 @@ export default function Welcome() {
                         </div>
                         
                         {/* Footer section - responsive for all devices */}
-                        <footer className="py-2 sm:py-3 md:py-4 border-t border-blue-800/30 relative z-10 bg-blue-950/50 backdrop-blur-sm">
+                        <footer className="sticky bottom-0 py-2 sm:py-3 md:py-4 border-t border-blue-800/30 relative z-10 bg-blue-950/50 backdrop-blur-sm">
                             <div className="container mx-auto px-3 sm:px-6">
                                 <div className="flex flex-col sm:flex-row justify-between items-center">
                                     <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-0">
