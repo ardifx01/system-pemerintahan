@@ -91,13 +91,19 @@ Sistem ini mengharuskan setiap pengguna untuk registrasi dan login terlebih dahu
     php artisan migrate --seed
     ```
 
-8. Jalankan aset frontend & server
+8. Buat symlink storage
+
+    ```
+    php artisan storage:link
+    ```
+
+9. Jalankan aset frontend & server
 
     ```
     composer run dev
     ```
 
-9. Akses aplikasi di http://localhost:8000
+10. Akses aplikasi di http://localhost:8000
 
 ## Penggunaan
 
@@ -121,4 +127,4 @@ Sistem ini mengharuskan setiap pengguna untuk registrasi dan login terlebih dahu
 4. Kelola berita pemerintahan
 5. Pantau log aktivitas sistem
 
-© 2025 vickymosasan
+ 2025 vickymosasan
