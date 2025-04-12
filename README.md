@@ -121,6 +121,4 @@ Sistem ini mengharuskan setiap pengguna untuk registrasi dan login terlebih dahu
 4. Kelola berita pemerintahan
 5. Pantau log aktivitas sistem
 
-## Lisensi
-
-Project ini dilisensikan di bawah [MIT License](LICENSE).
+© 2025 vickymosasan
