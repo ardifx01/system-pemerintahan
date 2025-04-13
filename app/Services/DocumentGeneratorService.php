@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 class DocumentGeneratorService
 {
@@ -19,26 +20,40 @@ class DocumentGeneratorService
     public function generateDocument(Document $document): ?string
     {
         try {
+            // Clear view cache first to ensure we're using the latest templates
+            try {
+                Artisan::call('view:clear');
+            } catch (\Exception $e) {
+                Log::warning('Could not clear view cache: ' . $e->getMessage());
+            }
+
             // Ensure the storage directory exists
             if (!file_exists(public_path('documents'))) {
                 mkdir(public_path('documents'), 0755, true);
             }
-            
+
             // Get the appropriate view for the document type
             $view = $this->getDocumentView($document->type);
-            
+
             // Generate a unique filename
             $filename = $this->generateFilename($document);
-            
-            // Generate the PDF
+
+            // Generate the PDF with custom data
             $pdf = App::make('dompdf.wrapper');
-            $pdf->loadView($view, ['document' => $document]);
-            
+            $pdf->loadView($view, [
+                'document' => $document,
+                'signatureData' => [
+                    'pemohon' => $document->nama ?? 'Pemohon',
+                    'pejabat' => 'Kepala Bidang Kependudukan',
+                    'jabatan' => 'Pejabat Berwenang',
+                ]
+            ]);
+
             // Save the PDF directly to the public directory
             $filePath = 'documents/' . $filename;
             $fullPath = public_path($filePath);
             file_put_contents($fullPath, $pdf->output());
-            
+
             // Return the relative path
             return $filePath;
         } catch (\Exception $e) {
@@ -46,7 +61,7 @@ class DocumentGeneratorService
             return null;
         }
     }
-    
+
     /**
      * Get the appropriate view for the document type
      * 
@@ -63,7 +78,7 @@ class DocumentGeneratorService
             default => 'documents.default',
         };
     }
-    
+
     /**
      * Generate a unique filename for the document
      * 
@@ -79,7 +94,7 @@ class DocumentGeneratorService
             Document::TYPE_AKTA_KEMATIAN => 'AKTA_KEMATIAN',
             default => 'DOC',
         };
-        
+
         $timestamp = now()->format('YmdHis');
         return "{$prefix}_{$document->id}_{$timestamp}.pdf";
     }

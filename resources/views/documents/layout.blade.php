@@ -127,13 +127,13 @@
                 <div class="signature">
                     <div>Pemohon,</div>
                     <div class="signature-line"></div>
-                    <div>{{ $document->nama ?? '[NAMA PEMOHON]' }}</div>
+                    <div>{{ $signatureData['pemohon'] ?? ($document->nama ?? 'Pemohon') }}</div>
                 </div>
                 
                 <div class="signature">
-                    <div>Pejabat Berwenang,</div>
+                    <div>{{ $signatureData['jabatan'] ?? 'Pejabat Berwenang' }},</div>
                     <div class="signature-line"></div>
-                    <div>Admin Sistem</div>
+                    <div>{{ $signatureData['pejabat'] ?? 'Kepala Bidang Kependudukan' }}</div>
                     <div class="official-stamp">[STEMPEL RESMI]</div>
                 </div>
             </div>
