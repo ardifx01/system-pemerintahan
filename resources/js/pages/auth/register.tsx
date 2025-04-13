@@ -7,7 +7,7 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import RegisterLayout from '@/layouts/auth/register-layout';
 
 type RegisterForm = {
     name: string;
@@ -77,7 +77,7 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Pendaftaran" description="">
+        <RegisterLayout>
             <Head title="Pendaftaran | Sistem Pemerintahan" />
             
             <div className="relative w-full max-w-md mx-auto rounded-lg border border-border/40 bg-gradient-to-br from-card via-card/95 to-card/90 p-8 shadow-lg transition-all duration-300 hover:shadow-xl animate-fade-in">
@@ -304,6 +304,6 @@ export default function Register() {
                     <TextLink href="#" className="hover:text-primary transition-colors duration-200">Bantuan</TextLink>
                 </div>
             </div>
-        </AuthLayout>
+        </RegisterLayout>
     );
 }
