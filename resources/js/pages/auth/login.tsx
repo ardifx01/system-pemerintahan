@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import LoginLayout from '@/layouts/auth/login-layout';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 type LoginForm = {
@@ -45,10 +45,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Masuk ke Sistem Pemerintahan" description="Masukkan email dan password Anda untuk mengakses layanan pemerintahan">
-            <Head title="Login Sistem Pemerintahan" />
+        <LoginLayout>
+            <Head title="Login | Sistem Pemerintahan" />
 
-            <div className="relative w-full rounded-lg border border-border/40 bg-gradient-to-br from-card via-card/95 to-card/90 p-8 shadow-lg transition-all duration-300 hover:shadow-xl animate-fade-in">
+            <div className="relative w-full max-w-md mx-auto rounded-lg border border-border/40 bg-gradient-to-br from-card via-card/95 to-card/90 p-8 shadow-lg transition-all duration-300 hover:shadow-xl animate-fade-in">
                 {/* Subtle light effects */}
                 <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-primary/10 blur-[50px] opacity-70"></div>
                 <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-blue-500/10 blur-[50px] opacity-70"></div>
@@ -187,6 +187,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     <TextLink href="#" className="hover:text-primary transition-colors duration-200">Bantuan</TextLink>
                 </div>
             </div>
-        </AuthLayout>
+        </LoginLayout>
     );
 }
