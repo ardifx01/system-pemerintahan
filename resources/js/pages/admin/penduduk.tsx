@@ -878,8 +878,11 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
             {/* Delete Confirmation Modal */}
             <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader className="pb-4">
-                        <DialogTitle className="text-xl text-red-600">Konfirmasi Hapus Data</DialogTitle>
+                    <DialogHeader>
+                        <DialogTitle className="text-xl flex items-center gap-2">
+                            <Trash2 className="h-5 w-5 text-red-500" />
+                            Konfirmasi Hapus Data
+                        </DialogTitle>
                         <DialogDescription className="text-muted-foreground mt-1">
                             Tindakan ini tidak dapat dibatalkan.
                         </DialogDescription>
@@ -889,11 +892,17 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                             <p className="text-red-800 dark:text-red-300">
                                 Anda akan menghapus data penduduk:
                             </p>
-                            <p className="font-medium text-lg mt-1 text-red-900 dark:text-red-200">
-                                {pendudukToDelete?.nama}
-                            </p>
+                            <div className="mt-3 flex items-center gap-2">
+                                <div className="bg-red-100 dark:bg-red-900/50 p-2 rounded-full">
+                                    <User className="h-4 w-4 text-red-600 dark:text-red-400" />
+                                </div>
+                                <p className="font-medium text-lg text-red-900 dark:text-red-200">
+                                    {pendudukToDelete?.nama}
+                                </p>
+                            </div>
                             {pendudukToDelete?.user?.email && (
-                                <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+                                <p className="text-sm text-red-700 dark:text-red-400 mt-2 flex items-center gap-2">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
                                     {pendudukToDelete.user.email}
                                 </p>
                             )}
@@ -909,7 +918,13 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                         }}>
                             Batal
                         </Button>
-                        <Button variant="destructive" onClick={handleDeleteSubmit}>
+                        <Button 
+                            variant="destructive" 
+                            onClick={handleDeleteSubmit}
+                            disabled={processing}
+                            className="gap-1"
+                        >
+                            {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             <Trash2 className="mr-2 h-4 w-4" />
                             Hapus Data
                         </Button>
