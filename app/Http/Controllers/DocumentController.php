@@ -12,9 +12,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Services\ActivityLogService;
+use App\Services\DocumentGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Inertia\Inertia;
 
@@ -95,15 +96,70 @@ class DocumentController extends Controller
 
     public function download(Document $document)
     {
-        if ($document->user_id !== Auth::id()) {
-            abort(403);
+        // Check if the user is authorized to download this document
+        if ($document->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh dokumen ini.');
         }
 
-        if (!$document->file_path || !Storage::exists($document->file_path)) {
-            abort(404);
+        // Check if document is approved
+        if ($document->status !== Document::STATUS_SELESAI) {
+            abort(403, 'Dokumen belum disetujui dan tidak dapat diunduh.');
         }
 
-        return Storage::download($document->file_path);
+        try {
+            // Get document generator service
+            $documentGeneratorService = new DocumentGeneratorService();
+            
+            // Always regenerate the document to ensure we have the latest version
+            $filePath = $documentGeneratorService->generateDocument($document);
+            
+            if (!$filePath) {
+                Log::error('Failed to generate document: ' . $document->id);
+                abort(500, 'Gagal menghasilkan dokumen. Silakan coba lagi nanti.');
+            }
+            
+            // Update the document record with the file path
+            $document->file_path = $filePath;
+            $document->save();
+            
+            // Create a readable filename for the downloaded file
+            $filename = $this->getDocumentFileName($document);
+            
+            // Check if file exists in public directory
+            $fullPath = public_path($document->file_path);
+            if (!file_exists($fullPath)) {
+                Log::error('Document file not found: ' . $fullPath);
+                abort(404, 'File dokumen tidak ditemukan.');
+            }
+            
+            // Return the file for download
+            return Response::download($fullPath, $filename);
+        } catch (\Exception $e) {
+            Log::error('Document download failed: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Generate a descriptive filename for downloading
+     *
+     * @param Document $document
+     * @return string
+     */
+    private function getDocumentFileName(Document $document)
+    {
+        $prefix = match ($document->type) {
+            Document::TYPE_KTP => 'KTP',
+            Document::TYPE_KK => 'Kartu_Keluarga',
+            Document::TYPE_AKTA_KELAHIRAN => 'Akta_Kelahiran',
+            Document::TYPE_AKTA_KEMATIAN => 'Akta_Kematian',
+            default => 'Dokumen',
+        };
+        
+        $sanitizedName = str_replace(' ', '_', $document->nama);
+        $date = now()->format('Ymd');
+        
+        return "{$prefix}_{$sanitizedName}_{$date}.pdf";
     }
 
     // Admin document management methods
@@ -162,7 +218,7 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function approve(Document $document, Request $request, ActivityLogService $activityLogService)
+    public function approve(Document $document, Request $request, ActivityLogService $activityLogService, DocumentGeneratorService $documentGeneratorService)
     {
         $validated = $request->validate([
             'notes' => 'nullable|string',
@@ -170,9 +226,13 @@ class DocumentController extends Controller
 
         $document->status = Document::STATUS_SELESAI;
         $document->notes = $validated['notes'] ?? null;
-        // Here we would generate the document file and save its path
-        // For now we'll simulate this with a placeholder
-        $document->file_path = 'documents/' . $document->type . '_' . $document->id . '.pdf';
+        
+        // Generate the document PDF
+        $filePath = $documentGeneratorService->generateDocument($document);
+        if ($filePath) {
+            $document->file_path = $filePath;
+        }
+        
         $document->save();
 
         // Log the activity
@@ -230,12 +290,42 @@ class DocumentController extends Controller
         }
     }
 
+    /**
+     * Admin version of document download function
+     */
     public function adminDownload(Document $document)
     {
-        if (!$document->file_path || !Storage::exists($document->file_path)) {
-            abort(404);
+        try {
+            // Get document generator service
+            $documentGeneratorService = new DocumentGeneratorService();
+            
+            // Always regenerate the document to ensure we have the latest version
+            $filePath = $documentGeneratorService->generateDocument($document);
+            
+            if (!$filePath) {
+                Log::error('Admin failed to generate document: ' . $document->id);
+                abort(500, 'Gagal menghasilkan dokumen. Silakan coba lagi nanti.');
+            }
+            
+            // Update the document record with the file path
+            $document->file_path = $filePath;
+            $document->save();
+            
+            // Create a readable filename for the downloaded file
+            $filename = $this->getDocumentFileName($document);
+            
+            // Check if file exists in public directory
+            $fullPath = public_path($document->file_path);
+            if (!file_exists($fullPath)) {
+                Log::error('Admin document file not found: ' . $fullPath);
+                abort(404, 'File dokumen tidak ditemukan.');
+            }
+            
+            // Return the file for download
+            return Response::download($fullPath, $filename);
+        } catch (\Exception $e) {
+            Log::error('Admin document download failed: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengunduh dokumen: ' . $e->getMessage());
         }
-
-        return Storage::download($document->file_path);
     }
 }

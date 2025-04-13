@@ -71,13 +71,15 @@ Route::middleware(['auth', 'verified', PendudukMiddleware::class])->prefix('pend
     Route::controller(DocumentController::class)->group(function () {
         Route::get('documents', 'index')->name('documents.index');
         Route::post('documents', 'store')->name('documents.store');
-        Route::get('documents/{document}/download', 'download')->name('documents.download');
     });
 
     // Berita routes
     Route::get('berita', [BeritaController::class, 'pendudukIndex'])->name('penduduk.berita');
     Route::get('berita/{berita}', [BeritaController::class, 'pendudukShow'])->name('penduduk.berita.show');
 });
+
+// Public document download route (must be outside the penduduk group to match frontend URL)
+Route::get('/document/{document}/download', [DocumentController::class, 'download'])->middleware(['auth'])->name('document.download');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
