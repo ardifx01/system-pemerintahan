@@ -5,111 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Dokumen Resmi' }}</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        @page {
             margin: 0;
-            padding: 20px;
-            color: #333;
+            size: A4;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            color: #000;
+            background-color: #fff;
+            font-size: 12pt;
         }
         .document {
-            max-width: 800px;
+            max-width: 21cm;
             margin: 0 auto;
-            padding: 30px;
-            border: 1px solid #ddd;
+            padding: 1cm;
+            position: relative;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 60px;
+            color: rgba(200, 200, 200, 0.1);
+            z-index: -1;
+            pointer-events: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            white-space: nowrap;
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 1cm;
             border-bottom: 2px solid #000;
-            padding-bottom: 20px;
-        }
-        .logo {
-            width: 80px;
-            height: auto;
-            display: block;
-            margin: 0 auto 15px;
+            padding-bottom: 10px;
         }
         .title {
-            font-size: 18px;
+            font-size: 16pt;
             font-weight: bold;
             margin: 5px 0;
             text-transform: uppercase;
         }
         .subtitle {
-            font-size: 14px;
-            margin: 5px 0;
+            font-size: 12pt;
+            margin: 3px 0;
         }
         .content {
-            margin-bottom: 30px;
+            margin-bottom: 1cm;
+        }
+        .info-section {
+            margin-bottom: 15px;
         }
         .info-item {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
+            display: flex;
         }
         .info-item .label {
             font-weight: bold;
-            width: 200px;
-            float: left;
+            width: 150px;
+            flex-shrink: 0;
         }
         .info-item .value {
-            margin-left: 210px;
+            flex-grow: 1;
         }
         .footer {
-            margin-top: 50px;
+            margin-top: 15px;
             text-align: right;
+            font-size: 10pt;
         }
         .signatures {
-            margin-top: 80px;
+            margin-top: 1cm;
             display: flex;
             justify-content: space-between;
+            font-size: 10pt;
         }
         .signature {
             width: 45%;
             text-align: center;
         }
         .signature-line {
-            margin-top: 70px;
+            margin-top: 50px;
             border-bottom: 1px solid #000;
             margin-bottom: 5px;
         }
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
         .document-number {
-            margin-top: 10px;
+            margin: 10px auto;
             text-align: center;
-            font-size: 14px;
+            font-size: 11pt;
             font-weight: bold;
             border: 1px solid #000;
             display: inline-block;
-            padding: 5px 10px;
-            margin-left: auto;
-            margin-right: auto;
+            padding: 2px 10px;
         }
-        .official-stamp {
-            margin-top: 30px;
+        .document-validity {
+            margin-top: 15px;
+            padding: 5px;
+            border: 1px solid #ddd;
             text-align: center;
-            font-style: italic;
-            font-size: 12px;
-            color: #777;
+            font-size: 10pt;
+        }
+        h2 {
+            font-size: 14pt;
+            margin: 10px 0;
+            text-align: center;
+        }
+        p {
+            margin: 3px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10pt;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
     <div class="document">
+        <div class="watermark">REPUBLIK INDONESIA</div>
+        
         <div class="header">
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <div style="position: absolute; left: 50px;">
-                    <!-- Logo goes here, e.g. <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo"> -->
-                    [LOGO]
-                </div>
-                <div>
-                    <div class="title">PEMERINTAH REPUBLIK INDONESIA</div>
-                    <div class="subtitle">DOKUMEN RESMI KEPENDUDUKAN</div>
-                    <div class="subtitle">{{ $documentTitle ?? 'DOKUMEN RESMI' }}</div>
-                </div>
-            </div>
+            <div class="title">PEMERINTAH REPUBLIK INDONESIA</div>
+            <div class="subtitle">{{ $documentTitle ?? 'DOKUMEN RESMI' }}</div>
             @if(isset($documentNumber))
                 <div class="document-number">{{ $documentNumber }}</div>
             @endif
@@ -134,7 +162,6 @@
                     <div>{{ $signatureData['jabatan'] ?? 'Pejabat Berwenang' }},</div>
                     <div class="signature-line"></div>
                     <div>{{ $signatureData['pejabat'] ?? 'Kepala Bidang Kependudukan' }}</div>
-                    <div class="official-stamp">[STEMPEL RESMI]</div>
                 </div>
             </div>
         </div>
