@@ -33,6 +33,8 @@ interface PendudukData {
     created_at: string;
     updated_at: string;
     user_id: number;
+    registration_date?: string;
+    registration_date_formatted?: string;
     user?: {
         id: number;
         email: string;
@@ -415,7 +417,12 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                                         <div className="bg-muted p-1.5 rounded-full">
                                                             <Calendar className="h-3 w-3 text-muted-foreground" />
                                                         </div>
-                                                        <span>{item.user?.created_at ? new Date(item.user.created_at).toLocaleDateString('id-ID') : '-'}</span>
+                                                        <div className="flex flex-col">
+                                                            <span>{item.registration_date_formatted || '-'}</span>
+                                                            <span className="text-xs text-muted-foreground">
+                                                                {item.registration_date ? new Date(item.registration_date).toLocaleDateString('id-ID') : ''}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-right">

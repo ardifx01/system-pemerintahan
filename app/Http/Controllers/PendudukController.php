@@ -20,7 +20,7 @@ class PendudukController extends Controller
         $search = $request->input('search');
         
         $penduduk = Penduduk::query()
-            ->with('user:id,email') // Use eager loading instead of join
+            ->with('user:id,email,created_at') // Add created_at to get registration timestamp
             ->when($search, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('nama', 'like', "%{$search}%")
@@ -32,6 +32,13 @@ class PendudukController extends Controller
             ->latest()
             ->paginate(10)
             ->withQueryString();
+            
+        // Transform data to include registration date in easily accessible format
+        $penduduk->through(function ($item) {
+            $item->registration_date = $item->user->created_at->format('Y-m-d H:i:s');
+            $item->registration_date_formatted = $item->user->created_at->diffForHumans();
+            return $item;
+        });
             
         return Inertia::render('admin/penduduk', [
             'penduduk' => $penduduk,
@@ -103,8 +110,13 @@ class PendudukController extends Controller
      */
     public function show(Penduduk $penduduk)
     {
-        // Load user relationship to access email
-        $penduduk->load('user:id,email');
+        // Load user relationship to access email and registration date
+        $penduduk->load('user:id,email,created_at');
+        
+        // Add formatted registration date
+        $penduduk->registration_date = $penduduk->user->created_at->format('Y-m-d H:i:s');
+        $penduduk->registration_date_formatted = $penduduk->user->created_at->diffForHumans();
+        
         return response()->json($penduduk);
     }
 
