@@ -77,8 +77,8 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Pendaftaran Akun Baru" description="Masukkan data diri Anda untuk membuat akun di Sistem Pemerintahan">
-            <Head title="Pendaftaran Sistem Pemerintahan" />
+        <AuthLayout title="Pendaftaran" description="">
+            <Head title="Pendaftaran | Sistem Pemerintahan" />
             
             <div className="relative w-full max-w-md mx-auto rounded-lg border border-border/40 bg-gradient-to-br from-card via-card/95 to-card/90 p-8 shadow-lg transition-all duration-300 hover:shadow-xl animate-fade-in">
                 {/* Subtle background effects */}
