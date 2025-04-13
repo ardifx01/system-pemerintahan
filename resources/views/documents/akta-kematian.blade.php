@@ -4,41 +4,20 @@
     <h2>AKTA KEMATIAN</h2>
     <p style="text-align: center; margin-bottom: 15px;">Nomor: {{ 'AM' . str_pad($document->id, 8, '0', STR_PAD_LEFT) }}</p>
     
-    <div class="info-section">
-        <div class="info-item">
-            <div class="label">Nama Lengkap</div>
-            <div class="value">: {{ $document->nama_almarhum }}</div>
-        </div>
+    <div style="margin-bottom: 20px;">
+        <p><strong>Nama Lengkap</strong> : {{ $document->nama_almarhum }}</p>
         
-        <div class="info-item">
-            <div class="label">NIK</div>
-            <div class="value">: {{ $document->nik }}</div>
-        </div>
+        <p><strong>NIK</strong> : {{ $document->nik }}</p>
         
-        <div class="info-item">
-            <div class="label">Tempat Meninggal</div>
-            <div class="value">: {{ $document->tempat_meninggal ?? 'Rumah Sakit' }}</div>
-        </div>
+        <p><strong>Tempat Meninggal</strong> : {{ $document->tempat_meninggal ?? 'Rumah Sakit' }}</p>
         
-        <div class="info-item">
-            <div class="label">Tanggal Meninggal</div>
-            <div class="value">: {{ \Carbon\Carbon::parse($document->tanggal_meninggal)->format('d F Y') }}</div>
-        </div>
+        <p><strong>Tanggal Meninggal</strong> : {{ \Carbon\Carbon::parse($document->tanggal_meninggal)->format('d F Y') }}</p>
         
-        <div class="info-item">
-            <div class="label">Penyebab Kematian</div>
-            <div class="value">: {{ $document->penyebab_kematian ?? 'Sakit' }}</div>
-        </div>
+        <p><strong>Penyebab Kematian</strong> : {{ $document->penyebab_kematian ?? 'Sakit' }}</p>
         
-        <div class="info-item">
-            <div class="label">Alamat Terakhir</div>
-            <div class="value">: {{ $document->alamat }}</div>
-        </div>
+        <p><strong>Alamat Terakhir</strong> : {{ $document->alamat }}</p>
         
-        <div class="info-item">
-            <div class="label">Nama Pelapor</div>
-            <div class="value">: {{ $document->nama }}</div>
-        </div>
+        <p><strong>Nama Pelapor</strong> : {{ $document->nama }}</p>
     </div>
     
     <div class="document-validity">

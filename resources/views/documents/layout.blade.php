@@ -16,6 +16,7 @@
             color: #000;
             background-color: #fff;
             font-size: 12pt;
+            line-height: 1.2;
         }
         .document {
             max-width: 21cm;
@@ -57,20 +58,11 @@
         .content {
             margin-bottom: 1cm;
         }
-        .info-section {
-            margin-bottom: 15px;
+        p {
+            margin: 0 0 5px 0;
         }
-        .info-item {
-            margin-bottom: 5px;
-            display: flex;
-        }
-        .info-item .label {
+        strong {
             font-weight: bold;
-            width: 150px;
-            flex-shrink: 0;
-        }
-        .info-item .value {
-            flex-grow: 1;
         }
         .footer {
             margin-top: 15px;
@@ -112,9 +104,6 @@
             font-size: 14pt;
             margin: 10px 0;
             text-align: center;
-        }
-        p {
-            margin: 3px 0;
         }
         table {
             width: 100%;

@@ -4,36 +4,18 @@
     <h2>AKTA KELAHIRAN</h2>
     <p style="text-align: center; margin-bottom: 15px;">Nomor: {{ 'AK' . str_pad($document->id, 8, '0', STR_PAD_LEFT) }}</p>
     
-    <div class="info-section">
-        <div class="info-item">
-            <div class="label">Nama Lengkap</div>
-            <div class="value">: {{ $document->nama }}</div>
-        </div>
+    <div style="margin-bottom: 20px;">
+        <p><strong>Nama Lengkap</strong> : {{ $document->nama }}</p>
         
-        <div class="info-item">
-            <div class="label">Tempat / Tanggal Lahir</div>
-            <div class="value">: {{ $document->tempat_lahir }}, {{ \Carbon\Carbon::parse($document->tanggal_lahir)->format('d F Y') }}</div>
-        </div>
+        <p><strong>Tempat / Tanggal Lahir</strong> : {{ $document->tempat_lahir }}, {{ \Carbon\Carbon::parse($document->tanggal_lahir)->format('d F Y') }}</p>
         
-        <div class="info-item">
-            <div class="label">Jenis Kelamin</div>
-            <div class="value">: {{ $document->jenis_kelamin ?? 'Tidak diketahui' }}</div>
-        </div>
+        <p><strong>Jenis Kelamin</strong> : {{ $document->jenis_kelamin ?? 'Tidak diketahui' }}</p>
         
-        <div class="info-item">
-            <div class="label">Nama Ayah</div>
-            <div class="value">: {{ $document->nama_ayah }}</div>
-        </div>
+        <p><strong>Nama Ayah</strong> : {{ $document->nama_ayah }}</p>
         
-        <div class="info-item">
-            <div class="label">Nama Ibu</div>
-            <div class="value">: {{ $document->nama_ibu }}</div>
-        </div>
+        <p><strong>Nama Ibu</strong> : {{ $document->nama_ibu }}</p>
         
-        <div class="info-item">
-            <div class="label">Alamat</div>
-            <div class="value">: {{ $document->alamat }}</div>
-        </div>
+        <p><strong>Alamat</strong> : {{ $document->alamat }}</p>
     </div>
     
     <div class="document-validity">

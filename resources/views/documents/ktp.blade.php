@@ -4,46 +4,22 @@
     <h2>KARTU TANDA PENDUDUK</h2>
     <p style="text-align: center; margin-bottom: 15px;">Nomor NIK: <strong>{{ $document->nik }}</strong></p>
     
-    <div class="info-section">
-        <div class="info-item">
-            <div class="label">Nama Lengkap</div>
-            <div class="value">: {{ $document->nama }}</div>
-        </div>
+    <div style="margin-bottom: 20px;">
+        <p><strong>Nama Lengkap</strong> : {{ $document->nama }}</p>
         
-        <div class="info-item">
-            <div class="label">Tempat / Tanggal Lahir</div>
-            <div class="value">: {{ $document->tempat_lahir }}, {{ \Carbon\Carbon::parse($document->tanggal_lahir)->format('d F Y') }}</div>
-        </div>
+        <p><strong>Tempat / Tanggal Lahir</strong> : {{ $document->tempat_lahir }}, {{ \Carbon\Carbon::parse($document->tanggal_lahir)->format('d F Y') }}</p>
         
-        <div class="info-item">
-            <div class="label">Jenis Kelamin</div>
-            <div class="value">: {{ $document->jenis_kelamin ?? 'Tidak diketahui' }}</div>
-        </div>
+        <p><strong>Jenis Kelamin</strong> : {{ $document->jenis_kelamin ?? 'Tidak diketahui' }}</p>
         
-        <div class="info-item">
-            <div class="label">Alamat</div>
-            <div class="value">: {{ $document->alamat }}</div>
-        </div>
+        <p><strong>Alamat</strong> : {{ $document->alamat }}</p>
         
-        <div class="info-item">
-            <div class="label">Agama</div>
-            <div class="value">: {{ $document->agama ?? '-' }}</div>
-        </div>
+        <p><strong>Agama</strong> : {{ $document->agama ?? '-' }}</p>
         
-        <div class="info-item">
-            <div class="label">Status Perkawinan</div>
-            <div class="value">: {{ $document->status_perkawinan ?? '-' }}</div>
-        </div>
+        <p><strong>Status Perkawinan</strong> : {{ $document->status_perkawinan ?? '-' }}</p>
         
-        <div class="info-item">
-            <div class="label">Pekerjaan</div>
-            <div class="value">: {{ $document->pekerjaan ?? '-' }}</div>
-        </div>
+        <p><strong>Pekerjaan</strong> : {{ $document->pekerjaan ?? '-' }}</p>
         
-        <div class="info-item">
-            <div class="label">Kewarganegaraan</div>
-            <div class="value">: Indonesia</div>
-        </div>
+        <p><strong>Kewarganegaraan</strong> : Indonesia</p>
     </div>
     
     <div class="document-validity">
