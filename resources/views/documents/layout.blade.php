@@ -58,12 +58,6 @@
         .content {
             margin-bottom: 1cm;
         }
-        p {
-            margin: 0 0 5px 0;
-        }
-        strong {
-            font-weight: bold;
-        }
         .footer {
             margin-top: 15px;
             text-align: right;
@@ -118,6 +112,9 @@
         th {
             background-color: #f2f2f2;
         }
+        p {
+            margin: 0 0 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -127,9 +124,9 @@
         <div class="header">
             <div class="title">PEMERINTAH REPUBLIK INDONESIA</div>
             <div class="subtitle">{{ $documentTitle ?? 'DOKUMEN RESMI' }}</div>
-            @if(isset($documentNumber))
+            @isset($documentNumber)
                 <div class="document-number">{{ $documentNumber }}</div>
-            @endif
+            @endisset
         </div>
         
         <div class="content">
