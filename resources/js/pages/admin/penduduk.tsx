@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/react';
-import { Edit, PlusCircle, Search, Trash2, Users, UserCheck, UserX, Calendar, Clock, Loader2 } from 'lucide-react';
+import { Edit, PlusCircle, Search, Trash2, Users, UserCheck, UserX, Calendar, Clock, Loader2, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -55,6 +55,52 @@ interface PendudukProps extends PageProps {
     filters: {
         search: string | null;
     };
+}
+
+interface StatsCardProps {
+    title: string;
+    value: string | number;
+    icon: React.ReactNode;
+    description?: string;
+    color?: 'default' | 'blue' | 'green' | 'orange' | 'purple' | 'red';
+    delay?: number;
+}
+
+function StatsCard({ title, value, icon, description, color = 'default', delay = 0 }: StatsCardProps) {
+    const colorClasses = {
+        default: 'from-zinc-500/20 to-zinc-500/5 text-zinc-600 dark:from-zinc-400/10 dark:to-zinc-400/5 dark:text-zinc-200',
+        blue: 'from-blue-500/20 to-blue-500/5 text-blue-600 dark:from-blue-400/10 dark:to-blue-400/5 dark:text-blue-200',
+        green: 'from-emerald-500/20 to-emerald-500/5 text-emerald-600 dark:from-emerald-400/10 dark:to-emerald-400/5 dark:text-emerald-200',
+        orange: 'from-orange-500/20 to-orange-500/5 text-orange-600 dark:from-orange-400/10 dark:to-orange-400/5 dark:text-orange-200',
+        purple: 'from-purple-500/20 to-purple-500/5 text-purple-600 dark:from-purple-400/10 dark:to-purple-400/5 dark:text-purple-200',
+        red: 'from-red-500/20 to-red-500/5 text-red-600 dark:from-red-400/10 dark:to-red-400/5 dark:text-red-200',
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: delay * 0.1 }}
+            className="h-full"
+        >
+            <Card className={cn("bg-gradient-to-br h-full flex flex-col", colorClasses[color])}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 flex-shrink-0">
+                    <CardTitle className="text-sm font-medium">{title}</CardTitle>
+                    <div className={cn("p-2 rounded-full bg-white/20", colorClasses[color])}>
+                        {icon}
+                    </div>
+                </CardHeader>
+                <CardContent className="flex flex-col justify-between flex-grow">
+                    <div className="text-3xl font-bold tracking-tight">{value}</div>
+                    <div className="h-4">
+                        {description && (
+                            <p className="text-xs text-current/70 mt-1 font-medium">{description}</p>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+        </motion.div>
+    );
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -226,41 +272,47 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-                        <div className="flex items-center mb-2">
-                            <Users className="h-5 w-5 text-blue-500" />
-                            <h2 className="text-lg font-bold ml-2">Total Penduduk</h2>
-                        </div>
-                        <p className="text-3xl font-bold">{totalPenduduk.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-                        <div className="flex items-center mb-2">
-                            <UserCheck className="h-5 w-5 text-green-500" />
-                            <h2 className="text-lg font-bold ml-2">Data Lengkap</h2>
-                        </div>
-                        <p className="text-3xl font-bold">{completePenduduk.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-                        <div className="flex items-center mb-2">
-                            <UserX className="h-5 w-5 text-orange-500" />
-                            <h2 className="text-lg font-bold ml-2">Data Belum Lengkap</h2>
-                        </div>
-                        <p className="text-3xl font-bold">{incompletePenduduk.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-                        <div className="flex items-center mb-2">
-                            <Calendar className="h-5 w-5 text-blue-500" />
-                            <h2 className="text-lg font-bold ml-2">Registrasi Baru</h2>
-                        </div>
-                        <p className="text-3xl font-bold">{recentRegistrations.toLocaleString()}</p>
-                    </div>
+                    <StatsCard
+                        title="Total Penduduk"
+                        value={totalPenduduk.toLocaleString()}
+                        icon={<Users className="h-5 w-5" />}
+                        color="blue"
+                        delay={0}
+                    />
+                    <StatsCard
+                        title="Data Lengkap"
+                        value={completePenduduk.toLocaleString()}
+                        icon={<UserCheck className="h-5 w-5" />}
+                        color="green"
+                        delay={1}
+                        description="Penduduk dengan data lengkap"
+                    />
+                    <StatsCard
+                        title="Data Belum Lengkap"
+                        value={incompletePenduduk.toLocaleString()}
+                        icon={<UserX className="h-5 w-5" />}
+                        color="orange"
+                        delay={2}
+                        description="Perlu melengkapi data"
+                    />
+                    <StatsCard
+                        title="Registrasi Baru"
+                        value={recentRegistrations.toLocaleString()}
+                        icon={<Calendar className="h-5 w-5" />}
+                        color="purple"
+                        delay={3}
+                        description="Dalam 7 hari terakhir"
+                    />
                 </div>
 
                 <Card className="overflow-hidden border-none shadow-md">
                     <CardHeader className="bg-card pb-6 border-b">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
-                                <CardTitle className="text-lg font-semibold">Data Penduduk</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                    Data Penduduk
+                                </CardTitle>
                                 <p className="text-sm text-muted-foreground mt-1">
                                     Total {penduduk.data.length} penduduk {searchQuery && 'ditemukan'}
                                 </p>
@@ -320,45 +372,75 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        penduduk.data.map((item) => (
-                                            <TableRow key={item.id} className="group transition-colors">
-                                                <TableCell className="font-medium">{item.nama}</TableCell>
-                                                <TableCell>{item.user?.email || '-'}</TableCell>
+                                        penduduk.data.map((item, index) => (
+                                            <motion.tr 
+                                                key={item.id}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.2, delay: index * 0.05 }}
+                                                className="group hover:bg-muted/50"
+                                            >
+                                                <TableCell className="font-medium">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="bg-primary/10 p-1.5 rounded-full">
+                                                            <User className="h-3 w-3 text-primary" />
+                                                        </div>
+                                                        <span>{item.nama}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span className="flex items-center gap-1.5">
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                                                        {item.user?.email || '-'}
+                                                    </span>
+                                                </TableCell>
                                                 <TableCell>
                                                     {item.nik ? (
-                                                        <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 hover:bg-green-100">
+                                                        <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 flex items-center gap-1.5">
+                                                            <span className="h-2 w-2 rounded-full bg-green-500"></span>
                                                             Lengkap
                                                         </Badge>
                                                     ) : (
-                                                        <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100">
+                                                        <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200 flex items-center gap-1.5">
+                                                            <span className="relative flex h-2 w-2">
+                                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                                                            </span>
                                                             Belum Lengkap
                                                         </Badge>
                                                     )}
                                                 </TableCell>
-                                                <TableCell>{item.user?.created_at ? new Date(item.user.created_at).toLocaleDateString('id-ID') : '-'}</TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="bg-muted p-1.5 rounded-full">
+                                                            <Calendar className="h-3 w-3 text-muted-foreground" />
+                                                        </div>
+                                                        <span>{item.user?.created_at ? new Date(item.user.created_at).toLocaleDateString('id-ID') : '-'}</span>
+                                                    </div>
+                                                </TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex justify-end space-x-2 transition-opacity">
+                                                    <div className="flex items-center justify-end gap-2">
                                                         <Button 
-                                                            variant="outline" 
-                                                            size="sm"
+                                                            variant="ghost"
+                                                            size="icon"
                                                             onClick={() => openEditModal(item)}
-                                                            className="h-8 px-2 text-blue-600"
+                                                            className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                                                            title={item.nik ? "Edit Data" : "Lengkapi Data"}
                                                         >
-                                                            <Edit className="mr-2 h-3.5 w-3.5" />
-                                                            {item.nik ? 'Edit' : 'Lengkapi Data'}
+                                                            <Edit className="h-4 w-4" />
                                                         </Button>
                                                         <Button 
-                                                            variant="outline" 
-                                                            size="sm" 
-                                                            className="h-8 px-2 text-red-600"
+                                                            variant="ghost"
+                                                            size="icon"
                                                             onClick={() => openDeleteModal(item)}
+                                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            title="Hapus Data"
                                                         >
-                                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                                            Hapus
+                                                            <Trash2 className="h-4 w-4" />
                                                         </Button>
                                                     </div>
                                                 </TableCell>
-                                            </TableRow>
+                                            </motion.tr>
                                         ))
                                     )}
                                 </TableBody>
