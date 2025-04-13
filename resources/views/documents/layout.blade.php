@@ -18,7 +18,7 @@
             color: #000;
             background-color: #fff;
             font-size: 12pt;
-            line-height: 1.3;
+            line-height: 1.5;
         }
 
         .document {
