@@ -11,11 +11,6 @@ class ActivityLogService
     /**
      * Log an activity performed by a user
      *
-     * @param string $action The action performed
-     * @param string $description A description of the activity
-     * @param string|null $modelType The type of model affected
-     * @param int|null $modelId The ID of the model affected
-     * @param array|null $properties Additional properties to store
      * @return ActivityLog
      */
     public function log(
@@ -41,10 +36,6 @@ class ActivityLogService
     /**
      * Log a document-related activity
      *
-     * @param string $action The action performed
-     * @param string $description A description of the activity
-     * @param int $documentId The document ID
-     * @param array|null $properties Additional properties to store
      * @return ActivityLog
      */
     public function logDocumentActivity(
@@ -65,10 +56,6 @@ class ActivityLogService
     /**
      * Log a penduduk-related activity
      *
-     * @param string $action The action performed
-     * @param string $description A description of the activity
-     * @param int $pendudukId The penduduk ID
-     * @param array|null $properties Additional properties to store
      * @return ActivityLog
      */
     public function logPendudukActivity(
@@ -89,10 +76,6 @@ class ActivityLogService
     /**
      * Log a berita-related activity
      *
-     * @param string $action The action performed
-     * @param string $description A description of the activity
-     * @param int $beritaId The berita ID
-     * @param array|null $properties Additional properties to store
      * @return ActivityLog
      */
     public function logBeritaActivity(
