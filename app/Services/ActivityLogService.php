@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class ActivityLogService
 {
     /**
-     * Log an activity performed by a user
+     * Mencatat aktivitas yang dilakukan oleh pengguna
      *
      * @return ActivityLog
      */
@@ -34,7 +34,7 @@ class ActivityLogService
     }
 
     /**
-     * Log a document-related activity
+     * Mencatat aktivitas yang terkait dengan dokumen
      *
      * @return ActivityLog
      */
@@ -54,7 +54,7 @@ class ActivityLogService
     }
 
     /**
-     * Log a penduduk-related activity
+     * Mencatat aktivitas yang terkait dengan penduduk
      *
      * @return ActivityLog
      */
@@ -74,7 +74,7 @@ class ActivityLogService
     }
 
     /**
-     * Log a berita-related activity
+     * Mencatat aktivitas yang terkait dengan berita
      *
      * @return ActivityLog
      */
