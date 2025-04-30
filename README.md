@@ -62,7 +62,6 @@ Sistem informasi pemerintahan modern berbasis web yang dikembangkan menggunakan 
 4. **Salin & konfigurasi environment:**
     ```bash
     cp .env.example .env
-    # Edit .env sesuai konfigurasi database & mail Anda
     ```
 5. **Generate key aplikasi Laravel:**
     ```bash
@@ -105,9 +104,8 @@ Sistem informasi pemerintahan modern berbasis web yang dikembangkan menggunakan 
 
 ### 3. Jalankan Frontend & Backend
 
-- Jalankan kedua server secara paralel:
-    - `npm run dev` (frontend)
-    - `php artisan serve` (backend)
+- Jalankan kedua server:
+    - composer run dev
 - Jika menggunakan XAMPP, pastikan MySQL & Apache running.
 
 ### 4. Storage & Permissions
