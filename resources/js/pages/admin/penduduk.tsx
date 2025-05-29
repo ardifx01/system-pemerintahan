@@ -88,13 +88,13 @@ function StatsCard({ title, value, icon, description, color = 'default', delay =
             <Card className={cn("bg-gradient-to-br h-full flex flex-col", colorClasses[color])}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 flex-shrink-0">
                     <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                    <div className={cn("p-2 rounded-full bg-white/20", colorClasses[color])}>
-                        {icon}
+                    <div className={cn("p-1.5 sm:p-2 rounded-full bg-white/20", colorClasses[color])}>
+                        <div className="h-4 w-4 sm:h-5 sm:w-5">{icon}</div>
                     </div>
                 </CardHeader>
-                <CardContent className="flex flex-col justify-between flex-grow">
-                    <div className="text-3xl font-bold tracking-tight">{value}</div>
-                    <div className="h-4">
+                <CardContent className="flex flex-col justify-between flex-grow pt-2">
+                    <div className="text-2xl sm:text-3xl font-bold tracking-tight">{value}</div>
+                    <div className="h-4 mt-auto">
                         {description && (
                             <p className="text-xs text-current/70 mt-1 font-medium">{description}</p>
                         )}
@@ -118,6 +118,15 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [pendudukToDelete, setPendudukToDelete] = useState<PendudukData | null>(null);
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Check if viewport is mobile-sized
+    useEffect(() => {
+        const checkIfMobile = () => setIsMobile(window.innerWidth < 640);
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        return () => window.removeEventListener('resize', checkIfMobile);
+    }, []);
 
     // Stats calculations
     const totalPenduduk = penduduk.data.length;
@@ -266,25 +275,25 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
-                className="flex h-full flex-1 flex-col gap-6 p-6"
+                className="flex h-full flex-1 flex-col gap-4 sm:gap-6 p-4 sm:p-6"
             >
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">Manajemen Penduduk</h1>
-                    <p className="text-muted-foreground">Kelola data dan akun penduduk dalam sistem.</p>
+                    <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Penduduk</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">Kelola data dan akun penduduk dalam sistem.</p>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-4">
                     <StatsCard
                         title="Total Penduduk"
                         value={totalPenduduk.toLocaleString()}
-                        icon={<Users className="h-5 w-5" />}
+                        icon={<Users className="h-full w-full" />}
                         color="blue"
                         delay={0}
                     />
                     <StatsCard
                         title="Data Lengkap"
                         value={completePenduduk.toLocaleString()}
-                        icon={<UserCheck className="h-5 w-5" />}
+                        icon={<UserCheck className="h-full w-full" />}
                         color="green"
                         delay={1}
                         description="Penduduk dengan data lengkap"
@@ -292,7 +301,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                     <StatsCard
                         title="Data Belum Lengkap"
                         value={incompletePenduduk.toLocaleString()}
-                        icon={<UserX className="h-5 w-5" />}
+                        icon={<UserX className="h-full w-full" />}
                         color="orange"
                         delay={2}
                         description="Perlu melengkapi data"
@@ -300,7 +309,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                     <StatsCard
                         title="Registrasi Baru"
                         value={recentRegistrations.toLocaleString()}
-                        icon={<Calendar className="h-5 w-5" />}
+                        icon={<Calendar className="h-full w-full" />}
                         color="purple"
                         delay={3}
                         description="Dalam 7 hari terakhir"
@@ -308,31 +317,34 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                 </div>
 
                 <Card className="overflow-hidden border-none shadow-md">
-                    <CardHeader className="bg-card pb-6 border-b">
+                    <CardHeader className="bg-card pb-4 sm:pb-6 border-b">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
-                                <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+                                <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold">
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                     Data Penduduk
                                 </CardTitle>
-                                <p className="text-sm text-muted-foreground mt-1">
+                                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                                     Total {penduduk.data.length} penduduk {searchQuery && 'ditemukan'}
                                 </p>
                             </div>
-                            <div className="flex space-x-2">
-                                <div className="relative">
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                                <div className="relative w-full sm:w-auto">
                                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input 
                                         type="search"
-                                        placeholder="Cari Email atau Nama..."
+                                        placeholder={isMobile ? "Cari..." : "Cari Email atau Nama..."}
                                         className="w-full pl-9 bg-background sm:w-64"
                                         value={searchQuery}
                                         onChange={handleSearchChange}
                                     />
                                 </div>
-                                <Button onClick={() => setIsAddModalOpen(true)}>
+                                <Button 
+                                    onClick={() => setIsAddModalOpen(true)}
+                                    className="w-full sm:w-auto"
+                                >
                                     <PlusCircle className="mr-2 h-4 w-4" />
-                                    Tambah Penduduk
+                                    {isMobile ? "Tambah" : "Tambah Penduduk"}
                                 </Button>
                             </div>
                         </div>
@@ -342,31 +354,31 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                             <Table>
                                 <TableHeader>
                                     <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                        <TableHead className="w-[220px]">Nama</TableHead>
-                                        <TableHead className="w-[220px]">Email</TableHead>
-                                        <TableHead className="w-[150px]">Status Data</TableHead>
-                                        <TableHead className="w-[180px]">Tanggal Registrasi</TableHead>
-                                        <TableHead className="text-right">Aksi</TableHead>
+                                        <TableHead className="w-[160px] sm:w-[220px] text-xs sm:text-sm">Nama</TableHead>
+                                        <TableHead className="w-[150px] sm:w-[220px] text-xs sm:text-sm hidden sm:table-cell">Email</TableHead>
+                                        <TableHead className="w-[130px] sm:w-[150px] text-xs sm:text-sm">Status Data</TableHead>
+                                        <TableHead className="w-[150px] sm:w-[180px] text-xs sm:text-sm hidden md:table-cell">Tanggal Registrasi</TableHead>
+                                        <TableHead className="text-right text-xs sm:text-sm">Aksi</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {penduduk.data.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={5}>
-                                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                                    <Users className="h-12 w-12 text-muted-foreground/30 mb-3" />
+                                                <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
+                                                    <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/30 mb-3" />
                                                     {searchQuery ? (
                                                         <>
-                                                            <p className="text-muted-foreground font-medium">Tidak ada penduduk ditemukan</p>
-                                                            <p className="text-sm text-muted-foreground/70 mt-1">
+                                                            <p className="text-sm text-muted-foreground font-medium">Tidak ada penduduk ditemukan</p>
+                                                            <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">
                                                                 Coba dengan kata kunci lain atau reset pencarian
                                                             </p>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <p className="text-muted-foreground font-medium">Belum ada data penduduk</p>
-                                                            <p className="text-sm text-muted-foreground/70 mt-1">
-                                                                Tambahkan penduduk baru dengan menekan tombol "Tambah Penduduk"
+                                                            <p className="text-sm text-muted-foreground font-medium">Belum ada data penduduk</p>
+                                                            <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">
+                                                                Tambahkan penduduk baru dengan menekan tombol "Tambah"
                                                             </p>
                                                         </>
                                                     )}
@@ -382,39 +394,39 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                                 transition={{ duration: 0.2, delay: index * 0.05 }}
                                                 className="group hover:bg-muted/50"
                                             >
-                                                <TableCell className="font-medium">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="bg-primary/10 p-1.5 rounded-full">
+                                                <TableCell className="font-medium text-xs sm:text-sm py-2 sm:py-4">
+                                                    <div className="flex items-center gap-1 sm:gap-2">
+                                                        <div className="bg-primary/10 p-1 sm:p-1.5 rounded-full">
                                                             <User className="h-3 w-3 text-primary" />
                                                         </div>
-                                                        <span>{item.nama}</span>
+                                                        <span className="truncate max-w-[100px] sm:max-w-full">{item.nama}</span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell>
-                                                    <span className="flex items-center gap-1.5">
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-                                                        {item.user?.email || '-'}
+                                                <TableCell className="hidden sm:table-cell text-xs sm:text-sm py-2 sm:py-4">
+                                                    <span className="flex items-center gap-1 sm:gap-1.5">
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500 flex-shrink-0"></span>
+                                                        <span className="truncate">{item.user?.email || '-'}</span>
                                                     </span>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell className="py-2 sm:py-4">
                                                     {item.nik ? (
-                                                        <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 flex items-center gap-1.5">
-                                                            <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                                                        <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 flex items-center gap-1 whitespace-nowrap text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5 sm:text-xs sm:gap-1.5">
+                                                            <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-green-500 flex-shrink-0"></span>
                                                             Lengkap
                                                         </Badge>
                                                     ) : (
-                                                        <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200 flex items-center gap-1.5">
-                                                            <span className="relative flex h-2 w-2">
+                                                        <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200 flex items-center gap-1 whitespace-nowrap text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5 sm:text-xs sm:gap-1.5">
+                                                            <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2 flex-shrink-0">
                                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-yellow-500"></span>
                                                             </span>
-                                                            Belum Lengkap
+                                                            {isMobile ? "Belum" : "Belum Lengkap"}
                                                         </Badge>
                                                     )}
                                                 </TableCell>
-                                                <TableCell>
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="bg-muted p-1.5 rounded-full">
+                                                <TableCell className="hidden md:table-cell text-xs sm:text-sm py-2 sm:py-4">
+                                                    <div className="flex items-center gap-1 sm:gap-2">
+                                                        <div className="bg-muted p-1 sm:p-1.5 rounded-full flex-shrink-0">
                                                             <Calendar className="h-3 w-3 text-muted-foreground" />
                                                         </div>
                                                         <div className="flex flex-col">
@@ -425,25 +437,25 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                                         </div>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-right">
-                                                    <div className="flex items-center justify-end gap-2">
+                                                <TableCell className="text-right py-2 sm:py-4">
+                                                    <div className="flex items-center justify-end gap-1 sm:gap-2">
                                                         <Button 
                                                             variant="ghost"
                                                             size="icon"
                                                             onClick={() => openEditModal(item)}
-                                                            className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                                                            className="h-7 w-7 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
                                                             title={item.nik ? "Edit Data" : "Lengkapi Data"}
                                                         >
-                                                            <Edit className="h-4 w-4" />
+                                                            <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                                         </Button>
                                                         <Button 
                                                             variant="ghost"
                                                             size="icon"
                                                             onClick={() => openDeleteModal(item)}
-                                                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                                                             title="Hapus Data"
                                                         >
-                                                            <Trash2 className="h-4 w-4" />
+                                                            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                                         </Button>
                                                     </div>
                                                 </TableCell>
@@ -455,13 +467,13 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                         </div>
 
                         {penduduk.last_page > 1 && (
-                            <div className="px-4 py-4 border-t">
+                            <div className="px-3 sm:px-4 py-3 sm:py-4 border-t">
                                 <Pagination className="justify-center">
                                     {penduduk.links.map((link, i) => (
                                         <Button
                                             key={i}
                                             variant={link.active ? "default" : "outline"}
-                                            className="mx-1 h-8 w-8 p-0"
+                                            className="mx-0.5 sm:mx-1 h-7 w-7 sm:h-8 sm:w-8 p-0 text-xs sm:text-sm"
                                             disabled={!link.url}
                                             onClick={() => link.url && router.get(link.url)}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
