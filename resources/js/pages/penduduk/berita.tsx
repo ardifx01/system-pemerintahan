@@ -134,11 +134,11 @@ export default function Berita({ beritas }: BeritaPageProps) {
     function renderNewsContent() {
         if (isLoading) {
             return (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {[...Array(6)].map((_, index) => (
                         <Card key={index} className="overflow-hidden flex flex-col h-full">
                             <div className="aspect-video w-full bg-muted/50 animate-pulse" />
-                            <CardHeader className="pb-2">
+                            <CardHeader className="pb-2 px-3 sm:px-6">
                                 <Skeleton className="h-6 w-3/4 mb-2" />
                                 <Skeleton className="h-4 w-1/2" />
                             </CardHeader>
@@ -162,7 +162,7 @@ export default function Berita({ beritas }: BeritaPageProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
-                    className="text-center py-16 bg-muted/30 rounded-lg"
+                    className="text-center py-8 sm:py-16 bg-muted/30 rounded-lg"
                 >
                     {searchQuery ? (
                         <>
@@ -223,7 +223,7 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                     </div>
                                 </div>
                             )}
-                            <CardHeader className="pb-2">
+                            <CardHeader className="pb-2 px-3 sm:px-6">
                                 <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors duration-200">
                                     {berita.judul}
                                 </CardTitle>
@@ -238,12 +238,12 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                     </span>
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="flex-grow pb-2">
+                            <CardContent className="flex-grow pb-2 px-3 sm:px-6">
                                 <div className="line-clamp-3 text-sm text-muted-foreground">
                                     {berita.konten}
                                 </div>
                             </CardContent>
-                            <CardFooter className="pt-2">
+                            <CardFooter className="pt-2 px-3 sm:px-6 pb-3 sm:pb-6">
                                 <Link href={route('penduduk.berita.show', berita.id)} className="w-full">
                                     <Button 
                                         variant="outline" 
@@ -266,28 +266,28 @@ export default function Berita({ beritas }: BeritaPageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Berita Pemerintahan" />
-            <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
+            <div className="flex h-full flex-1 flex-col gap-4 sm:gap-6 p-3 sm:p-4 md:p-6">
                 {/* Hero Section with Featured News */}
                 <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-800 to-blue-950 shadow-lg">
                     <div className="absolute inset-0 bg-[url('/assets/pattern-bg.png')] opacity-10"></div>
                     
-                    <div className="relative flex flex-col lg:flex-row gap-6 p-6 md:p-8">
+                    <div className="relative flex flex-col lg:flex-row gap-4 sm:gap-6 p-4 sm:p-6 md:p-8">
                         {/* Hero Text */}
                         <motion.div 
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="relative z-10 lg:w-1/2 lg:pr-6"
+                            className="relative z-10 lg:w-1/2 lg:pr-6 mb-4 lg:mb-0"
                         >
                             <div className="inline-flex items-center mb-4 px-3 py-1 rounded-full bg-blue-700/40 text-blue-100 text-sm">
                                 <Newspaper className="h-4 w-4 mr-2" />
                                 <span>Portal Berita Resmi</span>
                             </div>
-                            <h1 className="text-3xl font-bold tracking-tight mb-3 text-white">Berita Pemerintahan</h1>
-                            <p className="text-blue-100 text-lg mb-6">
+                            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 sm:mb-3 text-white">Berita Pemerintahan</h1>
+                            <p className="text-blue-100 text-base sm:text-lg mb-4 sm:mb-6">
                                 Dapatkan informasi terbaru dari pemerintah untuk masyarakat. Tetap terinformasi dengan berita terkini tentang kebijakan, program, dan kegiatan pemerintah.
                             </p>
-                            <div className="relative max-w-md">
+                            <div className="relative w-full max-w-md">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     type="search"
@@ -309,7 +309,7 @@ export default function Berita({ beritas }: BeritaPageProps) {
                             >
                                 <div className="flex flex-col md:flex-row bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-blue-700/20 h-full">
                                     {featuredNews.gambar ? (
-                                        <div className="md:w-2/5 overflow-hidden">
+                                        <div className="w-full md:w-2/5 aspect-video md:aspect-auto overflow-hidden">
                                             <img
                                                 src={featuredNews.gambar}
                                                 alt={featuredNews.judul}
@@ -317,16 +317,16 @@ export default function Berita({ beritas }: BeritaPageProps) {
                                             />
                                         </div>
                                     ) : (
-                                        <div className="md:w-2/5 bg-blue-900/50 flex items-center justify-center p-6">
+                                        <div className="w-full md:w-2/5 aspect-video md:aspect-auto bg-blue-900/50 flex items-center justify-center p-4 sm:p-6">
                                             <Newspaper className="h-12 w-12 text-blue-300/70" />
                                         </div>
                                     )}
-                                    <div className="md:w-3/5 p-5 flex flex-col justify-between">
+                                    <div className="md:w-3/5 p-4 sm:p-5 flex flex-col justify-between">
                                         <div>
                                             <Badge variant="outline" className="bg-blue-700/40 text-blue-100 border-none mb-3">
                                                 Berita Terbaru
                                             </Badge>
-                                            <h3 className="text-xl font-semibold text-white mb-2 line-clamp-2">
+                                            <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 line-clamp-2">
                                                 {featuredNews.judul}
                                             </h3>
                                             <p className="text-blue-100 line-clamp-2 mb-3 text-sm">
@@ -365,8 +365,8 @@ export default function Berita({ beritas }: BeritaPageProps) {
                 {/* News Filtering & Categories */}
                 <div className="flex flex-col space-y-4">
                     <Tabs defaultValue="semua" onValueChange={setActiveTab} className="w-full">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                            <TabsList className="bg-blue-50 p-1 border border-blue-200">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                            <TabsList className="bg-blue-50 p-1 border border-blue-200 w-full sm:w-auto">
                                 <TabsTrigger 
                                     value="semua" 
                                     className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 data-[state=inactive]:bg-transparent"
@@ -403,7 +403,7 @@ export default function Berita({ beritas }: BeritaPageProps) {
                 </div>
 
                 {showLoadMore && (
-                    <div className="flex justify-center mt-6">
+                    <div className="flex justify-center mt-4 sm:mt-6">
                         <Button 
                             variant="outline" 
                             onClick={loadMore} 
