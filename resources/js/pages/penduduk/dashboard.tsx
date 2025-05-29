@@ -116,7 +116,7 @@ const ServiceCard = ({ type, onRequest, isProcessing, inProgress = 0, completed 
     const hasActivity = inProgress > 0 || completed > 0;
     
     return (
-        <Card className="group border-primary/10 relative overflow-hidden h-full">
+        <Card className="group border-primary/10 relative overflow-hidden h-full flex flex-col">
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                     <div className="p-2.5 rounded-lg bg-primary/10 text-primary backdrop-blur-sm">
@@ -131,8 +131,8 @@ const ServiceCard = ({ type, onRequest, isProcessing, inProgress = 0, completed 
                 <CardTitle className="text-lg font-medium mt-3">{type.title}</CardTitle>
                 <CardDescription className="text-sm mt-1">{type.description}</CardDescription>
             </CardHeader>
-            <CardContent className="pt-0">
-                <div className="mt-2 space-y-3">
+            <CardContent className="pt-0 flex-1 flex flex-col">
+                <div className="mt-2 space-y-3 flex-1 flex flex-col">
                     <div className="space-y-1.5">
                         <div className="text-xs text-muted-foreground flex items-center justify-between">
                             <span>Langkah pengajuan:</span>
@@ -144,22 +144,25 @@ const ServiceCard = ({ type, onRequest, isProcessing, inProgress = 0, completed 
                         </ol>
                     </div>
                     
-                    <Button 
-                        onClick={() => onRequest(type.id as DocumentType)}
-                        className="w-full font-medium relative overflow-hidden"
-                        disabled={isProcessing}
-                    >
-                        {isProcessing ? (
-                            <div className="flex items-center justify-center space-x-2">
-                                <div className="size-4 border-2 border-current border-t-transparent animate-spin rounded-full" />
-                                <span>Memproses...</span>
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-center space-x-2">
-                                <span>Ajukan Dokumen</span>
-                            </div>
-                        )}
-                    </Button>
+                    <div className="mt-auto pt-3">
+                        <Button 
+                            onClick={() => onRequest(type.id as DocumentType)}
+                            className="w-full font-medium relative overflow-hidden h-10"
+                            disabled={isProcessing}
+                        >
+                            {isProcessing ? (
+                                <div className="flex items-center justify-center gap-2">
+                                    <div className="size-4 border-2 border-current border-t-transparent animate-spin rounded-full" />
+                                    <span>Memproses...</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center gap-2">
+                                    <FileText className="size-4" />
+                                    <span>Ajukan Dokumen</span>
+                                </div>
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </CardContent>
         </Card>
