@@ -86,21 +86,21 @@ const Button = ({ href, variant, size = 'md', children, className = '', icon }: 
     
     // Size styles
     const sizeStyles = {
-        xs: "text-xs px-3 py-1.5",
-        sm: "text-xs px-4 py-2",
-        md: "text-sm px-5 py-2.5",
-        lg: "text-base px-6 py-3"
+        xs: "text-sm px-3 py-2",
+        sm: "text-sm px-4 py-2",
+        md: "text-base px-5 py-2.5",
+        lg: "text-lg px-6 py-3"
     };
     
     // Variant styles
     const variantStyles = {
-        primary: "shadow-md text-white bg-blue-600 hover:bg-blue-700 hover:scale-105 focus:ring-blue-500 border border-transparent",
-        secondary: "border text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 hover:scale-105 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 focus:ring-gray-500 border-gray-300 shadow-sm",
-        outline: "border border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/30 focus:ring-blue-500"
+        primary: "shadow-md text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 hover:scale-105 focus:ring-blue-500 border border-transparent",
+        secondary: "border text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 active:bg-gray-100 hover:scale-105 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600 focus:ring-gray-500 border-gray-300 shadow-sm",
+        outline: "border border-blue-300 text-blue-600 hover:bg-blue-50 active:bg-blue-100 hover:border-blue-400 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/30 dark:active:bg-blue-800/40 focus:ring-blue-500"
     };
     
     return (
-        <motion.div whileHover={animations.scale.hover} whileTap={animations.scale.tap}>
+        <motion.div whileHover={animations.scale.hover} whileTap={animations.scale.tap} className="touch-manipulation">
             <Link 
                 href={href} 
                 className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
@@ -151,20 +151,18 @@ interface FeatureProps {
 
 const FeatureCard = ({ title, description, icon, delay = 0 }: FeatureProps) => {
     return (
-        <motion.div 
+        <motion.div
             variants={animations.fadeInUp}
             custom={delay}
-            className="bg-white/10 backdrop-blur-sm p-3 sm:p-6 md:p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-900/30 transform hover:-translate-y-1 h-full flex flex-col"
+            className="bg-blue-900/30 backdrop-blur-sm p-5 sm:p-5 md:p-6 rounded-xl border border-blue-500/20 group hover:bg-blue-800/30 transition-colors duration-300 flex flex-col items-center sm:items-start touch-manipulation"
         >
             {icon && (
-                <div className="mb-2 sm:mb-4 md:mb-5 text-blue-400 flex items-center justify-center">
-                    <div className="p-2 sm:p-3 rounded-full bg-blue-900/50 border border-blue-800/40 shadow-inner">
-                        {icon}
-                    </div>
+                <div className="mb-3 text-blue-300 group-hover:text-blue-200 transition-colors">
+                    {icon}
                 </div>
             )}
-            <h3 className="text-base sm:text-xl md:text-2xl font-semibold text-white mb-1 sm:mb-2">{title}</h3>
-            <p className="text-xs sm:text-base md:text-lg text-blue-100/80">{description}</p>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-2 text-white group-hover:text-blue-100 transition-colors text-center sm:text-left">{title}</h3>
+            <p className="text-sm sm:text-sm text-blue-200/80 leading-relaxed text-center sm:text-left">{description}</p>
         </motion.div>
     );
 };
@@ -179,26 +177,18 @@ interface StatProps {
 
 const StatCard = ({ value, label, icon, delay = 0 }: StatProps) => {
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ 
-                opacity: 1, 
-                y: 0, 
-                transition: { 
-                    delay,
-                    duration: 0.6
-                } 
-            }}
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
-            className="bg-blue-900/30 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-4 md:p-5 border border-blue-800/50 shadow-sm sm:shadow-md shadow-blue-900/20 flex flex-col items-center justify-center relative overflow-hidden group"
+        <motion.div
+            variants={animations.fadeInUp}
+            custom={delay}
+            className="bg-blue-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-blue-500/10 flex flex-col items-center group hover:bg-blue-800/30 transition-all duration-300 touch-manipulation"
         >
             {icon && (
-                <div className="absolute -right-2 -top-2 opacity-10 group-hover:opacity-20 transition-opacity text-2xl sm:text-3xl md:text-4xl text-blue-400">
+                <div className="mb-1 sm:mb-2 text-blue-300 group-hover:text-blue-200 transition-colors">
                     {icon}
                 </div>
             )}
-            <p className="text-lg sm:text-2xl md:text-3xl font-bold text-blue-300 leading-tight">{value}</p>
-            <p className="text-xs sm:text-sm md:text-base text-blue-200/80 leading-tight">{label}</p>
+            <span className="text-xl sm:text-xl md:text-2xl font-bold text-white">{value}</span>
+            <p className="text-sm sm:text-sm md:text-base text-blue-200/80 leading-tight">{label}</p>
         </motion.div>
     );
 };
@@ -280,6 +270,7 @@ export default function Welcome() {
                         height: ${isMobile ? 'calc(100vh - 56px - 50px)' : '100%'};
                         overflow-y: auto;
                         -webkit-overflow-scrolling: touch;
+                        padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 60px);
                     }
                     .content-wrapper {
                         min-height: ${isMobile ? 'auto' : '100vh'};
@@ -289,18 +280,36 @@ export default function Welcome() {
                             height: -webkit-fill-available;
                         }
                     }
+                    @media (max-width: 360px) {
+                        .xs-text-center {
+                            text-align: center;
+                        }
+                        .xs-full-width {
+                            width: 100%;
+                        }
+                        .xs-stack {
+                            flex-direction: column;
+                        }
+                        .xs-stack > * {
+                            margin-top: 0.5rem;
+                            margin-left: 0 !important;
+                        }
+                        .xs-stack > *:first-child {
+                            margin-top: 0;
+                        }
+                    }
                 `}</style>
             </Head>
             
-            <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
+            <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden overscroll-none">
                 {/* Enhanced Navigation with subtle blur effect */}
-                <nav className="sticky top-0 bg-slate-900/90 backdrop-blur-lg shadow-lg shadow-blue-900/10 z-50 transition-all duration-300 border-b border-blue-800/40">
+                <nav className="sticky top-0 bg-slate-900/90 backdrop-blur-lg shadow-lg shadow-blue-900/10 z-50 transition-all duration-300 border-b border-blue-800/40 safe-top">
                     <div className="container mx-auto px-3 sm:px-6 lg:px-8">
-                        <div className="flex justify-between items-center h-14 sm:h-16 md:h-20">
+                        <div className="flex justify-between items-center h-16 sm:h-16 md:h-20">
                             <div className="flex items-center">
                                 <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
                                     <div className="relative">
-                                        <AppLogoIcon className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg shadow-md transition-transform group-hover:scale-105" />
+                                        <AppLogoIcon className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg shadow-md transition-transform group-hover:scale-105" />
                                         <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></div>
                                     </div>
                                     <span className="text-lg sm:text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
@@ -309,15 +318,15 @@ export default function Welcome() {
                                 </Link>
                             </div>
                             
-                            <div className="flex items-center space-x-2 sm:space-x-4">
+                            <div className="flex items-center space-x-3 sm:space-x-4">
                                 {isAuthenticated ? (
                                     <DashboardButton notificationCount={notificationCount} />
                                 ) : (
                                     <>
-                                        <Button href={route('login')} variant="outline" size="xs" className="text-xs sm:text-sm">
+                                        <Button href={route('login')} variant="outline" size="xs" className="text-sm sm:text-sm min-w-[80px] sm:min-w-[100px]">
                                             Masuk
                                         </Button>
-                                        <Button href={route('register')} variant="primary" size="xs" className="text-xs sm:text-sm">
+                                        <Button href={route('register')} variant="primary" size="xs" className="text-sm sm:text-sm min-w-[80px] sm:min-w-[100px]">
                                             Daftar
                                         </Button>
                                     </>
@@ -392,7 +401,7 @@ export default function Welcome() {
                                     <motion.h1 
                                         variants={animations.fadeInUp}
                                         custom={0}
-                                        className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+                                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
                                     >
                                         <span className="block text-white mb-0 sm:mb-2">
                                             Sistem Informasi
@@ -406,7 +415,7 @@ export default function Welcome() {
                                     <motion.p
                                         variants={animations.fadeInUp}
                                         custom={0.2}
-                                        className="mt-2 sm:mt-4 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto text-center text-xs sm:text-base md:text-lg lg:text-xl text-blue-100"
+                                        className="mt-3 sm:mt-4 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto text-center text-sm sm:text-base md:text-lg lg:text-xl text-blue-100"
                                     >
                                         <span className="block sm:hidden">
                                             Layanan administrasi kependudukan online yang aman, cepat, dan mudah.
@@ -426,13 +435,13 @@ export default function Welcome() {
                                             custom={0.4}
                                             className="mt-3 sm:mt-6 md:mt-8 flex flex-col items-center"
                                         >
-                                            <div className="mb-2 sm:mb-3 md:mb-4 p-2 sm:p-3 md:p-4 bg-blue-600/10 backdrop-blur-sm rounded-lg border border-blue-500/20 max-w-xs sm:max-w-md">
-                                                <p className="text-[11px] sm:text-xs md:text-sm text-blue-200">
+                                            <div className="mb-3 sm:mb-3 md:mb-4 p-3 sm:p-3 md:p-4 bg-blue-600/10 backdrop-blur-sm rounded-lg border border-blue-500/20 max-w-xs sm:max-w-md">
+                                                <p className="text-xs sm:text-xs md:text-sm text-blue-200">
                                                     <span className="text-yellow-300">*</span> Untuk mengajukan dokumen, Anda perlu <span className="text-white font-semibold">Masuk</span> atau <span className="text-white font-semibold">Daftar</span> terlebih dahulu
                                                 </p>
                                             </div>
                                             
-                                            <div className="flex flex-row justify-center space-x-3 sm:space-x-4">
+                                            <div className="flex flex-row justify-center space-x-3 sm:space-x-4 xs-stack">
                                                 <Button 
                                                     href={route('login')} 
                                                     variant="secondary" 
@@ -440,7 +449,7 @@ export default function Welcome() {
                                                     icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
                                                     </svg>}
-                                                    className="text-xs sm:text-sm md:text-base"
+                                                    className="text-sm sm:text-sm md:text-base"
                                                 >
                                                     Masuk
                                                 </Button>
@@ -451,7 +460,7 @@ export default function Welcome() {
                                                     icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4" viewBox="0 0 20 20" fill="currentColor">
                                                         <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
                                                     </svg>}
-                                                    className="text-xs sm:text-sm md:text-base"
+                                                    className="text-sm sm:text-sm md:text-base"
                                                 >
                                                     Daftar
                                                 </Button>
@@ -463,7 +472,7 @@ export default function Welcome() {
                                     <motion.div
                                         variants={animations.fadeInUp}
                                         custom={0.5}
-                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-5 max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto"
+                                        className="mt-5 sm:mt-8 md:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-3 md:gap-5 max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto"
                                     >
                                         {stats.map((stat, index) => (
                                             <StatCard 
@@ -480,7 +489,7 @@ export default function Welcome() {
                                     <motion.div
                                         variants={animations.fadeInUp}
                                         custom={0.6}
-                                        className="mt-4 sm:mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
+                                        className="mt-5 sm:mt-8 md:mt-10 mb-8 sm:mb-12 md:mb-16 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
                                     >
                                         {features.map((feature, index) => (
                                             <FeatureCard 
@@ -497,12 +506,12 @@ export default function Welcome() {
                         </div>
                         
                         {/* Footer section - responsive for all devices */}
-                        <footer className="sticky bottom-0 py-2 sm:py-3 md:py-4 border-t border-blue-800/30 relative z-10 bg-blue-950/50 backdrop-blur-sm">
+                        <footer className="sticky bottom-0 py-3 sm:py-3 md:py-4 border-t border-blue-800/30 relative z-10 bg-blue-950/50 backdrop-blur-sm mt-auto">
                             <div className="container mx-auto px-3 sm:px-6">
-                                <div className="flex flex-col sm:flex-row justify-between items-center">
+                                <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
                                     <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-0">
                                         <AppLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded-md" />
-                                        <span className="text-[10px] sm:text-xs md:text-sm font-medium text-blue-200">
+                                        <span className="text-xs sm:text-xs md:text-sm font-medium text-blue-200">
                                             &copy; {new Date().getFullYear()} SIPEM | <span className="text-blue-300">Pemerintah Republik Indonesia</span>
                                         </span>
                                     </div>
