@@ -29,10 +29,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Beranda',
-        href: '/',
-    },
-    {
         title: 'Layanan Dokumen',
         href: '/penduduk/dashboard',
     },
