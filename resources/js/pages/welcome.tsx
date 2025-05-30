@@ -154,7 +154,7 @@ const FeatureCard = ({ title, description, icon, delay = 0 }: FeatureProps) => {
         <motion.div
             variants={animations.fadeInUp}
             custom={delay}
-            className="bg-blue-900/30 backdrop-blur-sm p-5 sm:p-5 md:p-6 rounded-xl border border-blue-500/20 group hover:bg-blue-800/30 transition-colors duration-300 flex flex-col items-center sm:items-start touch-manipulation"
+            className="bg-blue-900/30 backdrop-blur-sm p-5 sm:p-5 md:p-6 rounded-xl border border-blue-500/20 group hover:bg-blue-800/30 transition-colors duration-300 flex flex-col items-center sm:items-start touch-manipulation h-full"
         >
             {icon && (
                 <div className="mb-3 text-blue-300 group-hover:text-blue-200 transition-colors">
@@ -180,7 +180,7 @@ const StatCard = ({ value, label, icon, delay = 0 }: StatProps) => {
         <motion.div
             variants={animations.fadeInUp}
             custom={delay}
-            className="bg-blue-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-blue-500/10 flex flex-col items-center group hover:bg-blue-800/30 transition-all duration-300 touch-manipulation"
+            className="bg-blue-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-blue-500/10 flex flex-col items-center group hover:bg-blue-800/30 transition-all duration-300 touch-manipulation h-full"
         >
             {icon && (
                 <div className="mb-1 sm:mb-2 text-blue-300 group-hover:text-blue-200 transition-colors">
@@ -267,13 +267,14 @@ export default function Welcome() {
                 <style>{`
                     html, body { overflow: hidden; height: 100vh; }
                     .mobile-content {
-                        height: ${isMobile ? 'calc(100vh - 56px - 50px)' : '100%'};
+                        height: ${isMobile ? 'calc(100vh - 64px)' : '100%'};
                         overflow-y: auto;
                         -webkit-overflow-scrolling: touch;
-                        padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 60px);
+                        padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 80px);
                     }
                     .content-wrapper {
                         min-height: ${isMobile ? 'auto' : '100vh'};
+                        padding-bottom: ${isMobile ? '60px' : '70px'}; /* Add padding to prevent footer overlap */
                     }
                     @supports (-webkit-touch-callout: none) {
                         .mobile-content {
@@ -301,7 +302,7 @@ export default function Welcome() {
                 `}</style>
             </Head>
             
-            <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden overscroll-none">
+            <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden overscroll-none relative">
                 {/* Enhanced Navigation with subtle blur effect */}
                 <nav className="sticky top-0 bg-slate-900/90 backdrop-blur-lg shadow-lg shadow-blue-900/10 z-50 transition-all duration-300 border-b border-blue-800/40 safe-top">
                     <div className="container mx-auto px-3 sm:px-6 lg:px-8">
@@ -337,7 +338,7 @@ export default function Welcome() {
                 </nav>
 
                 {/* Main content - truly fullscreen */}
-                <main className="flex-1 flex flex-col relative">
+                <main className="flex-1 flex flex-col relative overflow-hidden">
                     {/* Enhanced background decorative elements */}
                     {!isMobile && (
                         <>
@@ -390,7 +391,7 @@ export default function Welcome() {
                     {/* Content area with flexible sizing to fit viewport */}
                     <div className="content-wrapper flex-1 flex flex-col justify-between">
                         {/* Center content area with mobile optimization */}
-                        <div className="mobile-content flex-1 flex flex-col justify-center relative z-10">
+                        <div className="mobile-content flex-1 flex flex-col relative z-10">
                             <div className="container mx-auto px-3 sm:px-6 lg:px-8 flex flex-col items-center py-4 sm:py-6 md:py-8">
                                 <motion.div
                                     initial="hidden"
@@ -489,7 +490,7 @@ export default function Welcome() {
                                     <motion.div
                                         variants={animations.fadeInUp}
                                         custom={0.6}
-                                        className="mt-5 sm:mt-8 md:mt-10 mb-8 sm:mb-12 md:mb-16 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
+                                        className="mt-5 sm:mt-8 md:mt-10 mb-12 sm:mb-16 md:mb-20 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4 md:gap-6 max-w-xs sm:max-w-4xl md:max-w-6xl mx-auto"
                                     >
                                         {features.map((feature, index) => (
                                             <FeatureCard 
@@ -506,7 +507,7 @@ export default function Welcome() {
                         </div>
                         
                         {/* Footer section - responsive for all devices */}
-                        <footer className="sticky bottom-0 py-3 sm:py-3 md:py-4 border-t border-blue-800/30 relative z-10 bg-blue-950/50 backdrop-blur-sm mt-auto">
+                        <footer className="fixed bottom-0 left-0 right-0 py-3 sm:py-3 md:py-4 border-t border-blue-800/30 z-20 bg-blue-950/70 backdrop-blur-sm">
                             <div className="container mx-auto px-3 sm:px-6">
                                 <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
                                     <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-0">
