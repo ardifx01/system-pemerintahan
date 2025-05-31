@@ -26,9 +26,7 @@ type FormData = {
     // Digital verification fields (Indonesia 2025)
     email: string;
     no_telp: string;
-    nik_elektronik: boolean;
     persetujuan_data: boolean;
-    scan_dokumen_pendukung: string;
     
     // KTP & Akta Kelahiran fields
     tempat_lahir?: string;
@@ -62,8 +60,7 @@ type FormData = {
 export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, documentType }: Props) {
     // Single state for file uploads
     const [fileUploads, setFileUploads] = useState({
-        ktpFile: null as File | null,
-        dokumenPendukungFile: null as File | null
+        ktpFile: null as File | null
     });
     
     // Initialize form with default values
@@ -77,9 +74,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
         // Digital verification fields
         email: '',
         no_telp: '',
-        nik_elektronik: false,
         persetujuan_data: false,
-        scan_dokumen_pendukung: '',
         
         // Set default values for other fields based on document type
         ...(documentType === 'KTP' || documentType === 'AKTA_KELAHIRAN' ? {
@@ -123,8 +118,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             clearErrors();
             // Reset file uploads
             setFileUploads({
-                ktpFile: null,
-                dokumenPendukungFile: null
+                ktpFile: null
             });
         }
     }, [isOpen, documentType, reset, clearErrors, setData]);
@@ -150,10 +144,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             return;
         }
 
-        if (!fileUploads.dokumenPendukungFile && data.scan_dokumen_pendukung) {
-            toast.error('Dokumen pendukung yang diupload tidak valid');
-            return;
-        }
+
 
         // Enhanced submission process for Indonesia 2025 digital verification requirements
         const submitDocumentRequest = () => {
@@ -161,7 +152,6 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             const formPayload = {
                 ...data,
                 // Convert boolean values to strings for backend compatibility
-                nik_elektronik: data.nik_elektronik ? '1' : '0',
                 persetujuan_data: data.persetujuan_data ? '1' : '0',
             };
             
@@ -664,51 +654,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                             </div>
                         </div>
 
-                        <div className="space-y-1 sm:space-y-1.5">
-                            <Label htmlFor="scan_dokumen_pendukung" className="text-xs sm:text-sm font-medium">Dokumen Pendukung</Label>
-                            <div className="flex items-center justify-center w-full">
-                                <label htmlFor="scan_dokumen_pendukung" className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer bg-background border-border hover:bg-muted/50">
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <svg className="w-8 h-8 mb-2 text-muted-foreground" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                        </svg>
-                                        <p className="mb-1 text-xs sm:text-sm text-muted-foreground">Unggah dokumen pendukung</p>
-                                        <p className="text-xs text-muted-foreground">PDF, JPG atau PNG (Maks. 5MB)</p>
-                                    </div>
-                                    <input 
-                                        id="scan_dokumen_pendukung" 
-                                        name="scan_dokumen_pendukung"
-                                        type="file" 
-                                        className="hidden" 
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        onChange={(e) => {
-                                            if (e.target.files && e.target.files[0]) {
-                                                setFileUploads(prev => ({
-                                                    ...prev,
-                                                    dokumenPendukungFile: e.target.files?.[0] || null
-                                                }));
-                                                setData('scan_dokumen_pendukung', e.target.files[0].name);
-                                            }
-                                        }}
-                                    />
-                                </label>
-                            </div>
-                            {errors.scan_dokumen_pendukung && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.scan_dokumen_pendukung}</p>}
-                            {data.scan_dokumen_pendukung && <p className="text-xs text-muted-foreground mt-1">File dipilih: {data.scan_dokumen_pendukung}</p>}
-                        </div>
-
                         <div className="space-y-2 sm:space-y-3">
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="checkbox"
-                                    id="nik_elektronik"
-                                    name="nik_elektronik"
-                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                    checked={data.nik_elektronik}
-                                    onChange={(e) => setData('nik_elektronik', e.target.checked)}
-                                />
-                                <Label htmlFor="nik_elektronik" className="text-xs sm:text-sm">Aktifkan NIK Elektronik untuk verifikasi digital</Label>
-                            </div>
 
                             <div className="flex items-start space-x-2">
                                 <input
