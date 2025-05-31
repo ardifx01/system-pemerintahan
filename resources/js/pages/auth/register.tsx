@@ -80,26 +80,28 @@ export default function Register() {
         <RegisterLayout>
             <Head title="Pendaftaran | Sistem Pemerintahan" />
             
-            <div className="relative w-full max-w-md mx-auto rounded-lg border border-border/40 bg-gradient-to-br from-card via-card/95 to-card/90 p-8 shadow-lg transition-all duration-300 hover:shadow-xl animate-fade-in">
-                {/* Subtle background effects */}
-                <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-primary/10 blur-[50px] opacity-70"></div>
-                <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-blue-500/10 blur-[50px] opacity-70"></div>
+            <div className="relative w-full max-w-md mx-auto rounded-2xl border border-[#0369a1]/30 bg-[#0c0f12] p-8 shadow-[0_20px_50px_rgba(3,105,161,0.15)] transition-all duration-300 hover:shadow-[0_25px_60px_rgba(3,105,161,0.25)] animate-fade-in backdrop-blur-sm backdrop-filter">
+                {/* Enhanced blue glow effects */}
+                <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-[#0ea5e9]/25 blur-[50px] opacity-70"></div>
+                <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-[#0284c7]/25 blur-[50px] opacity-70"></div>
+                <div className="absolute top-1/2 right-0 -translate-y-1/2 h-32 w-32 rounded-full bg-[#38bdf8]/20 blur-[40px] opacity-60"></div>
                 
                 <div className="relative z-10">
                     <div className="mb-7 flex items-center justify-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-blue-600 text-white shadow-md transition-transform duration-300 hover:scale-105 hover:shadow-lg">
-                            <Shield className="h-8 w-8" />
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#0284c7] text-white shadow-[0_10px_20px_rgba(2,132,199,0.35)] transition-all duration-500 hover:shadow-[0_15px_30px_rgba(2,132,199,0.5)] hover:scale-110 group">
+                            <div className="absolute inset-0 rounded-2xl bg-black opacity-0 transition-opacity duration-500 group-hover:opacity-10"></div>
+                            <Shield className="h-8 w-8 transition-transform duration-500 group-hover:rotate-12" />
                         </div>
                     </div>
                     
-                    <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-foreground">Daftar Akun Baru</h2>
-                    <p className="mb-6 text-center text-sm text-muted-foreground">Isi data lengkap untuk bergabung dengan Sistem Pemerintahan</p>
+                    <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8]">Daftar Akun Baru</h2>
+                    <p className="mb-6 text-center text-sm text-[#a1a1aa]">Isi data lengkap untuk bergabung dengan Sistem Pemerintahan</p>
                 
                     <form className="flex flex-col gap-5" onSubmit={submit}>
                         <div className="grid gap-5">
                             <div className="grid gap-2">
-                                <Label htmlFor="name" className="flex items-center gap-1.5 text-sm font-medium">
-                                    <User className="h-3.5 w-3.5 text-primary/90" />
+                                <Label htmlFor="name" className="flex items-center gap-1.5 text-sm font-medium text-[#f5f5f5]">
+                                    <User className="h-3.5 w-3.5 text-[#38bdf8]" />
                                     Nama Lengkap
                                 </Label>
                                 <div className="relative group">
@@ -124,8 +126,8 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email" className="flex items-center gap-1.5 text-sm font-medium">
-                                    <Mail className="h-3.5 w-3.5 text-primary/90" />
+                                <Label htmlFor="email" className="flex items-center gap-1.5 text-sm font-medium text-[#f5f5f5]">
+                                    <Mail className="h-3.5 w-3.5 text-[#38bdf8]" />
                                     Alamat Email
                                 </Label>
                                 <div className="relative group">
@@ -149,7 +151,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password" className="flex items-center gap-1.5 text-sm font-medium">
+                                <Label htmlFor="password" className="flex items-center gap-1.5 text-sm font-medium text-[#f5f5f5]">
                                     <Lock className="h-3.5 w-3.5 text-primary/90" />
                                     Kata Sandi
                                 </Label>
@@ -200,7 +202,7 @@ export default function Register() {
                                                 />
                                             ))}
                                         </div>
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                        <p className="text-xs text-[#a1a1aa] flex items-center gap-1">
                                             <Info className="h-3 w-3" />
                                             {passwordStrength === 0 && "Kata sandi terlalu lemah"}
                                             {passwordStrength === 1 && "Kata sandi lemah"}
@@ -213,7 +215,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation" className="flex items-center gap-1.5 text-sm font-medium">
+                                <Label htmlFor="password_confirmation" className="flex items-center gap-1.5 text-sm font-medium text-[#f5f5f5]">
                                     <Lock className="h-3.5 w-3.5 text-primary/90" />
                                     Konfirmasi Kata Sandi
                                 </Label>
@@ -253,8 +255,8 @@ export default function Register() {
                             </div>
 
                             {/* Information panel */}
-                            <div className="mt-1 p-3 bg-blue-50 dark:bg-blue-950/40 rounded-md border border-blue-100 dark:border-blue-900/50">
-                                <p className="text-xs text-blue-700 dark:text-blue-400 flex items-start gap-2">
+                            <div className="mt-1 p-3 bg-[#0c4a6e]/30 rounded-md border border-[#0284c7]/30">
+                                <p className="text-xs text-[#38bdf8] flex items-start gap-2">
                                     <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
                                     <span>
                                         Daftar sebagai penduduk untuk mengakses layanan pengajuan dokumen seperti KTP, KK, Akta Kelahiran, dan Akta Kematian secara online.
@@ -264,7 +266,7 @@ export default function Register() {
 
                             <Button 
                                 type="submit" 
-                                className="mt-2 w-full h-12 text-base font-medium bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 transition-all duration-300 transform hover:-translate-y-[2px] active:translate-y-[1px] shadow-[0_4px_12px_rgba(59,130,246,0.25)] hover:shadow-[0_6px_16px_rgba(59,130,246,0.35)]" 
+                                className="mt-2 w-full h-14 text-base font-medium bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] transition-all duration-500 transform hover:-translate-y-[3px] active:translate-y-[1px] shadow-[0_10px_25px_rgba(2,132,199,0.35)] hover:shadow-[0_15px_30px_rgba(2,132,199,0.5)] rounded-xl" 
                                 tabIndex={5} 
                                 disabled={processing || !formValid}
                             >
@@ -276,15 +278,15 @@ export default function Register() {
                                 ) : (
                                     <div className="flex items-center justify-center gap-2">
                                         <Shield className="h-5 w-5" />
-                                        <span>Daftar Akun</span>
+                                        <span className="font-semibold">Daftar Akun</span>
                                     </div>
                                 )}
                             </Button>
                         </div>
 
-                        <div className="text-muted-foreground text-center text-sm">
+                        <div className="text-[#a1a1aa] text-center text-sm mt-2">
                             Sudah memiliki akun?{' '}
-                            <TextLink href={route('login')} tabIndex={6} className="font-medium text-primary hover:text-primary/80 transition-colors duration-200">
+                            <TextLink href={route('login')} tabIndex={6} className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#0ea5e9] transition-all duration-300 hover:translate-x-0.5 inline-block">
                                 Masuk sekarang
                             </TextLink>
                         </div>
@@ -293,15 +295,15 @@ export default function Register() {
             </div>
             
             <div className="mt-6 text-center space-y-2 animate-fade-in-delayed">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#a1a1aa]">
                     &copy; {new Date().getFullYear()} Sistem Pemerintahan Indonesia
                 </p>
-                <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground/80">
-                    <TextLink href="#" className="hover:text-primary transition-colors duration-200">Kebijakan Privasi</TextLink>
+                <div className="flex items-center justify-center gap-4 text-xs text-[#a1a1aa]/80">
+                    <TextLink href="#" className="hover:text-[#38bdf8] transition-colors duration-200">Kebijakan Privasi</TextLink>
                     <span>•</span>
-                    <TextLink href="#" className="hover:text-primary transition-colors duration-200">Syarat & Ketentuan</TextLink>
+                    <TextLink href="#" className="hover:text-[#38bdf8] transition-colors duration-200">Syarat & Ketentuan</TextLink>
                     <span>•</span>
-                    <TextLink href="#" className="hover:text-primary transition-colors duration-200">Bantuan</TextLink>
+                    <TextLink href="#" className="hover:text-[#38bdf8] transition-colors duration-200">Bantuan</TextLink>
                 </div>
             </div>
         </RegisterLayout>
