@@ -12,16 +12,14 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     onFormSuccess: () => void;
-    documentType: DocumentType | 'KK';
+    documentType: DocumentType;
 }
 
 // Form data type with clear field grouping for better organization
-// Define KK as a valid document type
-type DocumentTypeExtended = DocumentType | 'KK';
 
 type FormData = {
     // Common fields for all document types
-    type: DocumentTypeExtended;
+    type: DocumentType;
     nik: string;
     nama: string;
     alamat: string;
@@ -135,6 +133,9 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
         e.preventDefault();
         clearErrors();
         setHasAttemptedSubmit(true);
+
+        // Debug the current form data
+        console.log('Form data to be submitted:', data);
         
         // Validation for all document types
         const commonFieldValidation = () => {
@@ -181,7 +182,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
         const typeSpecificValidation = () => {
             let isValid = true;
             
-            switch (documentType as DocumentTypeExtended) {
+            switch (documentType) {
                 case 'KTP':
                     // Validate KTP fields
                     if (!data.jenis_permohonan_ktp) {
@@ -279,17 +280,15 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             return;
         }
 
-        // Prepare data for submission
-        const prepareFormData = () => {
-            // Fix the boolean value for persetujuan_data to ensure compatibility with the backend
-            return {
-                ...data,
-                // Convert boolean values to actual booleans for proper JSON serialization
-                persetujuan_data: Boolean(data.persetujuan_data),
-                // Make sure scan_ktp is properly handled if a file was uploaded
-                ...(fileUploads.ktpFile ? { scan_ktp: fileUploads.ktpFile.name } : {})
-            };
-        };
+        // Make sure persetujuan_data is a proper boolean before submission
+        setData('persetujuan_data', Boolean(data.persetujuan_data));
+        
+        // For KTP renewals, set the scan_ktp field to the file name when a file is uploaded
+        if (fileUploads.ktpFile && documentType === 'KTP' && data.jenis_permohonan_ktp === 'PERPANJANGAN') {
+            // In a real implementation with file uploads, we would need to handle the file separately
+            // For now, just set the name in the data
+            setData('scan_ktp', fileUploads.ktpFile.name);
+        }
         
         // Show loading state with modern design for digital verification
         toast.loading('Melakukan verifikasi digital...', {
@@ -301,13 +300,12 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             },
         });
         
-        // Submit the form with proper error handling and fixed data structure
+        // Submit the form with proper error handling
         setTimeout(() => {
             toast.dismiss();
             
-            // Submit to backend
+            // Submit using Inertia useForm's post method
             post('/penduduk/documents', {
-                ...prepareFormData(),
                 onSuccess: () => {
                     // Close form and notify user
                     onClose();
