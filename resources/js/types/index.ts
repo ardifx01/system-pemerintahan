@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 
-export type DocumentType = 'KTP' | 'KK' | 'AKTA_KELAHIRAN' | 'AKTA_KEMATIAN';
+export type DocumentType = 'KTP' | 'KARTU_KELUARGA' | 'AKTA_KELAHIRAN' | 'AKTA_KEMATIAN';
 export type DocumentStatus = 'DIPROSES' | 'SELESAI' | 'DITOLAK';
 
 export interface Document {
