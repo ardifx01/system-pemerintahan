@@ -41,43 +41,77 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        // Buat aturan validasi dasar
+        // Buat aturan validasi dasar untuk semua jenis dokumen
         $rules = [
             'type' => 'required|in:KTP,KK,AKTA_KELAHIRAN,AKTA_KEMATIAN',
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
-            'tempat_lahir' => 'required_if:type,KTP,AKTA_KELAHIRAN|string|nullable',
-            'tanggal_lahir' => 'required_if:type,KTP,AKTA_KELAHIRAN|date|nullable',
-            'nama_ayah' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
-            'nama_ibu' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
-            'nama_almarhum' => 'required_if:type,AKTA_KEMATIAN|string|nullable',
-            'tanggal_meninggal' => 'required_if:type,AKTA_KEMATIAN|date|nullable',
+            
+            // Digital verification fields (Indonesia 2025)
+            'email' => 'required|email|max:255',
+            'no_telp' => 'required|string|max:20',
+            'persetujuan_data' => 'required|boolean',
         ];
         
-        // Tambahkan validasi khusus untuk KTP
-        if ($request->type === 'KTP') {
-            $rules['jenis_permohonan_ktp'] = 'required|in:BARU,PERPANJANGAN,PENGGANTIAN';
-            
-            // NIK wajib kecuali untuk pembuatan baru
-            if ($request->jenis_permohonan_ktp !== 'BARU') {
+        // Tambahkan validasi berdasarkan jenis dokumen
+        switch ($request->type) {
+            case 'KTP':
+                // KTP fields
+                $rules['jenis_permohonan_ktp'] = 'required|in:BARU,PERPANJANGAN,PENGGANTIAN';
+                $rules['tempat_lahir'] = 'required|string|max:100';
+                $rules['tanggal_lahir'] = 'required|date';
+                $rules['jenis_kelamin'] = 'required|string|in:Laki-laki,Perempuan';
+                $rules['agama'] = 'required|string';
+                $rules['status_perkawinan'] = 'required|string';
+                $rules['pekerjaan'] = 'required|string';
+                $rules['kewarganegaraan'] = 'required|string';
+                
+                // NIK wajib kecuali untuk pembuatan baru
+                if ($request->jenis_permohonan_ktp !== 'BARU') {
+                    $rules['nik'] = 'required|string|size:16';
+                } else {
+                    $rules['nik'] = 'nullable|string|size:16';
+                }
+                
+                // Scan KTP wajib untuk perpanjangan
+                if ($request->jenis_permohonan_ktp === 'PERPANJANGAN') {
+                    $rules['scan_ktp'] = 'required|string';
+                }
+                break;
+                
+            case 'AKTA_KELAHIRAN':
+                // Akta Kelahiran fields
                 $rules['nik'] = 'required|string|size:16';
-            } else {
-                $rules['nik'] = 'nullable|string|size:16';
-            }
-            
-            // Scan KTP wajib untuk perpanjangan
-            if ($request->jenis_permohonan_ktp === 'PERPANJANGAN') {
-                $rules['scan_ktp'] = 'required|string';
-            }
-        } else {
-            // Untuk dokumen selain KTP, NIK tetap wajib
-            $rules['nik'] = 'required|string|size:16';
+                $rules['tempat_lahir'] = 'required|string|max:100';
+                $rules['tanggal_lahir'] = 'required|date';
+                $rules['jenis_kelamin'] = 'required|string|in:Laki-laki,Perempuan';
+                $rules['nama_ayah'] = 'required|string|max:255';
+                $rules['nama_ibu'] = 'required|string|max:255';
+                break;
+                
+            case 'AKTA_KEMATIAN':
+                // Akta Kematian fields
+                $rules['nik'] = 'required|string|size:16';
+                $rules['nama_almarhum'] = 'required|string|max:255';
+                $rules['tanggal_meninggal'] = 'required|date';
+                break;
+                
+            case 'KK':
+                // Kartu Keluarga fields
+                $rules['nik'] = 'required|string|size:16';
+                $rules['no_kk'] = 'nullable|string|size:16';
+                $rules['nama_kepala_keluarga'] = 'required|string|max:255';
+                $rules['hubungan_keluarga'] = 'nullable|string';
+                $rules['pendidikan'] = 'nullable|string';
+                $rules['golongan_darah'] = 'nullable|string';
+                $rules['anggota_keluarga'] = 'nullable|string';
+                break;
         }
         
         $validated = $request->validate($rules);
 
         try {
-            // Prepare data for document creation
+            // Prepare common data for document creation
             $documentData = [
                 'user_id' => Auth::id(),
                 'type' => $validated['type'],
@@ -85,27 +119,73 @@ class DocumentController extends Controller
                 'submitted_at' => now(),
                 'nama' => $validated['nama'],
                 'alamat' => $validated['alamat'],
-                'tempat_lahir' => $validated['tempat_lahir'] ?? null,
-                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-                'nama_ayah' => $validated['nama_ayah'] ?? null,
-                'nama_ibu' => $validated['nama_ibu'] ?? null,
-                'nama_almarhum' => $validated['nama_almarhum'] ?? null,
-                'tanggal_meninggal' => $validated['tanggal_meninggal'] ?? null,
+                
+                // Digital verification fields
+                'email' => $validated['email'],
+                'no_telp' => $validated['no_telp'],
+                'persetujuan_data' => $validated['persetujuan_data'],
             ];
             
-            // Tambahkan NIK jika ada (opsional untuk KTP baru)
+            // Add NIK if provided
             if (isset($validated['nik'])) {
                 $documentData['nik'] = $validated['nik'];
             }
             
-            // Tambahkan jenis permohonan KTP jika ada
-            if ($validated['type'] === 'KTP' && isset($validated['jenis_permohonan_ktp'])) {
-                $documentData['jenis_permohonan_ktp'] = $validated['jenis_permohonan_ktp'];
-            }
-            
-            // Tambahkan scan KTP jika ada (wajib untuk perpanjangan KTP)
-            if (isset($validated['scan_ktp'])) {
-                $documentData['scan_ktp'] = $validated['scan_ktp'];
+            // Add fields based on document type
+            switch ($validated['type']) {
+                case 'KTP':
+                    // KTP fields
+                    $documentData['tempat_lahir'] = $validated['tempat_lahir'];
+                    $documentData['tanggal_lahir'] = $validated['tanggal_lahir'];
+                    $documentData['jenis_kelamin'] = $validated['jenis_kelamin'];
+                    $documentData['jenis_permohonan_ktp'] = $validated['jenis_permohonan_ktp'];
+                    $documentData['agama'] = $validated['agama'];
+                    $documentData['status_perkawinan'] = $validated['status_perkawinan'];
+                    $documentData['pekerjaan'] = $validated['pekerjaan'];
+                    $documentData['kewarganegaraan'] = $validated['kewarganegaraan'];
+                    
+                    // Add scan KTP if provided (required for renewal)
+                    if (isset($validated['scan_ktp'])) {
+                        $documentData['scan_ktp'] = $validated['scan_ktp'];
+                    }
+                    break;
+                    
+                case 'AKTA_KELAHIRAN':
+                    // Akta Kelahiran fields
+                    $documentData['tempat_lahir'] = $validated['tempat_lahir'];
+                    $documentData['tanggal_lahir'] = $validated['tanggal_lahir'];
+                    $documentData['jenis_kelamin'] = $validated['jenis_kelamin'];
+                    $documentData['nama_ayah'] = $validated['nama_ayah'];
+                    $documentData['nama_ibu'] = $validated['nama_ibu'];
+                    break;
+                    
+                case 'AKTA_KEMATIAN':
+                    // Akta Kematian fields
+                    $documentData['nama_almarhum'] = $validated['nama_almarhum'];
+                    $documentData['tanggal_meninggal'] = $validated['tanggal_meninggal'];
+                    break;
+                    
+                case 'KK':
+                    // Kartu Keluarga fields
+                    if (isset($validated['no_kk'])) {
+                        $documentData['no_kk'] = $validated['no_kk'];
+                    }
+                    $documentData['nama_kepala_keluarga'] = $validated['nama_kepala_keluarga'];
+                    
+                    // Optional KK fields
+                    if (isset($validated['hubungan_keluarga'])) {
+                        $documentData['hubungan_keluarga'] = $validated['hubungan_keluarga'];
+                    }
+                    if (isset($validated['pendidikan'])) {
+                        $documentData['pendidikan'] = $validated['pendidikan'];
+                    }
+                    if (isset($validated['golongan_darah'])) {
+                        $documentData['golongan_darah'] = $validated['golongan_darah'];
+                    }
+                    if (isset($validated['anggota_keluarga'])) {
+                        $documentData['anggota_keluarga'] = $validated['anggota_keluarga'];
+                    }
+                    break;
             }
             
             $document = Document::create($documentData);
