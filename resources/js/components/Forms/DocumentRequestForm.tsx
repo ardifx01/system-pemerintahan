@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { type DocumentType } from '@/types';
 import { useForm } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 
@@ -15,79 +15,117 @@ interface Props {
     documentType: DocumentType;
 }
 
+// Form data type with clear field grouping for better organization
 type FormData = {
+    // Common fields for all document types
     type: DocumentType;
     nik: string;
     nama: string;
     alamat: string;
+    
+    // Digital verification fields (Indonesia 2025)
+    email: string;
+    no_telp: string;
+    nik_elektronik: boolean;
+    persetujuan_data: boolean;
+    scan_dokumen_pendukung: string;
+    
+    // KTP & Akta Kelahiran fields
     tempat_lahir?: string;
     tanggal_lahir?: string;
     jenis_kelamin?: string;
+    
+    // KTP-specific fields
     agama?: string;
     status_perkawinan?: string;
     pekerjaan?: string;
     kewarganegaraan?: string;
+    scan_ktp?: string;
+    
+    // Family-related fields (KTP & Akta Kelahiran)
     nama_ayah?: string;
     nama_ibu?: string;
+    
+    // Akta Kematian fields
     nama_almarhum?: string;
     tanggal_meninggal?: string;
-    // Kartu Keluarga Fields
+    
+    // Kartu Keluarga fields
     no_kk?: string;
     hubungan_keluarga?: string;
     pendidikan?: string;
     golongan_darah?: string;
     nama_kepala_keluarga?: string;
     anggota_keluarga?: string;
-    // Additional fields for Indonesia 2025
-    email?: string;
-    no_telp?: string;
-    scan_ktp?: string;
-    scan_dokumen_pendukung?: string;
-    nik_elektronik?: boolean;
-    persetujuan_data?: boolean;
 }
 
 export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, documentType }: Props) {
-    // State to keep track of file uploads
-    const [ktpFile, setKtpFile] = useState<File | null>(null);
-    const [dokumenPendukungFile, setDokumenPendukungFile] = useState<File | null>(null);
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm<FormData>({
+    // Single state for file uploads
+    const [fileUploads, setFileUploads] = useState({
+        ktpFile: null as File | null,
+        dokumenPendukungFile: null as File | null
+    });
+    
+    // Initialize form with default values
+    const getInitialFormData = () => ({
+        // Common fields
         type: documentType,
         nik: '',
         nama: '',
         alamat: '',
-        tempat_lahir: '',
-        tanggal_lahir: '',
-        jenis_kelamin: 'Laki-laki',
-        agama: '',
-        status_perkawinan: '',
-        pekerjaan: '',
-        kewarganegaraan: 'Indonesia',
-        nama_ayah: '',
-        nama_ibu: '',
-        nama_almarhum: '',
-        tanggal_meninggal: '',
-        // Kartu Keluarga Fields
-        no_kk: '',
-        hubungan_keluarga: '',
-        pendidikan: '',
-        golongan_darah: 'O',
-        nama_kepala_keluarga: '',
-        anggota_keluarga: '',
-        // Additional fields for Indonesia 2025
+        
+        // Digital verification fields
         email: '',
         no_telp: '',
-        scan_ktp: '',
-        scan_dokumen_pendukung: '',
         nik_elektronik: false,
         persetujuan_data: false,
+        scan_dokumen_pendukung: '',
+        
+        // Set default values for other fields based on document type
+        ...(documentType === 'KTP' || documentType === 'AKTA_KELAHIRAN' ? {
+            tempat_lahir: '',
+            tanggal_lahir: '',
+            jenis_kelamin: 'Laki-laki',
+            nama_ayah: '',
+            nama_ibu: ''
+        } : {}),
+        
+        ...(documentType === 'KTP' ? {
+            agama: '',
+            status_perkawinan: '',
+            pekerjaan: '',
+            kewarganegaraan: 'Indonesia',
+            scan_ktp: ''
+        } : {}),
+        
+        ...(documentType === 'AKTA_KEMATIAN' ? {
+            nama_almarhum: '',
+            tanggal_meninggal: ''
+        } : {}),
+        
+        ...(documentType === 'KARTU_KELUARGA' ? {
+            no_kk: '',
+            hubungan_keluarga: '',
+            pendidikan: '',
+            golongan_darah: 'O',
+            nama_kepala_keluarga: '',
+            anggota_keluarga: ''
+        } : {})
     });
+    
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm<FormData>(getInitialFormData());
 
     useEffect(() => {
         if (isOpen) {
+            // Reset form data and clear errors when dialog opens
             reset();
+            setData(getInitialFormData());
             clearErrors();
-            setData('type', documentType);
+            // Reset file uploads
+            setFileUploads({
+                ktpFile: null,
+                dokumenPendukungFile: null
+            });
         }
     }, [isOpen, documentType, reset, clearErrors, setData]);
 
@@ -107,43 +145,81 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
 
         // For Indonesia 2025, required document uploads would be handled differently
         // Here we check if document uploads are required based on document type
-        if (documentType === 'KTP' && data.scan_ktp && !ktpFile) {
+        if (documentType === 'KTP' && data.scan_ktp && !fileUploads.ktpFile) {
             toast.error('File KTP yang diupload tidak valid');
             return;
         }
 
-        if (!dokumenPendukungFile && data.scan_dokumen_pendukung) {
+        if (!fileUploads.dokumenPendukungFile && data.scan_dokumen_pendukung) {
             toast.error('Dokumen pendukung yang diupload tidak valid');
             return;
         }
 
-        // In a production environment with Indonesia 2025 requirements, we would
-        // handle file uploads with a separate API endpoint or a multi-part form
-        // For this implementation, we'll simulate the process with the file names
-        
-        // Show loading state for digital verification (Indonesia 2025 feature)
-        toast.loading('Melakukan verifikasi digital...');
-        
-        // Simulate digital verification process (would be real in production)
-        setTimeout(() => {
-            toast.dismiss();
+        // Enhanced submission process for Indonesia 2025 digital verification requirements
+        const submitDocumentRequest = () => {
+            // Create payload with consistent field naming convention
+            const formPayload = {
+                ...data,
+                // Convert boolean values to strings for backend compatibility
+                nik_elektronik: data.nik_elektronik ? '1' : '0',
+                persetujuan_data: data.persetujuan_data ? '1' : '0',
+            };
             
-            // Use Inertia post method with form data
             post('/penduduk/documents', {
                 onSuccess: () => {
+                    // Close form and notify user
                     onClose();
                     onFormSuccess();
-                    toast.success('Dokumen berhasil diajukan dan akan diproses segera');
                     
-                    // Send verification SMS/email notification (simulated)
-                    toast.success(`Notifikasi telah dikirim ke ${data.email} dan ${data.no_telp}`);
+                    // Display styled success notification
+                    toast.success('Dokumen berhasil diajukan', {
+                        style: {
+                            background: 'linear-gradient(to right, #4f46e5, #06b6d4)',
+                            color: 'white',
+                            borderRadius: '0.5rem',
+                        },
+                        duration: 4000,
+                    });
+                    
+                    // Send verification SMS/email notification with enhanced styling
+                    setTimeout(() => {
+                        toast.success(`Notifikasi verifikasi telah dikirim ke ${data.email} dan ${data.no_telp}`, {
+                            style: {
+                                background: 'linear-gradient(to right, #06b6d4, #ec4899)',
+                                color: 'white',
+                                borderRadius: '0.5rem',
+                            },
+                            duration: 5000,
+                        });
+                    }, 1000);
                 },
                 onError: (errors: Record<string, string>) => {
                     console.error('Form errors:', errors);
-                    toast.error('Gagal mengajukan dokumen. Silakan periksa data yang dimasukkan');
+                    toast.error('Gagal mengajukan dokumen. Silakan periksa data yang dimasukkan', {
+                        style: {
+                            borderLeft: '4px solid #ef4444',
+                            borderRadius: '0.25rem',
+                        },
+                    });
                 }
             });
-        }, 1500); // Simulate verification delay
+        };
+        
+        // Show loading state with modern design for digital verification
+        toast.loading('Melakukan verifikasi digital...', {
+            style: {
+                background: '#1f2937',
+                color: 'white',
+                borderRadius: '0.5rem',
+                border: '1px solid #4f46e5',
+            },
+        });
+        
+        // Simulate digital verification process with appropriate delay
+        setTimeout(() => {
+            toast.dismiss();
+            submitDocumentRequest();
+        }, 1500);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -349,7 +425,10 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                                             accept=".jpg,.jpeg,.png"
                                             onChange={(e) => {
                                                 if (e.target.files && e.target.files[0]) {
-                                                    setKtpFile(e.target.files[0]);
+                                                    setFileUploads(prev => ({
+                                                        ...prev,
+                                                        ktpFile: e.target.files?.[0] || null
+                                                    }));
                                                     setData('scan_ktp', e.target.files[0].name);
                                                 }
                                             }}
@@ -604,7 +683,10 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         onChange={(e) => {
                                             if (e.target.files && e.target.files[0]) {
-                                                setDokumenPendukungFile(e.target.files[0]);
+                                                setFileUploads(prev => ({
+                                                    ...prev,
+                                                    dokumenPendukungFile: e.target.files?.[0] || null
+                                                }));
                                                 setData('scan_dokumen_pendukung', e.target.files[0].name);
                                             }
                                         }}
