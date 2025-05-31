@@ -34,6 +34,7 @@ type FormData = {
     jenis_kelamin?: string;
     
     // KTP-specific fields
+    jenis_permohonan_ktp?: string;
     agama?: string;
     status_perkawinan?: string;
     pekerjaan?: string;
@@ -86,6 +87,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
         } : {}),
         
         ...(documentType === 'KTP' ? {
+            jenis_permohonan_ktp: 'BARU',
             agama: '',
             status_perkawinan: '',
             pekerjaan: '',
@@ -227,20 +229,40 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                     <p className="text-xs sm:text-sm text-muted-foreground text-center mt-1">Lengkapi data untuk pengajuan dokumen</p>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                    {documentType === 'KTP' && (
+                        <div className="space-y-1 sm:space-y-1.5 mb-3">
+                            <Label htmlFor="jenis_permohonan_ktp" className="text-xs sm:text-sm font-medium">Jenis Permohonan</Label>
+                            <select 
+                                id="jenis_permohonan_ktp"
+                                name="jenis_permohonan_ktp"
+                                className="flex h-9 sm:h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-xs sm:text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={data.jenis_permohonan_ktp}
+                                onChange={(e) => setData('jenis_permohonan_ktp', e.target.value)}
+                                required
+                            >
+                                <option value="BARU">Pembuatan Baru</option>
+                                <option value="PERPANJANGAN">Perpanjangan</option>
+                                <option value="PENGGANTIAN">Penggantian (Hilang/Rusak)</option>
+                            </select>
+                            {errors.jenis_permohonan_ktp && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.jenis_permohonan_ktp}</p>}
+                        </div>
+                    )}
+                    
                     <div className="md:grid md:grid-cols-2 md:gap-4">
                         <div className="space-y-1 sm:space-y-1.5 mb-3 md:mb-0">
-                            <Label htmlFor="nik" className="text-xs sm:text-sm font-medium">NIK</Label>
+                            <Label htmlFor="nik" className="text-xs sm:text-sm font-medium">NIK {documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU' ? '(Opsional)' : ''}</Label>
                             <Input
                                 id="nik"
                                 name="nik"
                                 value={data.nik}
                                 onChange={handleChange}
                                 maxLength={16}
-                                required
+                                required={!(documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU')}
                                 className="h-9 sm:h-10 text-xs sm:text-sm px-3"
-                                placeholder="Masukkan NIK (16 Digit)"
+                                placeholder={documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU' ? "Kosongkan jika belum memiliki NIK" : "Masukkan NIK (16 Digit)"}
                             />
                             {errors.nik && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.nik}</p>}
+                            {documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU' && <p className="text-xs text-muted-foreground mt-1">NIK akan diberikan setelah proses pembuatan KTP</p>}
                         </div>
 
                         <div className="space-y-1 sm:space-y-1.5">
