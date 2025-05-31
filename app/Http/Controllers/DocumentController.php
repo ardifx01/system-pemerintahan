@@ -47,10 +47,10 @@ class DocumentController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
             
-            // Digital verification fields (Indonesia 2025)
+            // Digital verification fields
             'email' => 'required|email|max:255',
             'no_telp' => 'required|string|max:20',
-            'persetujuan_data' => 'required|boolean',
+            'persetujuan_data' => 'required',
         ];
         
         // Tambahkan validasi berdasarkan jenis dokumen
@@ -131,6 +131,17 @@ class DocumentController extends Controller
                 $documentData['nik'] = $validated['nik'];
             }
             
+            // Convert persetujuan_data to boolean if it's a string
+            if (isset($validated['persetujuan_data'])) {
+                if (is_string($validated['persetujuan_data']) && ($validated['persetujuan_data'] === '1' || $validated['persetujuan_data'] === 'true')) {
+                    $documentData['persetujuan_data'] = true;
+                } else if (is_string($validated['persetujuan_data']) && ($validated['persetujuan_data'] === '0' || $validated['persetujuan_data'] === 'false')) {
+                    $documentData['persetujuan_data'] = false;
+                } else {
+                    $documentData['persetujuan_data'] = (bool)$validated['persetujuan_data'];
+                }
+            }
+            
             // Add fields based on document type
             switch ($validated['type']) {
                 case 'KTP':
@@ -144,8 +155,12 @@ class DocumentController extends Controller
                     $documentData['pekerjaan'] = $validated['pekerjaan'];
                     $documentData['kewarganegaraan'] = $validated['kewarganegaraan'];
                     
-                    // Add scan KTP if provided (required for renewal)
-                    if (isset($validated['scan_ktp'])) {
+                    // Handle file uploads for KTP renewal
+                    if ($request->hasFile('scan_ktp')) {
+                        $path = $request->file('scan_ktp')->store('ktp_scans', 'public');
+                        $documentData['scan_ktp'] = $path;
+                    } else if (isset($validated['scan_ktp']) && is_string($validated['scan_ktp'])) {
+                        // Handle case where the frontend sends a filename
                         $documentData['scan_ktp'] = $validated['scan_ktp'];
                     }
                     break;
@@ -185,9 +200,9 @@ class DocumentController extends Controller
                     if (isset($validated['anggota_keluarga'])) {
                         $documentData['anggota_keluarga'] = $validated['anggota_keluarga'];
                     }
-                    break;
             }
             
+            // Simpan dokumen baru
             $document = Document::create($documentData);
 
             if ($request->wantsJson()) {

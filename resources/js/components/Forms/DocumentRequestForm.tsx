@@ -12,13 +12,16 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     onFormSuccess: () => void;
-    documentType: DocumentType;
+    documentType: DocumentType | 'KK';
 }
 
 // Form data type with clear field grouping for better organization
+// Define KK as a valid document type
+type DocumentTypeExtended = DocumentType | 'KK';
+
 type FormData = {
     // Common fields for all document types
-    type: DocumentType;
+    type: DocumentTypeExtended;
     nik: string;
     nama: string;
     alamat: string;
@@ -100,7 +103,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             tanggal_meninggal: ''
         } : {}),
         
-        ...(documentType === 'KARTU_KELUARGA' ? {
+        ...(documentType === 'KK' ? {
             no_kk: '',
             hubungan_keluarga: '',
             pendidikan: '',
@@ -111,6 +114,9 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
     });
     
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm<FormData>(getInitialFormData());
+    
+    // Track form submission attempt to improve user feedback
+    const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -127,45 +133,181 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        clearErrors();
+        setHasAttemptedSubmit(true);
         
-        // Validate digital verification requirements for Indonesia 2025
-        if (!data.persetujuan_data) {
-            toast.error('Anda harus menyetujui ketentuan penggunaan data');
-            return;
-        }
-        
-        if (!data.email || !data.no_telp) {
-            toast.error('Email dan nomor telepon wajib diisi untuk verifikasi digital');
-            return;
-        }
-
-        // Validasi khusus berdasarkan jenis permohonan KTP
-        if (documentType === 'KTP') {
-            // Validasi khusus untuk perpanjangan: wajib upload scan KTP
-            if (data.jenis_permohonan_ktp === 'PERPANJANGAN' && !fileUploads.ktpFile) {
-                toast.error('Untuk perpanjangan KTP, scan KTP lama wajib diunggah');
-                return;
+        // Validation for all document types
+        const commonFieldValidation = () => {
+            let isValid = true;
+            
+            // Check required common fields
+            if (!data.nama) {
+                setData('nama', '');
+                toast.error('Nama lengkap wajib diisi');
+                isValid = false;
             }
             
-            // Validasi NIK untuk perpanjangan dan penggantian
-            if ((data.jenis_permohonan_ktp === 'PERPANJANGAN' || data.jenis_permohonan_ktp === 'PENGGANTIAN') && !data.nik) {
-                toast.error('Untuk perpanjangan/penggantian KTP, NIK wajib diisi');
-                return;
+            if (!data.alamat) {
+                setData('alamat', '');
+                toast.error('Alamat wajib diisi');
+                isValid = false;
             }
+            
+            // Digital verification fields
+            if (!data.email) {
+                setData('email', '');
+                toast.error('Email wajib diisi untuk verifikasi digital');
+                isValid = false;
+            } else if (!/^\S+@\S+\.\S+$/.test(data.email)) {
+                toast.error('Format email tidak valid');
+                isValid = false;
+            }
+            
+            if (!data.no_telp) {
+                setData('no_telp', '');
+                toast.error('Nomor telepon wajib diisi untuk verifikasi digital');
+                isValid = false;
+            }
+            
+            if (!data.persetujuan_data) {
+                toast.error('Anda harus menyetujui ketentuan penggunaan data');
+                isValid = false;
+            }
+            
+            return isValid;
+        };
+        
+        // Type-specific validation
+        const typeSpecificValidation = () => {
+            let isValid = true;
+            
+            switch (documentType as DocumentTypeExtended) {
+                case 'KTP':
+                    // Validate KTP fields
+                    if (!data.jenis_permohonan_ktp) {
+                        toast.error('Jenis permohonan KTP wajib dipilih');
+                        isValid = false;
+                    }
+                    
+                    // NIK validation for renewal/replacement
+                    if ((data.jenis_permohonan_ktp === 'PERPANJANGAN' || data.jenis_permohonan_ktp === 'PENGGANTIAN')) {
+                        if (!data.nik) {
+                            toast.error('NIK wajib diisi untuk perpanjangan/penggantian KTP');
+                            isValid = false;
+                        } else if (data.nik.length !== 16) {
+                            toast.error('NIK harus terdiri dari 16 digit');
+                            isValid = false;
+                        }
+                    }
+                    
+                    // Required KTP fields
+                    if (!data.tempat_lahir) {
+                        toast.error('Tempat lahir wajib diisi');
+                        isValid = false;
+                    }
+                    
+                    if (!data.tanggal_lahir) {
+                        toast.error('Tanggal lahir wajib diisi');
+                        isValid = false;
+                    }
+                    
+                    // Scan KTP validation for renewal
+                    if (data.jenis_permohonan_ktp === 'PERPANJANGAN' && !fileUploads.ktpFile && !data.scan_ktp) {
+                        toast.error('Untuk perpanjangan KTP, scan KTP lama wajib diunggah');
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'AKTA_KELAHIRAN':
+                    // Required fields for birth certificate
+                    if (!data.nik || data.nik.length !== 16) {
+                        toast.error('NIK harus terdiri dari 16 digit');
+                        isValid = false;
+                    }
+                    if (!data.tempat_lahir) {
+                        toast.error('Tempat lahir wajib diisi');
+                        isValid = false;
+                    }
+                    if (!data.tanggal_lahir) {
+                        toast.error('Tanggal lahir wajib diisi');
+                        isValid = false;
+                    }
+                    if (!data.nama_ayah) {
+                        toast.error('Nama ayah wajib diisi');
+                        isValid = false;
+                    }
+                    if (!data.nama_ibu) {
+                        toast.error('Nama ibu wajib diisi');
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'AKTA_KEMATIAN':
+                    // Required fields for death certificate
+                    if (!data.nik || data.nik.length !== 16) {
+                        toast.error('NIK harus terdiri dari 16 digit');
+                        isValid = false;
+                    }
+                    if (!data.nama_almarhum) {
+                        toast.error('Nama almarhum wajib diisi');
+                        isValid = false;
+                    }
+                    if (!data.tanggal_meninggal) {
+                        toast.error('Tanggal meninggal wajib diisi');
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'KK':
+                    // Required fields for family card
+                    if (!data.nik || data.nik.length !== 16) {
+                        toast.error('NIK harus terdiri dari 16 digit');
+                        isValid = false;
+                    }
+                    if (!data.nama_kepala_keluarga) {
+                        toast.error('Nama kepala keluarga wajib diisi');
+                        isValid = false;
+                    }
+                    break;
+            }
+            
+            return isValid;
+        };
+        
+        // Run all validations
+        if (!commonFieldValidation() || !typeSpecificValidation()) {
+            return;
         }
 
-
-
-        // Enhanced submission process for Indonesia 2025 digital verification requirements
-        const submitDocumentRequest = () => {
-            // Create payload with consistent field naming convention
-            const formPayload = {
+        // Prepare data for submission
+        const prepareFormData = () => {
+            // Fix the boolean value for persetujuan_data to ensure compatibility with the backend
+            return {
                 ...data,
-                // Convert boolean values to strings for backend compatibility
-                persetujuan_data: data.persetujuan_data ? '1' : '0',
+                // Convert boolean values to actual booleans for proper JSON serialization
+                persetujuan_data: Boolean(data.persetujuan_data),
+                // Make sure scan_ktp is properly handled if a file was uploaded
+                ...(fileUploads.ktpFile ? { scan_ktp: fileUploads.ktpFile.name } : {})
             };
+        };
+        
+        // Show loading state with modern design for digital verification
+        toast.loading('Melakukan verifikasi digital...', {
+            style: {
+                background: '#1f2937',
+                color: 'white',
+                borderRadius: '0.5rem',
+                border: '1px solid #4f46e5',
+            },
+        });
+        
+        // Submit the form with proper error handling and fixed data structure
+        setTimeout(() => {
+            toast.dismiss();
             
+            // Submit to backend
             post('/penduduk/documents', {
+                ...prepareFormData(),
                 onSuccess: () => {
                     // Close form and notify user
                     onClose();
@@ -194,37 +336,39 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                     }, 1000);
                 },
                 onError: (errors: Record<string, string>) => {
-                    console.error('Form errors:', errors);
-                    toast.error('Gagal mengajukan dokumen. Silakan periksa data yang dimasukkan', {
-                        style: {
-                            borderLeft: '4px solid #ef4444',
-                            borderRadius: '0.25rem',
-                        },
-                    });
+                    console.error('Form submission errors:', errors);
+                    
+                    // Display specific error messages if available, or a general message
+                    if (Object.keys(errors).length > 0) {
+                        // Show the first error message
+                        const firstErrorKey = Object.keys(errors)[0];
+                        toast.error(`Error: ${errors[firstErrorKey]}`, {
+                            style: {
+                                borderLeft: '4px solid #ef4444',
+                                borderRadius: '0.25rem',
+                            },
+                        });
+                    } else {
+                        toast.error('Gagal mengajukan dokumen. Silakan periksa data yang dimasukkan', {
+                            style: {
+                                borderLeft: '4px solid #ef4444',
+                                borderRadius: '0.25rem',
+                            },
+                        });
+                    }
                 }
             });
-        };
-        
-        // Show loading state with modern design for digital verification
-        toast.loading('Melakukan verifikasi digital...', {
-            style: {
-                background: '#1f2937',
-                color: 'white',
-                borderRadius: '0.5rem',
-                border: '1px solid #4f46e5',
-            },
-        });
-        
-        // Simulate digital verification process with appropriate delay
-        setTimeout(() => {
-            toast.dismiss();
-            submitDocumentRequest();
         }, 1500);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setData(name as keyof FormData, value);
+        
+        // Clear specific error when user fixes a field
+        if (hasAttemptedSubmit && errors[name as keyof typeof errors]) {
+            clearErrors(name as keyof typeof errors);
+        }
     };
 
     return (
@@ -232,7 +376,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             <DialogContent className="max-w-md mx-auto w-full max-h-[90vh] overflow-y-auto sm:max-h-[85vh] p-4 sm:p-6">
                 <DialogHeader className="pb-4">
                     <DialogTitle className="text-lg sm:text-xl font-semibold text-center">
-                        Ajukan {documentType === 'KARTU_KELUARGA' ? 'Kartu Keluarga' : documentType.replace('_', ' ')}
+                        Ajukan {documentType === 'KK' ? 'Kartu Keluarga' : documentType.replace('_', ' ')}
                     </DialogTitle>
                     <p className="text-xs sm:text-sm text-muted-foreground text-center mt-1">Lengkapi data untuk pengajuan dokumen</p>
                 </DialogHeader>
@@ -532,7 +676,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                         </>
                     )}
 
-                    {documentType === 'KARTU_KELUARGA' && (
+                    {documentType === 'KK' && (
                         <>
                             <div className="space-y-1 sm:space-y-1.5">
                                 <Label htmlFor="no_kk" className="text-xs sm:text-sm font-medium">Nomor KK (Jika Perubahan/Pembaruan)</Label>
@@ -712,14 +856,23 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                         <Button type="button" variant="outline" onClick={onClose} className="h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4">
                             Batal
                         </Button>
-                        <Button type="submit" disabled={processing} className="h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4 bg-primary hover:bg-primary/90">
+                        <Button 
+                            type="submit" 
+                            disabled={processing} 
+                            className="h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4 bg-gradient-to-r from-indigo-500 via-cyan-500 to-pink-500 hover:opacity-90 text-white font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                        >
                             {processing ? (
                                 <>
                                     <Loader2 className="mr-2 size-4 animate-spin" />
-                                    Memproses...
+                                    <span>Memproses...</span>
                                 </>
                             ) : (
-                                'Ajukan'
+                                <span className="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                    Ajukan Sekarang
+                                </span>
                             )}
                         </Button>
                     </div>
