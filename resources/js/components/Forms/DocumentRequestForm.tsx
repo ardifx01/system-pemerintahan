@@ -139,11 +139,19 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
             return;
         }
 
-        // For Indonesia 2025, required document uploads would be handled differently
-        // Here we check if document uploads are required based on document type
-        if (documentType === 'KTP' && data.scan_ktp && !fileUploads.ktpFile) {
-            toast.error('File KTP yang diupload tidak valid');
-            return;
+        // Validasi khusus berdasarkan jenis permohonan KTP
+        if (documentType === 'KTP') {
+            // Validasi khusus untuk perpanjangan: wajib upload scan KTP
+            if (data.jenis_permohonan_ktp === 'PERPANJANGAN' && !fileUploads.ktpFile) {
+                toast.error('Untuk perpanjangan KTP, scan KTP lama wajib diunggah');
+                return;
+            }
+            
+            // Validasi NIK untuk perpanjangan dan penggantian
+            if ((data.jenis_permohonan_ktp === 'PERPANJANGAN' || data.jenis_permohonan_ktp === 'PENGGANTIAN') && !data.nik) {
+                toast.error('Untuk perpanjangan/penggantian KTP, NIK wajib diisi');
+                return;
+            }
         }
 
 
@@ -249,21 +257,23 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                     )}
                     
                     <div className="md:grid md:grid-cols-2 md:gap-4">
-                        <div className="space-y-1 sm:space-y-1.5 mb-3 md:mb-0">
-                            <Label htmlFor="nik" className="text-xs sm:text-sm font-medium">NIK {documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU' ? '(Opsional)' : ''}</Label>
-                            <Input
-                                id="nik"
-                                name="nik"
-                                value={data.nik}
-                                onChange={handleChange}
-                                maxLength={16}
-                                required={!(documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU')}
-                                className="h-9 sm:h-10 text-xs sm:text-sm px-3"
-                                placeholder={documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU' ? "Kosongkan jika belum memiliki NIK" : "Masukkan NIK (16 Digit)"}
-                            />
-                            {errors.nik && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.nik}</p>}
-                            {documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU' && <p className="text-xs text-muted-foreground mt-1">NIK akan diberikan setelah proses pembuatan KTP</p>}
-                        </div>
+                        {/* NIK field - hide for new KTP requests */}
+                        {!(documentType === 'KTP' && data.jenis_permohonan_ktp === 'BARU') && (
+                            <div className="space-y-1 sm:space-y-1.5 mb-3 md:mb-0">
+                                <Label htmlFor="nik" className="text-xs sm:text-sm font-medium">NIK</Label>
+                                <Input
+                                    id="nik"
+                                    name="nik"
+                                    value={data.nik}
+                                    onChange={handleChange}
+                                    maxLength={16}
+                                    required
+                                    className="h-9 sm:h-10 text-xs sm:text-sm px-3"
+                                    placeholder="Masukkan NIK (16 Digit)"
+                                />
+                                {errors.nik && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.nik}</p>}
+                            </div>
+                        )}
 
                         <div className="space-y-1 sm:space-y-1.5">
                             <Label htmlFor="nama" className="text-xs sm:text-sm font-medium">Nama Lengkap</Label>
@@ -418,39 +428,41 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                                 {errors.kewarganegaraan && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.kewarganegaraan}</p>}
                             </div>
 
-                            <div className="space-y-1 sm:space-y-1.5">
-                                <Label htmlFor="scan_ktp" className="text-xs sm:text-sm font-medium">Unggah Scan KTP (Untuk perubahan/perpanjangan)</Label>
-                                <div className="flex items-center justify-center w-full">
-                                    <label htmlFor="scan_ktp" className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer bg-background border-border hover:bg-muted/50">
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <svg className="w-8 h-8 mb-2 text-muted-foreground" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                            </svg>
-                                            <p className="mb-1 text-xs sm:text-sm text-muted-foreground">Unggah scan KTP lama</p>
-                                            <p className="text-xs text-muted-foreground">JPG, JPEG atau PNG (Maks. 2MB)</p>
-                                        </div>
-                                        <input 
-                                            id="scan_ktp" 
-                                            name="scan_ktp"
-                                            type="file" 
-                                            className="hidden" 
-                                            accept=".jpg,.jpeg,.png"
-                                            onChange={(e) => {
-                                                if (e.target.files && e.target.files[0]) {
-                                                    setFileUploads(prev => ({
-                                                        ...prev,
-                                                        ktpFile: e.target.files?.[0] || null
-                                                    }));
-                                                    setData('scan_ktp', e.target.files[0].name);
-                                                }
-                                            }}
-                                        />
-                                    </label>
+                            {/* Unggah Scan KTP - hanya tampilkan untuk perpanjangan */}
+                            {documentType === 'KTP' && data.jenis_permohonan_ktp === 'PERPANJANGAN' && (
+                                <div className="space-y-1 sm:space-y-1.5">
+                                    <Label htmlFor="scan_ktp" className="text-xs sm:text-sm font-medium">Unggah Scan KTP Lama</Label>
+                                    <div className="flex items-center justify-center w-full">
+                                        <label htmlFor="scan_ktp" className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer bg-background border-border hover:bg-muted/50">
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg className="w-8 h-8 mb-2 text-muted-foreground" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                </svg>
+                                                <p className="mb-1 text-xs sm:text-sm text-muted-foreground">Unggah scan KTP lama</p>
+                                                <p className="text-xs text-muted-foreground">JPG, JPEG atau PNG (Maks. 2MB)</p>
+                                            </div>
+                                            <input 
+                                                id="scan_ktp" 
+                                                name="scan_ktp"
+                                                type="file" 
+                                                className="hidden" 
+                                                accept=".jpg,.jpeg,.png"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        setFileUploads(prev => ({
+                                                            ...prev,
+                                                            ktpFile: e.target.files?.[0] || null
+                                                        }));
+                                                        setData('scan_ktp', e.target.files[0].name);
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                    </div>
+                                    {errors.scan_ktp && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.scan_ktp}</p>}
+                                    {data.scan_ktp && <p className="text-xs text-muted-foreground mt-1">File dipilih: {data.scan_ktp}</p>}
                                 </div>
-                                {errors.scan_ktp && <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.scan_ktp}</p>}
-                                {data.scan_ktp && <p className="text-xs text-muted-foreground mt-1">File dipilih: {data.scan_ktp}</p>}
-                                <p className="text-xs text-muted-foreground mt-1">Opsional untuk pembaruan KTP</p>
-                            </div>
+                            )}
                         </>
                     )}
 
