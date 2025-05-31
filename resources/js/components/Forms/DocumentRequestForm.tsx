@@ -859,7 +859,7 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                         <Button 
                             type="submit" 
                             disabled={processing} 
-                            className="h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4 bg-gradient-to-r from-indigo-500 via-cyan-500 to-pink-500 hover:opacity-90 text-white font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                            className="h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4 bg-gray-900 hover:bg-gray-800 text-white font-medium transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                             {processing ? (
                                 <>
