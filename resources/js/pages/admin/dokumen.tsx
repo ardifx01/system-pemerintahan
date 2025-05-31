@@ -213,7 +213,7 @@ export default function Dokumen({ stats, documents }: Props) {
         switch (type) {
             case 'KTP':
                 return 'KTP';
-            case 'KK':
+            case 'KARTU_KELUARGA':
                 return 'Kartu Keluarga';
             case 'AKTA_KELAHIRAN':
                 return 'Akta Kelahiran';
