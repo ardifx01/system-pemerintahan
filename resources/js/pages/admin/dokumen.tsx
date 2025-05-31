@@ -127,7 +127,7 @@ export default function Dokumen({ stats, documents }: Props) {
         submitted_at?: string;
         notes?: string;
     }>({
-        type: 'KTP',
+        type: 'KTP' as DocumentType,
         nik: '',
         nama: '',
         alamat: ''
@@ -470,7 +470,7 @@ export default function Dokumen({ stats, documents }: Props) {
                         <DialogHeader>
                             <DialogTitle className="text-base sm:text-xl flex items-center gap-2">
                                 <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                                Detail Dokumen: {formatDocumentType(documentDetails.type)}
+                                Detail Dokumen: {formatDocumentType(documentDetails.type as DocumentType)}
                             </DialogTitle>
                             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                                 Informasi lengkap pengajuan dokumen dari penduduk
@@ -593,7 +593,7 @@ export default function Dokumen({ stats, documents }: Props) {
                                     <div className="space-y-1">
                                         <p className="text-xs sm:text-sm font-medium">Jenis Dokumen:</p>
                                         <p className="text-xs sm:text-sm text-muted-foreground">
-                                            {formatDocumentType(documentDetails.type)}
+                                            {formatDocumentType(documentDetails.type as DocumentType)}
                                         </p>
                                     </div>
                                     <div className="space-y-1">
