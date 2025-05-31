@@ -95,7 +95,7 @@ export default function Dokumen({ stats, documents }: Props) {
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    // State for tracking loading states (used for UI feedback)
     const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [isMobile, setIsMobile] = useState(false);
@@ -173,16 +173,14 @@ export default function Dokumen({ stats, documents }: Props) {
     const handleApproveConfirm = () => {
         if (!selectedDocument) return;
         
-        setIsLoading(true);
-        router.post(`/admin/dokumen/${selectedDocument.id}/approve`, {}, {
+        approveForm.post(`/admin/dokumen/${selectedDocument.id}/approve`, {
             onSuccess: () => {
                 setIsApproveDialogOpen(false);
-                setIsLoading(false);
+                approveForm.reset();
                 toast.success('Dokumen berhasil disetujui');
                 router.reload();
             },
             onError: () => {
-                setIsLoading(false);
                 toast.error('Terjadi kesalahan saat menyetujui dokumen');
             }
         });
@@ -612,11 +610,20 @@ export default function Dokumen({ stats, documents }: Props) {
                                     </div>
                                 </div>
 
-                                {documentDetails.status === 'DITOLAK' && documentDetails.notes && (
+                                {selectedDocument && documentDetails.status === 'DITOLAK' && documentDetails.notes && (
                                     <div className="mb-6">
                                         <p className="text-xs sm:text-sm font-medium mb-2">Alasan Penolakan:</p>
                                         <div className="bg-red-50 border border-red-200 rounded p-2 sm:p-3">
                                             <p className="text-xs sm:text-sm text-red-700">{documentDetails.notes}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {selectedDocument && documentDetails.status === 'SELESAI' && documentDetails.notes && (
+                                    <div className="mb-6">
+                                        <p className="text-xs sm:text-sm font-medium mb-2">Catatan Persetujuan:</p>
+                                        <div className="bg-green-50 border border-green-200 rounded p-2 sm:p-3">
+                                            <p className="text-xs sm:text-sm text-green-700">{documentDetails.notes}</p>
                                         </div>
                                     </div>
                                 )}
@@ -775,9 +782,20 @@ export default function Dokumen({ stats, documents }: Props) {
                             </div>
                         </div>
                         
-                        <p className="text-xs sm:text-sm">
-                            Anda yakin ingin menyetujui dokumen ini? Setelah disetujui, dokumen akan dapat diunduh oleh pemohon.
-                        </p>
+                        <div className="space-y-2">
+                            <Label htmlFor="approval-notes" className="text-xs sm:text-sm">Catatan (Opsional)</Label>
+                            <Textarea 
+                                id="approval-notes"
+                                placeholder="Berikan catatan tambahan jika diperlukan"
+                                value={approveForm.data.notes}
+                                onChange={(e) => approveForm.setData('notes', e.target.value)}
+                                className="min-h-[80px] sm:min-h-[100px] text-xs sm:text-sm"
+                                disabled={approveForm.processing}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Anda yakin ingin menyetujui dokumen ini? Setelah disetujui, dokumen akan dapat diunduh oleh pemohon.
+                            </p>
+                        </div>
                     </div>
                     
                     <DialogFooter className="gap-2 mt-3 sm:mt-4">
@@ -791,9 +809,9 @@ export default function Dokumen({ stats, documents }: Props) {
                         <Button 
                             onClick={handleApproveConfirm}
                             className="bg-green-600 text-white hover:bg-green-700 text-xs sm:text-sm h-8 sm:h-10"
-                            disabled={isLoading}
+                            disabled={approveForm.processing}
                         >
-                            {isLoading ? (
+                            {approveForm.processing ? (
                                 <>
                                     <Loader2 className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                                     Memproses...
