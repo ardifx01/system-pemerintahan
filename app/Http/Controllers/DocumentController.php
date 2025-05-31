@@ -41,9 +41,9 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Buat aturan validasi dasar
+        $rules = [
             'type' => 'required|in:KTP,KK,AKTA_KELAHIRAN,AKTA_KEMATIAN',
-            'nik' => 'required|string|size:16',
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
             'tempat_lahir' => 'required_if:type,KTP,AKTA_KELAHIRAN|string|nullable',
@@ -52,15 +52,37 @@ class DocumentController extends Controller
             'nama_ibu' => 'required_if:type,AKTA_KELAHIRAN|string|nullable',
             'nama_almarhum' => 'required_if:type,AKTA_KEMATIAN|string|nullable',
             'tanggal_meninggal' => 'required_if:type,AKTA_KEMATIAN|date|nullable',
-        ]);
+        ];
+        
+        // Tambahkan validasi khusus untuk KTP
+        if ($request->type === 'KTP') {
+            $rules['jenis_permohonan_ktp'] = 'required|in:BARU,PERPANJANGAN,PENGGANTIAN';
+            
+            // NIK wajib kecuali untuk pembuatan baru
+            if ($request->jenis_permohonan_ktp !== 'BARU') {
+                $rules['nik'] = 'required|string|size:16';
+            } else {
+                $rules['nik'] = 'nullable|string|size:16';
+            }
+            
+            // Scan KTP wajib untuk perpanjangan
+            if ($request->jenis_permohonan_ktp === 'PERPANJANGAN') {
+                $rules['scan_ktp'] = 'required|string';
+            }
+        } else {
+            // Untuk dokumen selain KTP, NIK tetap wajib
+            $rules['nik'] = 'required|string|size:16';
+        }
+        
+        $validated = $request->validate($rules);
 
         try {
-            $document = Document::create([
+            // Prepare data for document creation
+            $documentData = [
                 'user_id' => Auth::id(),
                 'type' => $validated['type'],
                 'status' => Document::STATUS_DIPROSES,
                 'submitted_at' => now(),
-                'nik' => $validated['nik'],
                 'nama' => $validated['nama'],
                 'alamat' => $validated['alamat'],
                 'tempat_lahir' => $validated['tempat_lahir'] ?? null,
@@ -69,7 +91,24 @@ class DocumentController extends Controller
                 'nama_ibu' => $validated['nama_ibu'] ?? null,
                 'nama_almarhum' => $validated['nama_almarhum'] ?? null,
                 'tanggal_meninggal' => $validated['tanggal_meninggal'] ?? null,
-            ]);
+            ];
+            
+            // Tambahkan NIK jika ada (opsional untuk KTP baru)
+            if (isset($validated['nik'])) {
+                $documentData['nik'] = $validated['nik'];
+            }
+            
+            // Tambahkan jenis permohonan KTP jika ada
+            if ($validated['type'] === 'KTP' && isset($validated['jenis_permohonan_ktp'])) {
+                $documentData['jenis_permohonan_ktp'] = $validated['jenis_permohonan_ktp'];
+            }
+            
+            // Tambahkan scan KTP jika ada (wajib untuk perpanjangan KTP)
+            if (isset($validated['scan_ktp'])) {
+                $documentData['scan_ktp'] = $validated['scan_ktp'];
+            }
+            
+            $document = Document::create($documentData);
 
             if ($request->wantsJson()) {
                 return response()->json([

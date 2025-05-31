@@ -25,6 +25,8 @@ class Document extends Model
         'nama_ibu',
         'nama_almarhum',
         'tanggal_meninggal',
+        'jenis_permohonan_ktp', // Field untuk jenis permohonan KTP (BARU/PERPANJANGAN/PENGGANTIAN)
+        'scan_ktp',             // Field untuk menyimpan nama file scan KTP
     ];
 
     protected $casts = [
