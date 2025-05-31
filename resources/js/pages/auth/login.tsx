@@ -48,14 +48,14 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         <LoginLayout>
             <Head title="Login | Sistem Pemerintahan" />
 
-            <div className="relative w-full max-w-md mx-auto rounded-2xl border border-[#0369a1]/30 bg-[#0c0f12] p-8 shadow-[0_20px_50px_rgba(3,105,161,0.15)] transition-all duration-300 hover:shadow-[0_25px_60px_rgba(3,105,161,0.25)] animate-fade-in backdrop-blur-sm backdrop-filter">
+            <div className="relative w-full max-w-md mx-auto rounded-2xl border border-[#0369a1]/30 bg-[#0c0f12] p-4 sm:p-6 md:p-8 shadow-[0_20px_50px_rgba(3,105,161,0.15)] transition-all duration-300 hover:shadow-[0_25px_60px_rgba(3,105,161,0.25)] animate-fade-in backdrop-blur-sm backdrop-filter">
                 {/* Enhanced blue glow effects */}
-                <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-[#0ea5e9]/25 blur-[50px] opacity-70"></div>
-                <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-[#0284c7]/25 blur-[50px] opacity-70"></div>
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 h-32 w-32 rounded-full bg-[#38bdf8]/20 blur-[40px] opacity-60"></div>
+                <div className="absolute -top-5 sm:-top-10 -right-5 sm:-right-10 h-32 sm:h-48 w-32 sm:w-48 rounded-full bg-[#0ea5e9]/25 blur-[50px] opacity-70"></div>
+                <div className="absolute -bottom-5 sm:-bottom-10 -left-5 sm:-left-10 h-32 sm:h-48 w-32 sm:w-48 rounded-full bg-[#0284c7]/25 blur-[50px] opacity-70"></div>
+                <div className="absolute top-1/2 right-0 -translate-y-1/2 h-24 sm:h-32 w-24 sm:w-32 rounded-full bg-[#38bdf8]/20 blur-[40px] opacity-60"></div>
                 
                 <div className="relative z-10">
-                    <div className="mb-7 flex items-center justify-center">
+                    <div className="mb-4 sm:mb-7 flex items-center justify-center">
                         <div 
                             className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#0284c7] text-white shadow-[0_10px_20px_rgba(2,132,199,0.35)] transition-all duration-500 hover:shadow-[0_15px_30px_rgba(2,132,199,0.5)] hover:scale-110 group"
                         >
@@ -65,7 +65,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </div>
                     </div>
                     
-                    <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8]">Selamat Datang Kembali</h2>
+                    <h2 className="mb-4 sm:mb-6 text-center text-2xl sm:text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8]">Selamat Datang Kembali</h2>
                     
                     {status && (
                         <Alert variant="success" className="mb-6 animate-slide-down">
@@ -74,11 +74,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </Alert>
                     )}
 
-                    <form className="flex flex-col gap-6" onSubmit={submit}>
-                        <div className="grid gap-6">
+                    <form className="flex flex-col gap-4 sm:gap-6" onSubmit={submit}>
+                        <div className="grid gap-4 sm:gap-6">
                             <div className="grid gap-3">
-                                <Label htmlFor="email" className="flex items-center gap-1.5 text-sm font-medium text-[#f5f5f5]">
-                                    <Mail className="h-3.5 w-3.5 text-[#38bdf8]" />
+                                <Label htmlFor="email" className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#f5f5f5]">
+                                    <Mail className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-[#38bdf8]" />
                                     Alamat Email
                                 </Label>
                                 <div className="relative group">
@@ -92,10 +92,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
                                         placeholder="nama@example.com"
-                                        className="pl-10 h-12 transition-all duration-300 rounded-xl bg-[#1c1c1c] border-[#2a2a2a] focus:border-[#4f46e5] group-hover:border-[#4f46e5]/50 shadow-[0_2px_10px_rgba(0,0,0,0.2)] text-[#f5f5f5] placeholder:text-[#6b7280] focus:ring-2 focus:ring-[#4f46e5]/20"
+                                        className="pl-10 h-10 sm:h-12 text-sm sm:text-base transition-all duration-300 rounded-xl bg-[#1c1c1c] border-[#2a2a2a] focus:border-[#4f46e5] group-hover:border-[#4f46e5]/50 shadow-[0_2px_10px_rgba(0,0,0,0.2)] text-[#f5f5f5] placeholder:text-[#6b7280] focus:ring-2 focus:ring-[#4f46e5]/20"
                                     />
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b7280] transition-all duration-300 group-hover:text-[#4f46e5]">
-                                        <Mail className="h-5 w-5" />
+                                        <Mail className="h-4 sm:h-5 w-4 sm:w-5" />
                                     </span>
                                 </div>
                                 <InputError message={errors.email} />
@@ -103,17 +103,17 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                             <div className="grid gap-3">
                                 <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="flex items-center gap-1.5 text-sm font-medium text-[#f5f5f5]">
-                                        <Lock className="h-3.5 w-3.5 text-[#38bdf8]" />
+                                    <Label htmlFor="password" className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#f5f5f5]">
+                                        <Lock className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-[#38bdf8]" />
                                         Kata Sandi
                                     </Label>
                                     {canResetPassword && (
                                         <TextLink 
                                             href={route('password.request')} 
-                                            className="text-xs font-medium flex items-center gap-1 transition-all duration-300 text-[#0ea5e9] hover:text-[#38bdf8] hover:translate-x-0.5"
+                                            className="text-[10px] sm:text-xs font-medium flex items-center gap-1 transition-all duration-300 text-[#0ea5e9] hover:text-[#38bdf8] hover:translate-x-0.5"
                                             tabIndex={5}
                                         >
-                                            <HelpCircle className="h-3 w-3" />
+                                            <HelpCircle className="h-2.5 sm:h-3 w-2.5 sm:w-3" />
                                             Lupa kata sandi?
                                         </TextLink>
                                     )}
@@ -128,16 +128,16 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
                                         placeholder="Kata sandi Anda" 
-                                        className="pl-10 h-12 transition-all duration-300 rounded-xl bg-[#1c1c1c] border-[#2a2a2a] focus:border-[#4f46e5] group-hover:border-[#4f46e5]/50 shadow-[0_2px_10px_rgba(0,0,0,0.2)] text-[#f5f5f5] placeholder:text-[#6b7280] focus:ring-2 focus:ring-[#4f46e5]/20"
+                                        className="pl-10 h-10 sm:h-12 text-sm sm:text-base transition-all duration-300 rounded-xl bg-[#1c1c1c] border-[#2a2a2a] focus:border-[#4f46e5] group-hover:border-[#4f46e5]/50 shadow-[0_2px_10px_rgba(0,0,0,0.2)] text-[#f5f5f5] placeholder:text-[#6b7280] focus:ring-2 focus:ring-[#4f46e5]/20"
                                     />
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b7280] transition-all duration-300 group-hover:text-[#4f46e5]">
-                                        <Lock className="h-5 w-5" />
+                                        <Lock className="h-4 sm:h-5 w-4 sm:w-5" />
                                     </span>
                                 </div>
                                 <InputError message={errors.password} />
                             </div>
 
-                            <div className="flex items-center space-x-3 py-1">
+                            <div className="flex items-center space-x-2 sm:space-x-3 py-1">
                                 <Checkbox
                                     id="remember"
                                     name="remember"
@@ -146,12 +146,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     tabIndex={3}
                                     className="text-[#0ea5e9] border-[#1e293b] hover:border-[#38bdf8] data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-[#0ea5e9] data-[state=checked]:to-[#0284c7] data-[state=checked]:text-white transition-all duration-300 rounded-md"
                                 />
-                                <Label htmlFor="remember" className="text-sm font-normal cursor-pointer text-[#a1a1aa] hover:text-[#f5f5f5] transition-all duration-300">Ingat saya</Label>
+                                <Label htmlFor="remember" className="text-xs sm:text-sm font-normal cursor-pointer text-[#a1a1aa] hover:text-[#f5f5f5] transition-all duration-300">Ingat saya</Label>
                             </div>
 
                             <Button 
                                 type="submit" 
-                                className="mt-6 w-full h-14 text-base font-medium bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] transition-all duration-500 transform hover:-translate-y-[3px] active:translate-y-[1px] shadow-[0_10px_25px_rgba(2,132,199,0.35)] hover:shadow-[0_15px_30px_rgba(2,132,199,0.5)] rounded-xl" 
+                                className="mt-4 sm:mt-6 w-full h-12 sm:h-14 text-sm sm:text-base font-medium bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0284c7] hover:to-[#0369a1] transition-all duration-500 transform hover:-translate-y-[3px] active:translate-y-[1px] shadow-[0_10px_25px_rgba(2,132,199,0.35)] hover:shadow-[0_15px_30px_rgba(2,132,199,0.5)] rounded-xl" 
                                 tabIndex={4} 
                                 disabled={processing || !formValid}
                             >
@@ -172,7 +172,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             </Button>
                         </div>
 
-                        <div className="text-[#a1a1aa] text-center text-sm mt-2">
+                        <div className="text-[#a1a1aa] text-center text-xs sm:text-sm mt-2">
                             Belum memiliki akun?{' '}
                             <TextLink href={route('register')} tabIndex={5} className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#38bdf8] hover:from-[#38bdf8] hover:to-[#0ea5e9] transition-all duration-300 hover:translate-x-0.5 inline-block">
                                 Daftar sekarang
@@ -182,11 +182,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 </div>
             </div>
             
-            <div className="mt-8 text-center space-y-3 animate-fade-in-delayed">
-                <p className="text-sm text-[#a1a1aa] font-medium">
+            <div className="mt-6 sm:mt-8 text-center space-y-2 sm:space-y-3 animate-fade-in-delayed">
+                <p className="text-xs sm:text-sm text-[#a1a1aa] font-medium">
                     &copy; {new Date().getFullYear()} Sistem Pemerintahan Indonesia
                 </p>
-                <div className="flex items-center justify-center gap-4 text-xs text-[#a1a1aa]/70">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-[#a1a1aa]/70">
                     <TextLink href="#" className="hover:text-[#0ea5e9] transition-all duration-300 hover:translate-y-[-2px] inline-block">Kebijakan Privasi</TextLink>
                     <span className="text-[#a1a1aa]/50">•</span>
                     <TextLink href="#" className="hover:text-[#0ea5e9] transition-all duration-300 hover:translate-y-[-2px] inline-block">Syarat & Ketentuan</TextLink>
