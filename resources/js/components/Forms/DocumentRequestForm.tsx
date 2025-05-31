@@ -22,6 +22,11 @@ type FormData = {
     alamat: string;
     tempat_lahir?: string;
     tanggal_lahir?: string;
+    jenis_kelamin?: string;
+    agama?: string;
+    status_perkawinan?: string;
+    pekerjaan?: string;
+    kewarganegaraan?: string;
     nama_ayah?: string;
     nama_ibu?: string;
     nama_almarhum?: string;
@@ -36,6 +41,11 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
         alamat: '',
         tempat_lahir: '',
         tanggal_lahir: '',
+        jenis_kelamin: 'Laki-laki',
+        agama: '',
+        status_perkawinan: '',
+        pekerjaan: '',
+        kewarganegaraan: 'Indonesia',
         nama_ayah: '',
         nama_ibu: '',
         nama_almarhum: '',
@@ -139,6 +149,93 @@ export default function DocumentRequestForm({ isOpen, onClose, onFormSuccess, do
                                     required
                                 />
                                 {errors.tanggal_lahir && <p className="text-sm text-red-500">{errors.tanggal_lahir}</p>}
+                            </div>
+                        </>
+                    )}
+                    
+                    {documentType === 'KTP' && (
+                        <>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
+                                <select 
+                                    id="jenis_kelamin"
+                                    name="jenis_kelamin"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    value={data.jenis_kelamin}
+                                    onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                    required
+                                >
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                                {errors.jenis_kelamin && <p className="text-sm text-red-500">{errors.jenis_kelamin}</p>}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="agama">Agama</Label>
+                                <select 
+                                    id="agama"
+                                    name="agama"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    value={data.agama}
+                                    onChange={(e) => setData('agama', e.target.value)}
+                                    required
+                                >
+                                    <option value="">Pilih Agama</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                                {errors.agama && <p className="text-sm text-red-500">{errors.agama}</p>}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="status_perkawinan">Status Perkawinan</Label>
+                                <select 
+                                    id="status_perkawinan"
+                                    name="status_perkawinan"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    value={data.status_perkawinan}
+                                    onChange={(e) => setData('status_perkawinan', e.target.value)}
+                                    required
+                                >
+                                    <option value="">Pilih Status Perkawinan</option>
+                                    <option value="Belum Kawin">Belum Kawin</option>
+                                    <option value="Kawin">Kawin</option>
+                                    <option value="Cerai Hidup">Cerai Hidup</option>
+                                    <option value="Cerai Mati">Cerai Mati</option>
+                                </select>
+                                {errors.status_perkawinan && <p className="text-sm text-red-500">{errors.status_perkawinan}</p>}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="pekerjaan">Pekerjaan</Label>
+                                <Input
+                                    id="pekerjaan"
+                                    name="pekerjaan"
+                                    value={data.pekerjaan}
+                                    onChange={handleChange}
+                                    placeholder="Masukkan Pekerjaan"
+                                    required
+                                />
+                                {errors.pekerjaan && <p className="text-sm text-red-500">{errors.pekerjaan}</p>}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="kewarganegaraan">Kewarganegaraan</Label>
+                                <Input
+                                    id="kewarganegaraan"
+                                    name="kewarganegaraan"
+                                    value={data.kewarganegaraan}
+                                    onChange={handleChange}
+                                    defaultValue="Indonesia"
+                                    required
+                                />
+                                {errors.kewarganegaraan && <p className="text-sm text-red-500">{errors.kewarganegaraan}</p>}
                             </div>
                         </>
                     )}
