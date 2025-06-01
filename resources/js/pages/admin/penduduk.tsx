@@ -551,48 +551,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                             {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
                         </div>
 
-                        <div className="grid grid-cols-1 mt-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <h3 className="text-lg font-medium">Data Kependudukan (Opsional)</h3>
-                                <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-                                    Opsional
-                                </Badge>
-                            </div>
-                            <div className="h-px w-full bg-border mb-4"></div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div className="space-y-2">
-                                    <Label htmlFor="nik" className="font-medium">NIK</Label>
-                                    <Input
-                                        id="nik"
-                                        placeholder="Masukkan NIK (16 Digit)"
-                                        value={data.nik}
-                                        onChange={(e) => setData('nik', e.target.value)}
-                                        className={cn(
-                                            "bg-background focus:ring-2 focus:ring-primary/20",
-                                            errors.nik && "border-red-500 focus:ring-red-500/20"
-                                        )}
-                                        maxLength={16}
-                                    />
-                                    {errors.nik && <p className="text-xs text-red-500 mt-1">{errors.nik}</p>}
-                                </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="alamat" className="font-medium">Alamat</Label>
-                                    <Input
-                                        id="alamat"
-                                        placeholder="Masukkan Alamat"
-                                        value={data.alamat}
-                                        onChange={(e) => setData('alamat', e.target.value)}
-                                        className={cn(
-                                            "bg-background focus:ring-2 focus:ring-primary/20",
-                                            errors.alamat && "border-red-500 focus:ring-red-500/20"
-                                        )}
-                                    />
-                                    {errors.alamat && <p className="text-xs text-red-500 mt-1">{errors.alamat}</p>}
-                                </div>
-                            </div>
-                        </div>
 
                         {/* Hidden but necessary fields */}
                         <div className="hidden">
@@ -698,173 +657,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                             <p className="text-xs text-muted-foreground">Email tidak dapat diubah karena terhubung dengan akun pengguna</p>
                         </div>
 
-                        <div className="grid grid-cols-1 mt-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <h3 className="text-lg font-medium">Data Kependudukan</h3>
-                                <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-                                    Wajib untuk Dokumen
-                                </Badge>
-                            </div>
-                            <div className="h-px w-full bg-border mb-4"></div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div className="space-y-2">
-                                    <Label htmlFor="edit-nik" className="font-medium">
-                                        NIK <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input
-                                        id="edit-nik"
-                                        placeholder="Masukkan NIK (16 Digit)"
-                                        value={editData.nik}
-                                        onChange={(e) => setEditData('nik', e.target.value)}
-                                        className={cn(
-                                            "bg-background focus:ring-2 focus:ring-primary/20",
-                                            editErrors.nik && "border-red-500 focus:ring-red-500/20"
-                                        )}
-                                        maxLength={16}
-                                    />
-                                    {editErrors.nik && <p className="text-xs text-red-500 mt-1">{editErrors.nik}</p>}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="edit-alamat" className="font-medium">Alamat</Label>
-                                    <Input
-                                        id="edit-alamat"
-                                        placeholder="Masukkan Alamat"
-                                        value={editData.alamat}
-                                        onChange={(e) => setEditData('alamat', e.target.value)}
-                                        className={cn(
-                                            "bg-background focus:ring-2 focus:ring-primary/20",
-                                            editErrors.alamat && "border-red-500 focus:ring-red-500/20"
-                                        )}
-                                    />
-                                    {editErrors.alamat && <p className="text-xs text-red-500 mt-1">{editErrors.alamat}</p>}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-jenis_kelamin" className="font-medium">Jenis Kelamin</Label>
-                                <Select 
-                                    value={editData.jenis_kelamin} 
-                                    onValueChange={(value) => setEditData('jenis_kelamin', value)}
-                                >
-                                    <SelectTrigger id="edit-jenis_kelamin" className="bg-background">
-                                        <SelectValue placeholder="Pilih Jenis Kelamin" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Laki-laki">Laki-laki</SelectItem>
-                                        <SelectItem value="Perempuan">Perempuan</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {editErrors.jenis_kelamin && <p className="text-xs text-red-500 mt-1">{editErrors.jenis_kelamin}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-tempat_lahir" className="font-medium">Tempat Lahir</Label>
-                                <Input
-                                    id="edit-tempat_lahir"
-                                    placeholder="Masukkan Tempat Lahir"
-                                    value={editData.tempat_lahir}
-                                    onChange={(e) => setEditData('tempat_lahir', e.target.value)}
-                                    className={cn(
-                                        "bg-background focus:ring-2 focus:ring-primary/20",
-                                        editErrors.tempat_lahir && "border-red-500 focus:ring-red-500/20"
-                                    )}
-                                />
-                                {editErrors.tempat_lahir && <p className="text-xs text-red-500 mt-1">{editErrors.tempat_lahir}</p>}
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-tanggal_lahir" className="font-medium">Tanggal Lahir</Label>
-                                <Input
-                                    id="edit-tanggal_lahir"
-                                    type="date"
-                                    value={editData.tanggal_lahir}
-                                    onChange={(e) => setEditData('tanggal_lahir', e.target.value)}
-                                    className={cn(
-                                        "bg-background focus:ring-2 focus:ring-primary/20",
-                                        editErrors.tanggal_lahir && "border-red-500 focus:ring-red-500/20"
-                                    )}
-                                />
-                                {editErrors.tanggal_lahir && <p className="text-xs text-red-500 mt-1">{editErrors.tanggal_lahir}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-agama" className="font-medium">Agama</Label>
-                                <Select 
-                                    value={editData.agama || ''} 
-                                    onValueChange={(value) => setEditData('agama', value)}
-                                >
-                                    <SelectTrigger id="edit-agama" className="bg-background">
-                                        <SelectValue placeholder="Pilih Agama" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Islam">Islam</SelectItem>
-                                        <SelectItem value="Kristen">Kristen</SelectItem>
-                                        <SelectItem value="Katolik">Katolik</SelectItem>
-                                        <SelectItem value="Hindu">Hindu</SelectItem>
-                                        <SelectItem value="Buddha">Buddha</SelectItem>
-                                        <SelectItem value="Konghucu">Konghucu</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {editErrors.agama && <p className="text-xs text-red-500 mt-1">{editErrors.agama}</p>}
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-status_perkawinan" className="font-medium">Status Perkawinan</Label>
-                                <Select 
-                                    value={editData.status_perkawinan || ''} 
-                                    onValueChange={(value) => setEditData('status_perkawinan', value)}
-                                >
-                                    <SelectTrigger id="edit-status_perkawinan" className="bg-background">
-                                        <SelectValue placeholder="Pilih Status Perkawinan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Belum Kawin">Belum Kawin</SelectItem>
-                                        <SelectItem value="Kawin">Kawin</SelectItem>
-                                        <SelectItem value="Cerai Hidup">Cerai Hidup</SelectItem>
-                                        <SelectItem value="Cerai Mati">Cerai Mati</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {editErrors.status_perkawinan && <p className="text-xs text-red-500 mt-1">{editErrors.status_perkawinan}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-pekerjaan" className="font-medium">Pekerjaan</Label>
-                                <Input
-                                    id="edit-pekerjaan"
-                                    placeholder="Masukkan Pekerjaan"
-                                    value={editData.pekerjaan || ''}
-                                    onChange={(e) => setEditData('pekerjaan', e.target.value)}
-                                    className={cn(
-                                        "bg-background focus:ring-2 focus:ring-primary/20",
-                                        editErrors.pekerjaan && "border-red-500 focus:ring-red-500/20"
-                                    )}
-                                />
-                                {editErrors.pekerjaan && <p className="text-xs text-red-500 mt-1">{editErrors.pekerjaan}</p>}
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="edit-kewarganegaraan" className="font-medium">Kewarganegaraan</Label>
-                            <Input
-                                id="edit-kewarganegaraan"
-                                placeholder="Masukkan Kewarganegaraan"
-                                value={editData.kewarganegaraan}
-                                onChange={(e) => setEditData('kewarganegaraan', e.target.value)}
-                                className={cn(
-                                    "bg-background focus:ring-2 focus:ring-primary/20",
-                                    editErrors.kewarganegaraan && "border-red-500 focus:ring-red-500/20"
-                                )}
-                            />
-                            {editErrors.kewarganegaraan && <p className="text-xs text-red-500 mt-1">{editErrors.kewarganegaraan}</p>}
-                        </div>
+                        {/* Data Kependudukan telah dihapus - hanya menggunakan nama dan email */}
 
                         {/* Hidden but necessary fields */}
                         <div className="hidden">
@@ -922,7 +715,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                             {pendudukToDelete?.user?.email && (
                                 <p className="text-sm text-red-700 dark:text-red-400 mt-2 flex items-center gap-2">
                                     <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                                    {pendudukToDelete.user.email}
+                                    {pendudukToDelete?.user?.email}
                                 </p>
                             )}
                         </div>
