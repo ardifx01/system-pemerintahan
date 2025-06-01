@@ -130,7 +130,8 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
 
     // Stats calculations
     const totalPenduduk = penduduk.data.length;
-    const completePenduduk = penduduk.data.filter(p => p.nik).length;
+    // Setelah perubahan UI, data penduduk dianggap lengkap jika memiliki nama dan email (terkait akun)
+    const completePenduduk = penduduk.data.filter(p => p.nama && p.user?.email).length;
     const incompletePenduduk = totalPenduduk - completePenduduk;
     const recentRegistrations = penduduk.data.filter(p => {
         if (!p.user?.created_at) return false;
@@ -409,7 +410,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="py-2 sm:py-4">
-                                                    {item.nik ? (
+                                                    {item.nama && item.user?.email ? (
                                                         <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 flex items-center gap-1 whitespace-nowrap text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5 sm:text-xs sm:gap-1.5">
                                                             <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-green-500 flex-shrink-0"></span>
                                                             Lengkap
@@ -444,7 +445,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                                             size="icon"
                                                             onClick={() => openEditModal(item)}
                                                             className="h-7 w-7 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                                                            title={item.nik ? "Edit Data" : "Lengkapi Data"}
+                                                            title="Edit Data"
                                                         >
                                                             <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                                         </Button>
