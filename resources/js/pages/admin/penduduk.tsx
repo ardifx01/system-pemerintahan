@@ -289,6 +289,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                         icon={<Users className="h-full w-full" />}
                         color="blue"
                         delay={0}
+                        description="Semua data penduduk"
                     />
                     <StatsCard
                         title="Data Terdaftar"
