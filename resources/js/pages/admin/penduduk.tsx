@@ -127,6 +127,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
     const [pendudukToDelete, setPendudukToDelete] = useState<PendudukData | null>(null);
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
     const [isMobile, setIsMobile] = useState(false);
+    const [validationError, setValidationError] = useState<string | null>(null);
 
     // Check if viewport is mobile-sized
     useEffect(() => {
@@ -220,9 +221,30 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
     };
 
     const handleAddSubmit = () => {
+        // Reset any previous validation errors
+        setValidationError(null);
+        
+        // Check if there's already a penduduk with the same name
+        const duplicateName = penduduk.data.find(p => 
+            p.nama.toLowerCase() === data.nama.toLowerCase()
+        );
+        
+        if (duplicateName) {
+            // Set validation error if duplicate name found
+            setValidationError('Nama lengkap sudah digunakan oleh penduduk lain. Harap gunakan nama yang berbeda.');
+            toast({
+                title: 'Validasi Gagal',
+                description: 'Nama lengkap sudah digunakan oleh penduduk lain.',
+                variant: 'destructive'
+            });
+            return;
+        }
+        
+        // Proceed with saving if no duplicates
         post(route('admin.penduduk.store'), {
             onSuccess: () => {
                 reset();
+                setValidationError(null);
                 setIsAddModalOpen(false);
                 // Update local state for immediate UI feedback
                 router.reload();
@@ -231,6 +253,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
     };
 
     const openEditModal = (penduduk: PendudukData) => {
+        setValidationError(null);
         setEditData({
             id: penduduk.id.toString(),
             nik: penduduk.nik,
@@ -250,9 +273,31 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
     };
 
     const handleEditSubmit = () => {
+        // Reset any previous validation errors
+        setValidationError(null);
+        
+        // Check if there's already another penduduk with the same name (excluding the current one being edited)
+        const duplicateName = penduduk.data.find(p => 
+            p.nama.toLowerCase() === editData.nama.toLowerCase() && 
+            p.id !== parseInt(editData.id)
+        );
+        
+        if (duplicateName) {
+            // Set validation error if duplicate name found
+            setValidationError('Nama lengkap sudah digunakan oleh penduduk lain. Harap gunakan nama yang berbeda.');
+            toast({
+                title: 'Validasi Gagal',
+                description: 'Nama lengkap sudah digunakan oleh penduduk lain.',
+                variant: 'destructive'
+            });
+            return;
+        }
+        
+        // Proceed with update if no duplicates
         put(route('admin.penduduk.update', { penduduk: editData.id }), {
             onSuccess: () => {
                 resetEdit();
+                setValidationError(null);
                 setIsEditModalOpen(false);
                 router.reload();
             },
@@ -585,9 +630,9 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                             errors.nama && "border-red-400 focus-visible:ring-red-400/30"
                                         )}
                                     />
-                                    {errors.nama && (
+                                    {(errors.nama || validationError) && (
                                         <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
-                                            <AlertCircle className="h-3 w-3" /> {errors.nama}
+                                            <AlertCircle className="h-3 w-3" /> {errors.nama || validationError}
                                         </p>
                                     )}
                                 </div>
@@ -689,12 +734,13 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                         </div>
                     </div>
                     <DialogFooter className="flex px-6 py-4 bg-muted/20 border-t gap-2 sm:gap-0">
-                        <Button 
-                            variant="outline" 
-                            onClick={() => {
-                                setIsAddModalOpen(false);
-                                reset();
-                            }}
+                            <Button 
+                                variant="outline" 
+                                onClick={() => {
+                                    setIsAddModalOpen(false);
+                                    reset();
+                                    setValidationError(null);
+                                }}
                             className="border-border/50 hover:bg-background"
                         >
                             Batal
@@ -748,9 +794,9 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                         editErrors.nama && "border-red-400 focus-visible:ring-red-400/30"
                                     )}
                                 />
-                                {editErrors.nama && (
+                                {(editErrors.nama || validationError) && (
                                     <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
-                                        <AlertCircle className="h-3 w-3" /> {editErrors.nama}
+                                        <AlertCircle className="h-3 w-3" /> {editErrors.nama || validationError}
                                     </p>
                                 )}
                             </motion.div>
@@ -792,6 +838,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                             onClick={() => {
                                 setIsEditModalOpen(false);
                                 resetEdit();
+                                setValidationError(null);
                             }}
                             className="border-border/50 hover:bg-background"
                         >
