@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/react';
-import { Edit, PlusCircle, Search, Trash2, Users, UserCheck, UserX, Calendar, Clock, Loader2, User } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Calendar, Check, ChevronLeft, ChevronRight, Clock, Edit, Loader2, Pencil, PlusCircle, Search, Trash2, User, UserCheck, UserPlus, Users, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,9 +14,10 @@ import { toast } from '@/components/ui/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import debounce from 'lodash/debounce';
 import type { PageProps } from '@/types';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface PendudukData {
     id: number;
@@ -64,41 +65,48 @@ interface StatsCardProps {
     value: string | number;
     icon: React.ReactNode;
     description?: string;
-    color?: 'default' | 'blue' | 'green' | 'orange' | 'purple' | 'red';
+    color?: 'default' | 'blue' | 'green' | 'purple' | 'red';
     delay?: number;
 }
 
 function StatsCard({ title, value, icon, description, color = 'default', delay = 0 }: StatsCardProps) {
     const colorClasses = {
-        default: 'from-zinc-500/20 to-zinc-500/5 text-zinc-600 dark:from-zinc-400/10 dark:to-zinc-400/5 dark:text-zinc-200',
-        blue: 'from-blue-500/20 to-blue-500/5 text-blue-600 dark:from-blue-400/10 dark:to-blue-400/5 dark:text-blue-200',
-        green: 'from-emerald-500/20 to-emerald-500/5 text-emerald-600 dark:from-emerald-400/10 dark:to-emerald-400/5 dark:text-emerald-200',
-        orange: 'from-orange-500/20 to-orange-500/5 text-orange-600 dark:from-orange-400/10 dark:to-orange-400/5 dark:text-orange-200',
-        purple: 'from-purple-500/20 to-purple-500/5 text-purple-600 dark:from-purple-400/10 dark:to-purple-400/5 dark:text-purple-200',
-        red: 'from-red-500/20 to-red-500/5 text-red-600 dark:from-red-400/10 dark:to-red-400/5 dark:text-red-200',
+        default: 'bg-gradient-to-br from-zinc-100 to-zinc-50 text-zinc-700 dark:from-zinc-900/80 dark:to-zinc-900/60 dark:text-zinc-200 border-zinc-200/60 dark:border-zinc-800/60',
+        blue: 'bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-700 dark:from-blue-900/30 dark:to-indigo-900/20 dark:text-blue-200 border-blue-200/60 dark:border-blue-800/60',
+        green: 'bg-gradient-to-br from-emerald-50 to-teal-50 text-emerald-700 dark:from-emerald-900/30 dark:to-teal-900/20 dark:text-emerald-200 border-emerald-200/60 dark:border-emerald-800/60',
+        purple: 'bg-gradient-to-br from-purple-50 to-violet-50 text-purple-700 dark:from-purple-900/30 dark:to-violet-900/20 dark:text-purple-200 border-purple-200/60 dark:border-purple-800/60',
+        red: 'bg-gradient-to-br from-red-50 to-rose-50 text-red-700 dark:from-red-900/30 dark:to-rose-900/20 dark:text-red-200 border-red-200/60 dark:border-red-800/60'
+    };
+
+    const iconBgClasses = {
+        default: 'bg-zinc-200/70 dark:bg-zinc-700/70',
+        blue: 'bg-blue-100 dark:bg-blue-800/50',
+        green: 'bg-emerald-100 dark:bg-emerald-800/50',
+        purple: 'bg-purple-100 dark:bg-purple-800/50',
+        red: 'bg-red-100 dark:bg-red-800/50'
     };
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: delay * 0.1 }}
+            transition={{ duration: 0.4, delay: delay * 0.1, ease: 'easeOut' }}
             className="h-full"
         >
-            <Card className={cn("bg-gradient-to-br h-full flex flex-col", colorClasses[color])}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2 px-3 sm:px-4 sm:py-3 flex-shrink-0">
-                    <CardTitle className="text-xs sm:text-sm font-semibold">{title}</CardTitle>
-                    <div className={cn("p-1.5 rounded-full bg-white/20", colorClasses[color])}>
+            <Card className={cn("h-full flex flex-col shadow-sm border", colorClasses[color])}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3 px-4 sm:py-4 flex-shrink-0">
+                    <CardTitle className="text-xs sm:text-sm font-medium">{title}</CardTitle>
+                    <div className={cn("p-1.5 rounded-full", iconBgClasses[color])}>
                         <div className="h-3.5 w-3.5 sm:h-4 sm:w-4">{icon}</div>
                     </div>
                 </CardHeader>
-                <CardContent className="flex flex-col justify-between flex-grow px-3 sm:px-4 pt-0 pb-3">
-                    <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{value}</div>
-                    <div className="mt-1 sm:mt-2">
-                        {description && (
-                            <p className="text-[10px] sm:text-xs text-current/80 font-medium">{description}</p>
-                        )}
-                    </div>
+                <CardContent className="flex flex-col justify-between flex-grow px-4 pt-0 pb-4">
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold">{value}</div>
+                    {description && (
+                        <div className="mt-2">
+                            <p className="text-[10px] sm:text-xs opacity-80 font-medium">{description}</p>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </motion.div>
@@ -274,11 +282,11 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="flex h-full flex-1 flex-col gap-4 sm:gap-6 p-4 sm:p-6"
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="flex h-full flex-1 flex-col gap-5 sm:gap-6 p-4 sm:p-6"
             >
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Manajemen Penduduk</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70 dark:from-primary/90 dark:to-primary/60">Manajemen Penduduk</h1>
                     <p className="text-sm sm:text-base text-muted-foreground">Kelola data dan akun penduduk dalam sistem.</p>
                 </div>
 
@@ -302,43 +310,55 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                     <StatsCard
                         title="Registrasi Baru"
                         value={recentRegistrations.toLocaleString()}
-                        icon={<Calendar className="h-full w-full" />}
+                        icon={<UserPlus className="h-full w-full" />}
                         color="purple"
                         delay={2}
                         description="Dalam 7 hari terakhir"
                     />
                 </div>
 
-                <Card className="overflow-hidden border-none shadow-md">
-                    <CardHeader className="bg-card pb-4 sm:pb-6 border-b">
+                <Card className="overflow-hidden shadow-sm border border-border/40">
+                    <CardHeader className="bg-card/30 backdrop-blur-sm pb-4 sm:pb-6 border-b">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
                                 <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                    <div className="bg-primary/10 p-1.5 rounded-md">
+                                        <Users className="h-4 w-4 text-primary" />
+                                    </div>
                                     Data Penduduk
                                 </CardTitle>
-                                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                                <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 flex items-center">
+                                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary/60 mr-1.5"></span>
                                     Total {penduduk.data.length} penduduk {searchQuery && 'ditemukan'}
                                 </p>
                             </div>
-                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                                 <div className="relative w-full sm:w-auto">
                                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input 
                                         type="search"
                                         placeholder={isMobile ? "Cari..." : "Cari Email atau Nama..."}
-                                        className="w-full pl-9 bg-background sm:w-64"
+                                        className="w-full pl-9 bg-background/80 border-border/50 focus-visible:ring-primary/20 sm:w-64"
                                         value={searchQuery}
                                         onChange={handleSearchChange}
                                     />
                                 </div>
-                                <Button 
-                                    onClick={() => setIsAddModalOpen(true)}
-                                    className="w-full sm:w-auto"
-                                >
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    {isMobile ? "Tambah" : "Tambah Penduduk"}
-                                </Button>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button 
+                                                onClick={() => setIsAddModalOpen(true)}
+                                                className="w-full sm:w-auto bg-primary/90 hover:bg-primary shadow-sm"
+                                            >
+                                                <PlusCircle className="mr-2 h-4 w-4" />
+                                                {isMobile ? "Tambah" : "Tambah Penduduk"}
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom">
+                                            <p className="text-xs">Tambah data penduduk baru</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </div>
                         </div>
                     </CardHeader>
@@ -346,36 +366,65 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
-                                    <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                        <TableHead className="w-[160px] sm:w-[220px] text-xs sm:text-sm">Nama</TableHead>
-                                        <TableHead className="w-[150px] sm:w-[220px] text-xs sm:text-sm hidden sm:table-cell">Email</TableHead>
-                                        <TableHead className="w-[130px] sm:w-[150px] text-xs sm:text-sm">Status Data</TableHead>
-                                        <TableHead className="w-[150px] sm:w-[180px] text-xs sm:text-sm hidden md:table-cell">Tanggal Registrasi</TableHead>
-                                        <TableHead className="text-right text-xs sm:text-sm">Aksi</TableHead>
+                                    <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/50">
+                                        <TableHead className="w-[160px] sm:w-[220px] text-xs sm:text-sm font-medium text-muted-foreground/90">Nama</TableHead>
+                                        <TableHead className="w-[150px] sm:w-[220px] text-xs sm:text-sm font-medium text-muted-foreground/90 hidden sm:table-cell">Email</TableHead>
+                                        <TableHead className="w-[130px] sm:w-[150px] text-xs sm:text-sm font-medium text-muted-foreground/90">Status Data</TableHead>
+                                        <TableHead className="w-[150px] sm:w-[180px] text-xs sm:text-sm font-medium text-muted-foreground/90 hidden md:table-cell">Tanggal Registrasi</TableHead>
+                                        <TableHead className="text-right text-xs sm:text-sm font-medium text-muted-foreground/90">Aksi</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {penduduk.data.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={5}>
-                                                <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
-                                                    <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/30 mb-3" />
+                                                <motion.div 
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: 0.4 }}
+                                                    className="flex flex-col items-center justify-center py-10 sm:py-16 text-center"
+                                                >
                                                     {searchQuery ? (
                                                         <>
-                                                            <p className="text-sm text-muted-foreground font-medium">Tidak ada penduduk ditemukan</p>
-                                                            <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">
+                                                            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-full mb-4">
+                                                                <Search className="h-8 w-8 sm:h-10 sm:w-10 text-yellow-500 dark:text-yellow-400" />
+                                                            </div>
+                                                            <p className="text-base text-foreground font-medium">Tidak ada penduduk ditemukan</p>
+                                                            <p className="text-sm text-muted-foreground mt-1.5 max-w-md">
                                                                 Coba dengan kata kunci lain atau reset pencarian
                                                             </p>
+                                                            <Button 
+                                                                variant="outline" 
+                                                                className="mt-4" 
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    setSearchQuery('');
+                                                                    router.get(route('admin.penduduk'), {}, { preserveState: true });
+                                                                }}
+                                                            >
+                                                                Reset Pencarian
+                                                            </Button>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <p className="text-sm text-muted-foreground font-medium">Belum ada data penduduk</p>
-                                                            <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">
-                                                                Tambahkan penduduk baru dengan menekan tombol "Tambah"
+                                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full mb-4">
+                                                                <Users className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500 dark:text-blue-400" />
+                                                            </div>
+                                                            <p className="text-base text-foreground font-medium">Belum ada data penduduk</p>
+                                                            <p className="text-sm text-muted-foreground mt-1.5 max-w-md">
+                                                                Tambahkan penduduk baru dengan menekan tombol di bawah
                                                             </p>
+                                                            <Button 
+                                                                className="mt-4 bg-primary/90 hover:bg-primary" 
+                                                                size="sm"
+                                                                onClick={() => setIsAddModalOpen(true)}
+                                                            >
+                                                                <PlusCircle className="mr-2 h-4 w-4" />
+                                                                Tambah Penduduk
+                                                            </Button>
                                                         </>
                                                     )}
-                                                </div>
+                                                </motion.div>
                                             </TableCell>
                                         </TableRow>
                                     ) : (
@@ -384,72 +433,91 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                                 key={item.id}
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.2, delay: index * 0.05 }}
-                                                className="group hover:bg-muted/50"
+                                                transition={{ duration: 0.3, delay: index * 0.03, ease: 'easeOut' }}
+                                                className="group hover:bg-muted/40 border-b border-border/30 last:border-0"
                                             >
-                                                <TableCell className="font-medium text-xs sm:text-sm py-2 sm:py-4">
-                                                    <div className="flex items-center gap-1 sm:gap-2">
-                                                        <div className="bg-primary/10 p-1 sm:p-1.5 rounded-full">
-                                                            <User className="h-3 w-3 text-primary" />
+                                                <TableCell className="font-medium text-xs sm:text-sm py-3 sm:py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="bg-primary/10 p-1.5 rounded-md">
+                                                            <User className="h-3.5 w-3.5 text-primary" />
                                                         </div>
-                                                        <span className="truncate max-w-[100px] sm:max-w-full">{item.nama}</span>
+                                                        <span className="truncate max-w-[100px] sm:max-w-full font-medium">{item.nama}</span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="hidden sm:table-cell text-xs sm:text-sm py-2 sm:py-4">
-                                                    <span className="flex items-center gap-1 sm:gap-1.5">
+                                                <TableCell className="hidden sm:table-cell text-xs sm:text-sm py-3 sm:py-4">
+                                                    <span className="flex items-center gap-1.5">
                                                         <span className="h-1.5 w-1.5 rounded-full bg-blue-500 flex-shrink-0"></span>
-                                                        <span className="truncate">{item.user?.email || '-'}</span>
+                                                        <span className="truncate text-muted-foreground">{item.user?.email || '-'}</span>
                                                     </span>
                                                 </TableCell>
-                                                <TableCell className="py-2 sm:py-4">
+                                                <TableCell className="py-3 sm:py-4">
                                                     {item.nama && item.user?.email ? (
-                                                        <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 flex items-center gap-1 whitespace-nowrap text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5 sm:text-xs sm:gap-1.5">
-                                                            <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-green-500 flex-shrink-0"></span>
+                                                        <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 flex items-center gap-1.5 whitespace-nowrap text-xs px-2 py-0.5 font-medium">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-green-500 flex-shrink-0"></span>
                                                             Lengkap
                                                         </Badge>
                                                     ) : (
-                                                        <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200 flex items-center gap-1 whitespace-nowrap text-xs px-1.5 sm:px-2.5 py-0 sm:py-0.5 sm:text-xs sm:gap-1.5">
-                                                            <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2 flex-shrink-0">
+                                                        <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-200 flex items-center gap-1.5 whitespace-nowrap text-xs px-2 py-0.5 font-medium">
+                                                            <span className="relative flex h-1.5 w-1.5 flex-shrink-0">
                                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-yellow-500"></span>
+                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500"></span>
                                                             </span>
                                                             {isMobile ? "Belum" : "Belum Lengkap"}
                                                         </Badge>
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="hidden md:table-cell text-xs sm:text-sm py-2 sm:py-4">
-                                                    <div className="flex items-center gap-1 sm:gap-2">
-                                                        <div className="bg-muted p-1 sm:p-1.5 rounded-full flex-shrink-0">
-                                                            <Calendar className="h-3 w-3 text-muted-foreground" />
+                                                <TableCell className="hidden md:table-cell text-xs sm:text-sm py-3 sm:py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="bg-muted/70 p-1.5 rounded-md flex-shrink-0">
+                                                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            <span>{item.registration_date_formatted || '-'}</span>
-                                                            <span className="text-xs text-muted-foreground">
-                                                                {item.registration_date ? new Date(item.registration_date).toLocaleDateString('id-ID') : ''}
-                                                            </span>
+                                                            <span className="text-foreground/90">{item.registration_date_formatted || '-'}</span>
+                                                            {item.registration_date && (
+                                                                <span className="text-xs text-muted-foreground">
+                                                                    {new Date(item.registration_date).toLocaleDateString('id-ID')}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-right py-2 sm:py-4">
-                                                    <div className="flex items-center justify-end gap-1 sm:gap-2">
-                                                        <Button 
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => openEditModal(item)}
-                                                            className="h-7 w-7 sm:h-8 sm:w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                                                            title="Edit Data"
-                                                        >
-                                                            <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                                        </Button>
-                                                        <Button 
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => openDeleteModal(item)}
-                                                            className="h-7 w-7 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                            title="Hapus Data"
-                                                        >
-                                                            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                                        </Button>
+                                                <TableCell className="text-right py-3 sm:py-4">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button 
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        onClick={() => openEditModal(item)}
+                                                                        className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md"
+                                                                    >
+                                                                        <Edit className="h-4 w-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent side="top">
+                                                                    <p className="text-xs">Edit data</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button 
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        onClick={() => openDeleteModal(item)}
+                                                                        className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md"
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent side="top">
+                                                                    <p className="text-xs">Hapus data</p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
                                                     </div>
                                                 </TableCell>
                                             </motion.tr>
@@ -481,129 +549,162 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
 
             {/* Add Modal */}
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader className="pb-4 border-b">
-                        <DialogTitle className="text-xl">Tambah Penduduk Baru</DialogTitle>
-                        <DialogDescription className="text-muted-foreground mt-1">
-                            Tambahkan penduduk baru ke dalam sistem. Data dengan tanda <span className="text-red-500">*</span> wajib diisi.
-                        </DialogDescription>
+                <DialogContent className="sm:max-w-[550px] p-0 gap-0 overflow-hidden border-none shadow-xl">
+                    <DialogHeader className="px-6 pt-6 pb-4 bg-gradient-to-b from-card to-background border-b">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 p-2 rounded-md">
+                                <UserPlus className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl font-semibold">Tambah Penduduk Baru</DialogTitle>
+                                <DialogDescription className="text-muted-foreground/90 mt-1">
+                                    Data dengan tanda <span className="text-primary">*</span> wajib diisi
+                                </DialogDescription>
+                            </div>
+                        </div>
                     </DialogHeader>
-                    <div className="grid gap-5 py-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div className="space-y-2">
-                                <Label htmlFor="nama" className="font-medium">
-                                    Nama Lengkap <span className="text-red-500">*</span>
+                    <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
+                        <div className="grid gap-5">
+                            <motion.div 
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2, delay: 0.1 }}
+                                className="grid grid-cols-1 md:grid-cols-2 gap-5"
+                            >
+                                <div className="space-y-2.5">
+                                    <Label htmlFor="nama" className="font-medium flex items-center">
+                                        Nama Lengkap <span className="text-primary ml-1">*</span>
+                                    </Label>
+                                    <Input
+                                        id="nama"
+                                        placeholder="Masukkan Nama Lengkap"
+                                        value={data.nama}
+                                        onChange={(e) => setData('nama', e.target.value)}
+                                        className={cn(
+                                            "border-border/50 bg-background/80 focus-visible:ring-1 focus-visible:ring-primary/30",
+                                            errors.nama && "border-red-400 focus-visible:ring-red-400/30"
+                                        )}
+                                    />
+                                    {errors.nama && (
+                                        <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
+                                            <AlertCircle className="h-3 w-3" /> {errors.nama}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2.5">
+                                    <Label htmlFor="email" className="font-medium flex items-center">
+                                        Email <span className="text-primary ml-1">*</span>
+                                    </Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="Masukkan Email"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                        className={cn(
+                                            "border-border/50 bg-background/80 focus-visible:ring-1 focus-visible:ring-primary/30",
+                                            errors.email && "border-red-400 focus-visible:ring-red-400/30"
+                                        )}
+                                    />
+                                    {errors.email && (
+                                        <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
+                                            <AlertCircle className="h-3 w-3" /> {errors.email}
+                                        </p>
+                                    )}
+                                </div>
+                            </motion.div>
+
+                            <motion.div 
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2, delay: 0.2 }}
+                                className="space-y-2.5"
+                            >
+                                <Label htmlFor="password" className="font-medium flex items-center">
+                                    Password <span className="text-primary ml-1">*</span>
                                 </Label>
                                 <Input
-                                    id="nama"
-                                    placeholder="Masukkan Nama Lengkap"
-                                    value={data.nama}
-                                    onChange={(e) => setData('nama', e.target.value)}
+                                    id="password"
+                                    type="password"
+                                    placeholder="Masukkan Password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
                                     className={cn(
-                                        "bg-background focus:ring-2 focus:ring-primary/20",
-                                        errors.nama && "border-red-500 focus:ring-red-500/20"
+                                        "border-border/50 bg-background/80 focus-visible:ring-1 focus-visible:ring-primary/30",
+                                        errors.password && "border-red-400 focus-visible:ring-red-400/30"
                                     )}
                                 />
-                                {errors.nama && <p className="text-xs text-red-500 mt-1">{errors.nama}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="font-medium">
-                                    Email <span className="text-red-500">*</span>
-                                </Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="Masukkan Email"
-                                    value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    className={cn(
-                                        "bg-background focus:ring-2 focus:ring-primary/20",
-                                        errors.email && "border-red-500 focus:ring-red-500/20"
-                                    )}
-                                />
-                                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="password" className="font-medium">
-                                Password <span className="text-red-500">*</span>
-                            </Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Masukkan Password"
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                className={cn(
-                                    "bg-background focus:ring-2 focus:ring-primary/20",
-                                    errors.password && "border-red-500 focus:ring-red-500/20"
+                                {errors.password && (
+                                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
+                                        <AlertCircle className="h-3 w-3" /> {errors.password}
+                                    </p>
                                 )}
-                            />
-                            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
-                        </div>
+                            </motion.div>
 
-
-
-                        {/* Hidden but necessary fields */}
-                        <div className="hidden">
-                            <Input
-                                id="role"
-                                value={data.role}
-                                onChange={(e) => setData('role', e.target.value)}
-                            />
-                            <Input
-                                id="jenis_kelamin"
-                                value={data.jenis_kelamin}
-                                onChange={(e) => setData('jenis_kelamin', e.target.value)}
-                            />
-                            <Input
-                                id="tempat_lahir"
-                                value={data.tempat_lahir}
-                                onChange={(e) => setData('tempat_lahir', e.target.value)}
-                            />
-                            <Input
-                                id="tanggal_lahir"
-                                type="date" 
-                                value={data.tanggal_lahir}
-                                onChange={(e) => setData('tanggal_lahir', e.target.value)}
-                            />
-                            <Input
-                                id="agama"
-                                value={data.agama || ''}
-                                onChange={(e) => setData('agama', e.target.value)}
-                            />
-                            <Input
-                                id="status_perkawinan"
-                                value={data.status_perkawinan || ''}
-                                onChange={(e) => setData('status_perkawinan', e.target.value)}
-                            />
-                            <Input
-                                id="pekerjaan"
-                                value={data.pekerjaan || ''}
-                                onChange={(e) => setData('pekerjaan', e.target.value)}
-                            />
-                            <Input
-                                id="kewarganegaraan"
-                                value={data.kewarganegaraan}
-                                onChange={(e) => setData('kewarganegaraan', e.target.value)}
-                            />
+                            {/* Hidden but necessary fields */}
+                            <div className="hidden">
+                                <Input
+                                    id="role"
+                                    value={data.role}
+                                    onChange={(e) => setData('role', e.target.value)}
+                                />
+                                <Input
+                                    id="jenis_kelamin"
+                                    value={data.jenis_kelamin}
+                                    onChange={(e) => setData('jenis_kelamin', e.target.value)}
+                                />
+                                <Input
+                                    id="tempat_lahir"
+                                    value={data.tempat_lahir}
+                                    onChange={(e) => setData('tempat_lahir', e.target.value)}
+                                />
+                                <Input
+                                    id="tanggal_lahir"
+                                    type="date" 
+                                    value={data.tanggal_lahir}
+                                    onChange={(e) => setData('tanggal_lahir', e.target.value)}
+                                />
+                                <Input
+                                    id="agama"
+                                    value={data.agama || ''}
+                                    onChange={(e) => setData('agama', e.target.value)}
+                                />
+                                <Input
+                                    id="status_perkawinan"
+                                    value={data.status_perkawinan || ''}
+                                    onChange={(e) => setData('status_perkawinan', e.target.value)}
+                                />
+                                <Input
+                                    id="pekerjaan"
+                                    value={data.pekerjaan || ''}
+                                    onChange={(e) => setData('pekerjaan', e.target.value)}
+                                />
+                                <Input
+                                    id="kewarganegaraan"
+                                    value={data.kewarganegaraan}
+                                    onChange={(e) => setData('kewarganegaraan', e.target.value)}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
-                        <Button variant="outline" onClick={() => {
-                            setIsAddModalOpen(false);
-                            reset();
-                        }}>
+                    <DialogFooter className="flex px-6 py-4 bg-muted/20 border-t gap-2 sm:gap-0">
+                        <Button 
+                            variant="outline" 
+                            onClick={() => {
+                                setIsAddModalOpen(false);
+                                reset();
+                            }}
+                            className="border-border/50 hover:bg-background"
+                        >
                             Batal
                         </Button>
                         <Button 
                             onClick={handleAddSubmit} 
                             disabled={processing}
-                            className="gap-1"
+                            className="bg-primary/90 hover:bg-primary gap-2 shadow-sm"
                         >
-                            {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {processing && <Loader2 className="h-4 w-4 animate-spin" />}
                             Simpan
                         </Button>
                     </DialogFooter>
@@ -612,126 +713,159 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
 
             {/* Edit Modal */}
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader className="pb-4 border-b">
-                        <DialogTitle className="text-xl">Edit Data Penduduk</DialogTitle>
-                        <DialogDescription className="text-muted-foreground mt-1">
-                            Perbarui informasi penduduk. Data dengan tanda <span className="text-red-500">*</span> wajib diisi.
-                        </DialogDescription>
+                <DialogContent className="sm:max-w-[550px] p-0 gap-0 overflow-hidden border-none shadow-xl">
+                    <DialogHeader className="px-6 pt-6 pb-4 bg-gradient-to-b from-card to-background border-b">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-md">
+                                <Edit className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl font-semibold">Edit Data Penduduk</DialogTitle>
+                                <DialogDescription className="text-muted-foreground/90 mt-1">
+                                    Data dengan tanda <span className="text-blue-500">*</span> wajib diisi
+                                </DialogDescription>
+                            </div>
+                        </div>
                     </DialogHeader>
-                    <div className="grid gap-5 py-5">
-                        <div className="space-y-2">
-                            <Label htmlFor="edit-nama" className="font-medium">
-                                Nama Lengkap <span className="text-red-500">*</span>
-                            </Label>
-                            <Input
-                                id="edit-nama"
-                                placeholder="Masukkan Nama Lengkap"
-                                value={editData.nama}
-                                onChange={(e) => setEditData('nama', e.target.value)}
-                                className={cn(
-                                    "bg-background focus:ring-2 focus:ring-primary/20",
-                                    editErrors.nama && "border-red-500 focus:ring-red-500/20"
+                    <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
+                        <div className="grid gap-5">
+                            <motion.div 
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2, delay: 0.1 }}
+                                className="space-y-2.5"
+                            >
+                                <Label htmlFor="edit-nama" className="font-medium flex items-center">
+                                    Nama Lengkap <span className="text-blue-500 ml-1">*</span>
+                                </Label>
+                                <Input
+                                    id="edit-nama"
+                                    placeholder="Masukkan Nama Lengkap"
+                                    value={editData.nama}
+                                    onChange={(e) => setEditData('nama', e.target.value)}
+                                    className={cn(
+                                        "border-border/50 bg-background/80 focus-visible:ring-1 focus-visible:ring-blue-400/30",
+                                        editErrors.nama && "border-red-400 focus-visible:ring-red-400/30"
+                                    )}
+                                />
+                                {editErrors.nama && (
+                                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
+                                        <AlertCircle className="h-3 w-3" /> {editErrors.nama}
+                                    </p>
                                 )}
-                            />
-                            {editErrors.nama && <p className="text-xs text-red-500 mt-1">{editErrors.nama}</p>}
-                        </div>
+                            </motion.div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="edit-email" className="font-medium">Email (Terhubung dengan Akun)</Label>
-                            <Input
-                                id="edit-email"
-                                type="email"
-                                value={editData.email}
-                                readOnly
-                                disabled
-                                className="bg-gray-100 dark:bg-gray-800"
-                            />
-                            <p className="text-xs text-muted-foreground">Email tidak dapat diubah karena terhubung dengan akun pengguna</p>
-                        </div>
+                            <motion.div 
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2, delay: 0.2 }}
+                                className="space-y-2.5"
+                            >
+                                <Label htmlFor="edit-email" className="font-medium">Email (Terhubung dengan Akun)</Label>
+                                <Input
+                                    id="edit-email"
+                                    type="email"
+                                    value={editData.email}
+                                    readOnly
+                                    disabled
+                                    className="bg-muted/50 dark:bg-muted/20 text-muted-foreground border-border/50"
+                                />
+                                <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-1.5">
+                                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
+                                    Email tidak dapat diubah karena terhubung dengan akun pengguna
+                                </p>
+                            </motion.div>
 
-                        {/* Data Kependudukan telah dihapus - hanya menggunakan nama dan email */}
-
-                        {/* Hidden but necessary fields */}
-                        <div className="hidden">
-                            <Input
-                                id="edit-user_id"
-                                value={editData.user_id}
-                                onChange={(e) => setEditData('user_id', e.target.value)}
-                            />
+                            {/* Hidden but necessary fields */}
+                            <div className="hidden">
+                                <Input
+                                    id="edit-user_id"
+                                    value={editData.user_id}
+                                    onChange={(e) => setEditData('user_id', e.target.value)}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
-                        <Button variant="outline" onClick={() => {
-                            setIsEditModalOpen(false);
-                            resetEdit();
-                        }}>
+                    <DialogFooter className="flex px-6 py-4 bg-muted/20 border-t gap-2 sm:gap-0">
+                        <Button 
+                            variant="outline" 
+                            onClick={() => {
+                                setIsEditModalOpen(false);
+                                resetEdit();
+                            }}
+                            className="border-border/50 hover:bg-background"
+                        >
                             Batal
                         </Button>
                         <Button 
                             onClick={handleEditSubmit} 
                             disabled={editProcessing}
-                            className="gap-1"
+                            className="bg-blue-500/90 hover:bg-blue-500 gap-2 shadow-sm text-white"
                         >
-                            {editProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {editProcessing && <Loader2 className="h-4 w-4 animate-spin" />}
                             Simpan Perubahan
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
-            {/* Delete Confirmation Modal */}
+            {/* Delete Modal */}
             <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl flex items-center gap-2">
-                            <Trash2 className="h-5 w-5 text-red-500" />
-                            Konfirmasi Hapus Data
-                        </DialogTitle>
-                        <DialogDescription className="text-muted-foreground mt-1">
-                            Tindakan ini tidak dapat dibatalkan.
-                        </DialogDescription>
+                <DialogContent className="sm:max-w-[425px] p-0 gap-0 overflow-hidden border-none shadow-xl">
+                    <DialogHeader className="px-6 pt-6 pb-4 bg-gradient-to-b from-rose-50/80 to-rose-50/30 dark:from-rose-950/20 dark:to-background border-b">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-rose-100 dark:bg-rose-900/20 p-2 rounded-md">
+                                <Trash2 className="h-5 w-5 text-rose-500 dark:text-rose-400" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl font-semibold text-rose-600 dark:text-rose-400">Konfirmasi Hapus</DialogTitle>
+                                <DialogDescription className="text-muted-foreground/90 mt-1">
+                                    Anda yakin ingin menghapus data penduduk ini?
+                                </DialogDescription>
+                            </div>
+                        </div>
                     </DialogHeader>
-                    <div className="py-4 flex flex-col gap-3">
-                        <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-4 border border-red-200 dark:border-red-900">
-                            <p className="text-red-800 dark:text-red-300">
-                                Anda akan menghapus data penduduk:
+                    <div className="px-6 py-5">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <p className="text-sm text-muted-foreground">
+                                Data yang sudah dihapus tidak dapat dikembalikan. Tindakan ini juga akan menghapus akun pengguna yang terhubung dengan data penduduk ini.
                             </p>
-                            <div className="mt-3 flex items-center gap-2">
-                                <div className="bg-red-100 dark:bg-red-900/50 p-2 rounded-full">
-                                    <User className="h-4 w-4 text-red-600 dark:text-red-400" />
+                            <div className="mt-4 p-4 bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/50 rounded-lg shadow-sm">
+                                <div className="flex items-center gap-2">
+                                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                                    <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                                        Perhatian
+                                    </p>
                                 </div>
-                                <p className="font-medium text-lg text-red-900 dark:text-red-200">
-                                    {pendudukToDelete?.nama}
+                                <p className="text-xs text-amber-600 dark:text-amber-500 mt-2 ml-6">
+                                    Pengguna tidak akan bisa login lagi setelah data dihapus.
                                 </p>
                             </div>
-                            {pendudukToDelete?.user?.email && (
-                                <p className="text-sm text-red-700 dark:text-red-400 mt-2 flex items-center gap-2">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                                    {pendudukToDelete?.user?.email}
-                                </p>
-                            )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Menghapus data penduduk juga akan menghapus akun terkait dan semua dokumen yang telah diajukan. Apakah Anda yakin ingin melanjutkan?
-                        </p>
+                        </motion.div>
                     </div>
-                    <DialogFooter className="gap-2 sm:gap-0">
-                        <Button variant="outline" onClick={() => {
-                            setIsDeleteModalOpen(false);
-                            setPendudukToDelete(null);
-                        }}>
+                    <DialogFooter className="flex px-6 py-4 bg-muted/20 border-t gap-2 sm:gap-0">
+                        <Button 
+                            variant="outline" 
+                            onClick={() => {
+                                setIsDeleteModalOpen(false);
+                                setPendudukToDelete(null);
+                            }}
+                            className="border-border/50 hover:bg-background"
+                        >
                             Batal
                         </Button>
-                        <Button 
-                            variant="destructive" 
+                        <Button
+                            variant="destructive"
                             onClick={handleDeleteSubmit}
                             disabled={processing}
-                            className="gap-1"
+                            className="bg-rose-500 hover:bg-rose-600 gap-2 shadow-sm"
                         >
-                            {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Hapus Data
+                            {processing && <Loader2 className="h-4 w-4 animate-spin" />}
+                            Hapus Permanen
                         </Button>
                     </DialogFooter>
                 </DialogContent>
