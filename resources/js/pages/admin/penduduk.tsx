@@ -86,17 +86,17 @@ function StatsCard({ title, value, icon, description, color = 'default', delay =
             className="h-full"
         >
             <Card className={cn("bg-gradient-to-br h-full flex flex-col", colorClasses[color])}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 flex-shrink-0">
-                    <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                    <div className={cn("p-1.5 sm:p-2 rounded-full bg-white/20", colorClasses[color])}>
-                        <div className="h-4 w-4 sm:h-5 sm:w-5">{icon}</div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2 px-3 sm:px-4 sm:py-3 flex-shrink-0">
+                    <CardTitle className="text-xs sm:text-sm font-semibold">{title}</CardTitle>
+                    <div className={cn("p-1.5 rounded-full bg-white/20", colorClasses[color])}>
+                        <div className="h-3.5 w-3.5 sm:h-4 sm:w-4">{icon}</div>
                     </div>
                 </CardHeader>
-                <CardContent className="flex flex-col justify-between flex-grow pt-2">
-                    <div className="text-2xl sm:text-3xl font-bold tracking-tight">{value}</div>
-                    <div className="h-4 mt-auto">
+                <CardContent className="flex flex-col justify-between flex-grow px-3 sm:px-4 pt-0 pb-3">
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{value}</div>
+                    <div className="mt-1 sm:mt-2">
                         {description && (
-                            <p className="text-xs text-current/70 mt-1 font-medium">{description}</p>
+                            <p className="text-[10px] sm:text-xs text-current/80 font-medium">{description}</p>
                         )}
                     </div>
                 </CardContent>
@@ -282,7 +282,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                     <p className="text-sm sm:text-base text-muted-foreground">Kelola data dan akun penduduk dalam sistem.</p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6">
                     <StatsCard
                         title="Total Penduduk"
                         value={totalPenduduk.toLocaleString()}
