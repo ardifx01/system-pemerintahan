@@ -130,9 +130,8 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
 
     // Stats calculations
     const totalPenduduk = penduduk.data.length;
-    // Setelah perubahan UI, data penduduk dianggap lengkap jika memiliki nama dan email (terkait akun)
+    // Data penduduk terdaftar adalah yang memiliki nama dan email (terkait akun)
     const completePenduduk = penduduk.data.filter(p => p.nama && p.user?.email).length;
-    const incompletePenduduk = totalPenduduk - completePenduduk;
     const recentRegistrations = penduduk.data.filter(p => {
         if (!p.user?.created_at) return false;
         const createdDate = new Date(p.user.created_at);
@@ -283,7 +282,7 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                     <p className="text-sm sm:text-base text-muted-foreground">Kelola data dan akun penduduk dalam sistem.</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-3">
                     <StatsCard
                         title="Total Penduduk"
                         value={totalPenduduk.toLocaleString()}
@@ -292,27 +291,19 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                         delay={0}
                     />
                     <StatsCard
-                        title="Data Lengkap"
+                        title="Data Terdaftar"
                         value={completePenduduk.toLocaleString()}
                         icon={<UserCheck className="h-full w-full" />}
                         color="green"
                         delay={1}
-                        description="Penduduk dengan data lengkap"
-                    />
-                    <StatsCard
-                        title="Data Belum Lengkap"
-                        value={incompletePenduduk.toLocaleString()}
-                        icon={<UserX className="h-full w-full" />}
-                        color="orange"
-                        delay={2}
-                        description="Perlu melengkapi data"
+                        description="Penduduk dengan akun aktif"
                     />
                     <StatsCard
                         title="Registrasi Baru"
                         value={recentRegistrations.toLocaleString()}
                         icon={<Calendar className="h-full w-full" />}
                         color="purple"
-                        delay={3}
+                        delay={2}
                         description="Dalam 7 hari terakhir"
                     />
                 </div>
