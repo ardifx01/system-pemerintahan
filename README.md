@@ -76,14 +76,18 @@ Sistem informasi pemerintahan modern berbasis web yang dikembangkan menggunakan 
     ```bash
     php artisan storage:link
     ```
-
-8. **Jalankan aset frontend & server:**
+8. **Install DOMPdf**
+   
+   ```bash
+   composer require barryvdh/laravel-dompdf
+   ```
+9. **Jalankan aset frontend & server:**
 
     ```bash
     composer run dev
     ```
 
-9. Akses aplikasi di http://localhost:8000
+10. Akses aplikasi di http://localhost:8000
 
 ## Tutorial Lengkap Instalasi & Penggunaan
 
