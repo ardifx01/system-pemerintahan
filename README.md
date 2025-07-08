@@ -102,19 +102,22 @@ Sistem informasi pemerintahan modern berbasis web yang dikembangkan menggunakan 
     - **Password:** admin
 - Ubah password admin setelah login pertama demi keamanan!
 
-### 3. Jalankan Frontend & Backend
+### 3. Install DOMPdf
+- composer require barryvdh/laravel-dompdf
+
+### 4. Jalankan Frontend & Backend
 
 - Jalankan kedua server:
     - composer run dev
 - Jika menggunakan XAMPP, pastikan MySQL & Apache running.
 
-### 4. Storage & Permissions
+### 5. Storage & Permissions
 
 - Jika terjadi error pada upload/download file:
     - Pastikan folder `storage` dan `bootstrap/cache` dapat ditulis (writeable)
     - Jalankan: `php artisan storage:link` setelah deploy/move project
 
-### 5. Penggunaan Sistem
+### 6. Penggunaan Sistem
 
 #### **Sebagai Penduduk:**
 
