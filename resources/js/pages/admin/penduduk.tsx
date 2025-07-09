@@ -631,9 +631,12 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                         )}
                                     />
                                     {(errors.nama || validationError) && (
-                                        <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
-                                            <AlertCircle className="h-3 w-3" /> {errors.nama || validationError}
-                                        </p>
+                                        <div className="p-2 mt-2 border-2 border-red-400 bg-red-50 dark:bg-red-900/20 rounded-md animate-pulse">
+                                            <p className="text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-2">
+                                                <AlertTriangle className="h-4 w-4 flex-shrink-0" /> 
+                                                {errors.nama || validationError}
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
 
@@ -795,9 +798,12 @@ export default function Penduduk({ penduduk, filters, flash }: PendudukProps) {
                                     )}
                                 />
                                 {(editErrors.nama || validationError) && (
-                                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
-                                        <AlertCircle className="h-3 w-3" /> {editErrors.nama || validationError}
-                                    </p>
+                                    <div className="p-2 mt-2 border-2 border-red-400 bg-red-50 dark:bg-red-900/20 rounded-md animate-pulse">
+                                        <p className="text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-2">
+                                            <AlertTriangle className="h-4 w-4 flex-shrink-0" /> 
+                                            {editErrors.nama || validationError}
+                                        </p>
+                                    </div>
                                 )}
                             </motion.div>
 
