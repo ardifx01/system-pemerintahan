@@ -48,7 +48,7 @@ Sistem informasi pemerintahan modern berbasis web yang dikembangkan menggunakan 
 
 1. **Clone repositori:**
     ```bash
-    git clone https://github.com/vickyymosafan/Website-Government-Laravel-Typescript.git
+    git clone https://github.com/ardifx01/system-pemerintahan.git
     cd Website-Government-Laravel-Typescript
     ```
 2. **Instal dependensi backend (Laravel):**
